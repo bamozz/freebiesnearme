@@ -79,11 +79,7 @@
   .status-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
   .status-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);}
   .status-chip.active .pulse{background:#5FE3C4;}
-  select.neigh{
-    font-size:13px;font-weight:600;padding:8px 12px;border-radius:16px;border:1px solid var(--line);
-    background:#fff;color:var(--ink);font-family:'Inter',sans-serif;cursor:pointer;
-  }
-  .cat-row{
+  .chip-row{
     max-width:1220px;margin:10px auto 0;padding:0 28px;
     display:flex;flex-wrap:wrap;gap:8px;
   }
@@ -92,6 +88,7 @@
     border:1px solid var(--line);cursor:pointer;color:var(--muted);background:#fff;
   }
   .cat-chip.active{color:#fff;border-color:transparent;}
+  .cat-chip.neigh.active{background:var(--ink);}
 
   /* ===== Layout ===== */
   .layout{
@@ -212,7 +209,8 @@
 </div>
 
 <div class="filter-bar" id="statusFilters"></div>
-<div class="cat-row" id="catFilters"></div>
+<div class="chip-row" id="neighFilters"></div>
+<div class="chip-row" id="catFilters"></div>
 
 <div class="layout">
   <div class="sidebar">
@@ -315,16 +313,18 @@ function renderStatusFilters(){
     chip.onclick = ()=>{ activeStatus = o.id; renderStatusFilters(); renderList(); };
     wrap.appendChild(chip);
   });
-  const sel = document.createElement('select');
-  sel.className = 'neigh';
+}
+
+function renderNeighFilters(){
+  const wrap = document.getElementById('neighFilters');
+  wrap.innerHTML = '';
   neighbourhoodOptions.forEach(n=>{
-    const opt = document.createElement('option');
-    opt.value = n; opt.textContent = n;
-    if (n===activeNeigh) opt.selected = true;
-    sel.appendChild(opt);
+    const chip = document.createElement('div');
+    chip.className = 'cat-chip neigh' + (activeNeigh===n ? ' active' : '');
+    chip.textContent = n;
+    chip.onclick = ()=>{ activeNeigh = n; renderNeighFilters(); renderList(); };
+    wrap.appendChild(chip);
   });
-  sel.onchange = (e)=>{ activeNeigh = e.target.value; renderList(); };
-  wrap.appendChild(sel);
 }
 
 function renderCatFilters(){
@@ -453,6 +453,7 @@ async function loadListings(){
   document.getElementById('liveCount').textContent = events.filter(e=>e.status==='live').length;
   addMarkersToMap();
   renderStatusFilters();
+  renderNeighFilters();
   renderCatFilters();
   renderList();
 }
