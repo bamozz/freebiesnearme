@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit a Giveaway — Freebies Near Me</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --paper:#FEFCF6; --paper-alt:#F5F2E8; --ink:#151B21; --muted:#6B7280;
+    --line:#E4E8E5; --teal:#0E9C82; --teal-dim:#E3F5F0;
+    --amber:#F0A430; --amber-dim:#FCEED8; --coral:#EF5B4E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;}
+  .display{font-family:'Space Grotesk',sans-serif;}
+  .stamp-type{font-family:'Anton',sans-serif;letter-spacing:0.04em;text-transform:uppercase;}
+
+  nav{
+    display:flex;align-items:center;justify-content:space-between;padding:16px 28px;
+    border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(254,252,246,0.92);
+    backdrop-filter:blur(6px);z-index:500;
+  }
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;}
+
+  .wrap{max-width:640px;margin:0 auto;padding:36px 24px 60px;}
+  h1{font-size:clamp(26px,4vw,34px);margin:0 0 6px;}
+  .sub{font-size:14.5px;color:var(--muted);margin:0 0 28px;max-width:480px;}
+
+  .mode-toggle{display:flex;gap:10px;margin-bottom:26px;}
+  .mode-btn{
+    flex:1;text-align:center;padding:14px;border-radius:10px;border:1.5px solid var(--line);
+    cursor:pointer;font-weight:700;font-size:14px;background:#fff;
+  }
+  .mode-btn.active{border-color:var(--teal);background:var(--teal-dim);color:var(--teal);}
+  .mode-btn small{display:block;font-weight:500;color:var(--muted);font-size:11.5px;margin-top:3px;}
+  .mode-btn.active small{color:var(--teal);}
+
+  form{display:flex;flex-direction:column;gap:16px;}
+  label{font-size:12.5px;font-weight:700;color:var(--ink);display:flex;flex-direction:column;gap:6px;}
+  label.optional::after{content:" (optional)";font-weight:500;color:var(--muted);text-transform:none;}
+  input,select,textarea{
+    font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;border-radius:8px;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:70px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:520px){ .row2{grid-template-columns:1fr;} }
+
+  #pickMap{height:220px;border-radius:10px;border:1px solid var(--line);margin-top:2px;}
+  .map-hint{font-size:11.5px;color:var(--muted);font-weight:500;margin-top:4px;}
+  .coords{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--teal);margin-top:4px;}
+
+  .submit-btn{
+    margin-top:8px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;
+    padding:13px;border:none;border-radius:10px;cursor:pointer;
+  }
+  .submit-btn:disabled{opacity:0.5;cursor:default;}
+
+  .note{
+    font-size:12px;color:var(--muted);background:var(--paper-alt);border:1.5px dashed #D6D1BF;
+    border-radius:8px;padding:10px 12px;margin-top:4px;
+  }
+  .result{
+    margin-top:18px;padding:14px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none;
+  }
+  .result.ok{background:var(--teal-dim);color:var(--teal);display:block;}
+  .result.err{background:#FDE8E6;color:var(--coral);display:block;}
+</style>
+</head>
+<body>
+
+<nav><div class="logo">Freebies Near Me</div></nav>
+
+<div class="wrap">
+  <h1 class="display">Submit a giveaway</h1>
+  <p class="sub">Brands can list an upcoming activation. Hunters can flag something they spotted happening right now. Everything is reviewed before it goes on the map.</p>
+
+  <div class="mode-toggle">
+    <div class="mode-btn active" data-mode="brand">I am a brand<small>Listing my own event</small></div>
+    <div class="mode-btn" data-mode="hunter">I am a hunter<small>Reporting what I saw</small></div>
+  </div>
+
+  <form id="submitForm">
+    <label>Brand or business name
+      <input type="text" id="brand" required>
+    </label>
+
+    <label>What is being given away
+      <textarea id="what" required placeholder="e.g. free cold brew samples, first 150 people"></textarea>
+    </label>
+
+    <div class="row2">
+      <label>Category
+        <select id="category" required>
+          <option value="food">Food & Drink</option>
+          <option value="beauty">Beauty</option>
+          <option value="fashion">Fashion</option>
+          <option value="tech">Tech</option>
+          <option value="wellness">Wellness</option>
+        </select>
+      </label>
+      <label>Neighbourhood
+        <input type="text" id="neighbourhood" required placeholder="e.g. Queen West">
+      </label>
+    </div>
+
+    <label class="optional">Street address
+      <input type="text" id="address" placeholder="Helps hunters find the exact spot">
+    </label>
+
+    <label>Drop a pin at the location
+      <div id="pickMap"></div>
+      <span class="map-hint">Click the map to set the exact spot.</span>
+      <span class="coords" id="coordsLabel">No location set yet</span>
+    </label>
+
+    <div class="row2">
+      <label>Starts
+        <input type="datetime-local" id="startTime" required>
+      </label>
+      <label id="endLabel">Ends
+        <input type="datetime-local" id="endTime" required>
+      </label>
+    </div>
+
+    <label class="optional" id="totalLabel">How many are available in total
+      <input type="number" id="totalCount" min="1" placeholder="e.g. 150">
+    </label>
+
+    <label class="optional">Your email
+      <input type="email" id="contact" placeholder="In case we need to confirm details">
+    </label>
+
+    <div class="note" id="modeNote">Brand submissions with an exact quantity and time window get reviewed and listed fastest.</div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">Submit for review</button>
+    <div class="result" id="result"></div>
+  </form>
+</div>
+
+<script>
+  // Fill these in from Supabase, Project Settings, API
+  const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let mode = 'brand';
+  let picked = null;
+
+  const map = L.map('pickMap').setView([43.6532, -79.3832], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
+  }).addTo(map);
+  let marker = null;
+  map.on('click', (e) => {
+    picked = e.latlng;
+    if (marker) marker.remove();
+    marker = L.marker(picked).addTo(map);
+    document.getElementById('coordsLabel').textContent =
+      'Pin set at ' + picked.lat.toFixed(5) + ', ' + picked.lng.toFixed(5);
+  });
+
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      mode = btn.dataset.mode;
+      const totalInput = document.getElementById('totalCount');
+      const endInput = document.getElementById('endTime');
+      const note = document.getElementById('modeNote');
+      if (mode === 'hunter') {
+        totalInput.removeAttribute('required');
+        endInput.removeAttribute('required');
+        note.textContent = 'Not sure on exact numbers or end time? Give your best guess, or leave it blank.';
+      } else {
+        endInput.setAttribute('required', 'required');
+        note.textContent = 'Brand submissions with an exact quantity and time window get reviewed and listed fastest.';
+      }
+    };
+  });
+
+  document.getElementById('submitForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const resultEl = document.getElementById('result');
+    const btn = document.getElementById('submitBtn');
+
+    if (!picked) {
+      resultEl.className = 'result err';
+      resultEl.textContent = 'Please drop a pin on the map so we know where this is.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const startVal = document.getElementById('startTime').value;
+    const endVal = document.getElementById('endTime').value;
+
+    const payload = {
+      brand: document.getElementById('brand').value,
+      category: document.getElementById('category').value,
+      neighbourhood: document.getElementById('neighbourhood').value,
+      address: document.getElementById('address').value || null,
+      lat: picked.lat,
+      lng: picked.lng,
+      what: document.getElementById('what').value,
+      start_time: startVal ? new Date(startVal).toISOString() : null,
+      end_time: endVal ? new Date(endVal).toISOString() : null,
+      total_count: document.getElementById('totalCount').value || null,
+      claimed_count: 0,
+      submitted_by: mode,
+      submitter_contact: document.getElementById('contact').value || null,
+      moderation_status: 'pending'
+    };
+
+    const { error } = await sb.from('listings').insert(payload);
+
+    btn.disabled = false;
+    btn.textContent = 'Submit for review';
+
+    if (error) {
+      resultEl.className = 'result err';
+      resultEl.textContent = 'Something went wrong: ' + error.message;
+    } else {
+      resultEl.className = 'result ok';
+      resultEl.textContent = 'Thanks, this is in for review and will show up on the map once approved.';
+      document.getElementById('submitForm').reset();
+      if (marker) { marker.remove(); marker = null; picked = null; }
+      document.getElementById('coordsLabel').textContent = 'No location set yet';
+    }
+  });
+</script>
+</body>
+</html>

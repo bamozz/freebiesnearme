@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freebies Near Me — Toronto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  :root{
+    --paper:#FEFCF6;
+    --paper-alt:#F5F2E8;
+    --ink:#151B21;
+    --muted:#6B7280;
+    --line:#E4E8E5;
+    --teal:#0E9C82;
+    --teal-dim:#E3F5F0;
+    --amber:#F0A430;
+    --amber-dim:#FCEED8;
+    --coral:#EF5B4E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;}
+  .display{font-family:'Space Grotesk',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .stamp-type{font-family:'Anton',sans-serif;letter-spacing:0.04em;text-transform:uppercase;}
+  a{color:inherit;}
+
+  /* ===== Top nav ===== */
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 28px;border-bottom:1px solid var(--line);
+    position:sticky;top:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);
+    z-index:500;
+  }
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;}
+  .nav-links{display:flex;gap:26px;font-size:14px;font-weight:600;color:var(--muted);}
+  .nav-links span.on{color:var(--ink);}
+  .nav-right{display:flex;align-items:center;gap:14px;}
+  .btn-ghost{font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;}
+  .btn-solid{
+    background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;
+    padding:9px 16px;border-radius:20px;cursor:pointer;white-space:nowrap;
+  }
+  @media (max-width:760px){ .nav-links{display:none;} }
+
+  /* ===== Hero ===== */
+  .hero{
+    max-width:1220px;margin:0 auto;padding:46px 28px 20px;
+    display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;
+  }
+  .hero h1{
+    font-size:clamp(30px,4.2vw,46px);line-height:1.08;margin:0 0 10px;font-weight:700;max-width:640px;
+  }
+  .hero p{font-size:15.5px;color:var(--muted);max-width:480px;margin:0;}
+  .hero-stat{
+    background:var(--paper-alt);border:1px solid var(--line);border-left:1.5px dashed #C9C2A6;border-radius:10px;
+    padding:14px 18px;min-width:210px;position:relative;
+  }
+  .hero-stat::before{
+    content:"";position:absolute;left:-6px;top:50%;transform:translateY(-50%);
+    width:11px;height:11px;background:var(--paper);border:1px solid var(--line);border-radius:50%;
+  }
+  .hero-stat .num{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--teal);}
+  .hero-stat .lbl{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  /* ===== Ad banner ===== */
+  .ad-banner{max-width:1220px;margin:18px auto 0;padding:0 28px;}
+  .ad-banner-inner{
+    border:1.5px dashed #C9C2A6;background:var(--paper-alt);border-radius:10px;
+    padding:12px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .ad-tag{
+    font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--muted);border:1px solid var(--line);padding:2px 7px;border-radius:4px;flex-shrink:0;background:#fff;
+  }
+  .ad-banner-copy{font-size:13.5px;font-weight:500;flex:1;min-width:180px;}
+  .ad-banner-copy b{color:var(--teal);font-weight:700;}
+  .ad-banner-btn{
+    font-size:12.5px;font-weight:700;color:var(--ink);background:#fff;border:1px solid var(--ink);
+    padding:7px 13px;border-radius:16px;cursor:pointer;white-space:nowrap;
+  }
+
+  /* ===== Filter bar ===== */
+  .filter-bar{
+    max-width:1220px;margin:22px auto 0;padding:0 28px;
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  }
+  .status-chip{
+    font-size:13px;font-weight:600;padding:7px 13px;border-radius:16px;
+    border:1px solid var(--line);cursor:pointer;background:#fff;display:flex;align-items:center;gap:6px;
+  }
+  .status-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .status-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+  .status-chip.active .pulse{background:#5FE3C4;}
+  select.neigh{
+    font-size:13px;font-weight:600;padding:8px 12px;border-radius:16px;border:1px solid var(--line);
+    background:#fff;color:var(--ink);font-family:'Inter',sans-serif;cursor:pointer;
+  }
+  .cat-row{
+    max-width:1220px;margin:10px auto 0;padding:0 28px;
+    display:flex;flex-wrap:wrap;gap:8px;
+  }
+  .cat-chip{
+    font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:14px;
+    border:1px solid var(--line);cursor:pointer;color:var(--muted);background:#fff;
+  }
+  .cat-chip.active{color:#fff;border-color:transparent;}
+
+  /* ===== Layout ===== */
+  .layout{
+    max-width:1220px;margin:18px auto 44px;padding:0 28px;
+    display:grid;grid-template-columns:400px 1fr;gap:18px;
+  }
+  @media (max-width:920px){ .layout{grid-template-columns:1fr;} #map{height:420px !important;} }
+
+  .list-scroll{max-height:660px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px;}
+  .list-scroll::-webkit-scrollbar{width:7px;}
+  .list-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
+
+  /* ===== Card ===== */
+  .card{
+    position:relative;background:#fff;border:1px solid var(--line);border-radius:8px;
+    padding:14px 14px 12px 16px;cursor:pointer;transition:box-shadow .12s ease, border-color .12s ease;
+    border-left:3px solid var(--line);
+  }
+  .card::before,.card::after{
+    content:"";position:absolute;top:50%;transform:translateY(-50%);
+    width:13px;height:13px;background:var(--paper);border:1px solid var(--line);border-radius:50%;
+  }
+  .card::before{left:-6.5px;clip-path:inset(0 0 0 50%);}
+  .card::after{right:-6.5px;clip-path:inset(0 50% 0 0);}
+  .card:hover{box-shadow:0 3px 14px rgba(21,27,33,0.07);}
+  .card.selected{border-color:var(--teal);box-shadow:0 0 0 2px var(--teal-dim);}
+  .card.status-live{border-left-color:var(--teal);}
+  .card.status-soon{border-left-color:var(--amber);}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .tag-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .tag{
+    font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:3px 8px;border-radius:10px;
+  }
+  .tag.cat{background:var(--paper-alt);color:var(--muted);}
+  .status-badge{
+    font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;display:flex;align-items:center;gap:5px;
+  }
+  .status-badge.live{background:var(--teal-dim);color:var(--teal);}
+  .status-badge.soon{background:var(--amber-dim);color:#9C6B14;}
+  .status-badge.ended{background:var(--paper-alt);color:var(--muted);}
+  .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+  .card-brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;}
+  .card-what{font-size:13px;color:var(--ink);margin:0 0 8px;line-height:1.35;}
+  .card-meta{
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:1.5px dashed #D6D1BF;padding-top:8px;margin-top:2px;
+    font-size:11.5px;color:var(--muted);
+  }
+  .avail{font-weight:700;}
+  .avail.low{color:var(--coral);}
+  .avail.ok{color:var(--teal);}
+
+  .card.sponsored{background:linear-gradient(180deg,var(--amber-dim),#fff 60%);border-color:var(--amber);}
+  .sponsored-flag{
+    position:absolute;top:-9px;right:14px;background:var(--amber);color:#fff;
+    font-family:'Anton',sans-serif;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;
+    padding:3px 9px;border-radius:9px;transform:rotate(-4deg);border:1.5px solid var(--paper);
+  }
+
+  /* ===== Map ===== */
+  #map{height:660px;width:100%;border:1px solid var(--line);border-radius:12px;background:var(--paper-alt);}
+  .leaflet-popup-content-wrapper{border-radius:10px;border:1px solid var(--line);font-family:'Inter',sans-serif;}
+  .popup-cat{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;}
+  .popup-brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;margin:3px 0 4px;}
+  .popup-btn{
+    margin-top:8px;display:inline-block;font-size:11.5px;font-weight:700;
+    background:var(--ink);color:#fff;padding:6px 11px;border-radius:14px;text-decoration:none;
+  }
+  .pin{
+    width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+    display:flex;align-items:center;justify-content:center;position:relative;
+    border:2px solid #fff;box-shadow:0 1px 5px rgba(21,27,33,0.35);
+  }
+  .pin::before{
+    content:"";position:absolute;top:4px;left:4px;width:4px;height:4px;
+    border-radius:50%;background:rgba(255,255,255,0.75);
+  }
+  .pin span{transform:rotate(45deg);font-size:12px;}
+  .pin.sponsored{background:var(--amber) !important;}
+
+  /* ===== Value strip ===== */
+  .value-strip{
+    max-width:1220px;margin:6px auto 0;padding:26px 28px;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  @media (max-width:760px){ .value-strip{grid-template-columns:1fr;} }
+  .value-item .vnum{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--teal);font-weight:600;}
+  .value-item h3{font-size:15px;margin:6px 0 4px;font-family:'Space Grotesk',sans-serif;}
+  .value-item p{font-size:13px;color:var(--muted);margin:0;line-height:1.4;}
+
+  footer{
+    max-width:1220px;margin:0 auto 34px;padding:0 28px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+  }
+  footer p{font-size:12px;color:var(--muted);margin:0;}
+  .foot-link{font-size:13px;font-weight:700;color:var(--ink);border-bottom:2px solid var(--teal);cursor:pointer;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Freebies Near Me</div>
+  <div class="nav-links"><span class="on">Explore</span><span>Map</span><span>For brands</span></div>
+  <div class="nav-right">
+    <span class="btn-ghost">Sign in</span>
+    <span class="btn-solid">Get notified</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <div>
+    <h1 class="display">Free stuff is happening around Toronto right now.</h1>
+    <p>A live map of brand giveaways, samples, and pop up activations, so you know exactly where to go and what is left.</p>
+  </div>
+  <div class="hero-stat">
+    <div class="num" id="liveCount">0</div>
+    <div class="lbl">giveaways live in Toronto today</div>
+  </div>
+</div>
+
+<div class="ad-banner">
+  <div class="ad-banner-inner">
+    <span class="ad-tag">Ad</span>
+    <div class="ad-banner-copy">Reach hunters while they are deciding where to go next. <b>Book this spot for your launch week.</b></div>
+    <div class="ad-banner-btn">See rates</div>
+  </div>
+</div>
+
+<div class="filter-bar" id="statusFilters"></div>
+<div class="cat-row" id="catFilters"></div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="list-scroll" id="list"></div>
+  </div>
+  <div id="map"></div>
+</div>
+
+<footer>
+  <p>Listings shown are submitted and reviewed by the Freebies Near Me team.</p>
+  <div class="foot-link">Submit an event or advertise &rarr;</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Fill these in from Supabase, Project Settings, API
+const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const categories = [
+  {id:'all', label:'All categories', color:'#151B21'},
+  {id:'food', label:'Food & Drink', color:'#EF5B4E'},
+  {id:'beauty', label:'Beauty', color:'#D6579A'},
+  {id:'fashion', label:'Fashion', color:'#3E6FA8'},
+  {id:'tech', label:'Tech', color:'#0E9C82'},
+  {id:'wellness', label:'Wellness', color:'#8467C9'},
+];
+const catColor = Object.fromEntries(categories.map(c=>[c.id,c.color]));
+const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
+
+let events = [];
+let neighbourhoodOptions = ['All neighbourhoods'];
+let activeStatus = 'all';
+let activeCat = 'all';
+let activeNeigh = 'All neighbourhoods';
+let selectedId = null;
+
+const map = L.map('map', {scrollWheelZoom:true}).setView([43.6532,-79.3832], 12.2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution:'&copy; OpenStreetMap contributors', maxZoom:19
+}).addTo(map);
+
+const markers = {};
+function iconFor(cat){ return {food:'\u2615', beauty:'\u2728', fashion:'\uD83D\uDC5C', tech:'\uD83D\uDD0C', wellness:'\uD83C\uDF3F'}[cat] || '\u2605'; }
+
+function pinIcon(ev){
+  const color = ev.sponsored ? '#F0A430' : catColor[ev.cat];
+  const html = `<div class="pin" style="background:${color}"><span>${iconFor(ev.cat)}</span></div>`;
+  return L.divIcon({html, className:'', iconSize:[26,26], iconAnchor:[13,24], popupAnchor:[4,-22]});
+}
+
+function buildPopup(ev){
+  return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
+  <div class="popup-brand">${ev.brand}</div>
+  <div style="font-size:12.5px;max-width:190px;">${ev.what}</div>
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.time} &middot; ${ev.neighborhood}</div>
+  <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${ev.lat},${ev.lng}" target="_blank" rel="noopener">Get directions</a>`;
+}
+
+function addMarkersToMap(){
+  Object.values(markers).forEach(m => map.removeLayer(m));
+  Object.keys(markers).forEach(k => delete markers[k]);
+  events.forEach(ev=>{
+    const m = L.marker([ev.lat, ev.lng], {icon:pinIcon(ev)}).addTo(map);
+    m.bindPopup(buildPopup(ev));
+    m.on('click', ()=>selectCard(ev.id, false));
+    markers[ev.id] = m;
+  });
+}
+
+function availInfo(ev){
+  if (!ev.total){
+    return {cls:'ok', text:'Quantity not specified'};
+  }
+  const left = ev.total - ev.claimed;
+  const pct = left/ev.total;
+  const cls = pct <= 0.15 ? 'low' : 'ok';
+  const text = left <= 0 ? 'All claimed' : left + ' left of ' + ev.total;
+  return {cls, text};
+}
+
+function statusBadge(ev){
+  if (ev.status==='live') return '<span class="status-badge live"><span class="dot"></span>Live now</span>';
+  if (ev.status==='soon') return '<span class="status-badge soon"><span class="dot"></span>Starting soon</span>';
+  return '<span class="status-badge ended">Wrapped up</span>';
+}
+
+function renderStatusFilters(){
+  const opts = [
+    {id:'all', label:'All'},
+    {id:'live', label:'Live now', pulse:true},
+    {id:'soon', label:'Starting soon'},
+  ];
+  const wrap = document.getElementById('statusFilters');
+  wrap.innerHTML = '';
+  opts.forEach(o=>{
+    const chip = document.createElement('div');
+    chip.className = 'status-chip' + (activeStatus===o.id ? ' active' : '');
+    chip.innerHTML = (o.pulse ? '<span class="pulse"></span>' : '') + o.label;
+    chip.onclick = ()=>{ activeStatus = o.id; renderStatusFilters(); renderList(); };
+    wrap.appendChild(chip);
+  });
+  const sel = document.createElement('select');
+  sel.className = 'neigh';
+  neighbourhoodOptions.forEach(n=>{
+    const opt = document.createElement('option');
+    opt.value = n; opt.textContent = n;
+    if (n===activeNeigh) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.onchange = (e)=>{ activeNeigh = e.target.value; renderList(); };
+  wrap.appendChild(sel);
+}
+
+function renderCatFilters(){
+  const wrap = document.getElementById('catFilters');
+  wrap.innerHTML = '';
+  categories.forEach(c=>{
+    const chip = document.createElement('div');
+    chip.className = 'cat-chip' + (activeCat===c.id ? ' active' : '');
+    chip.style.background = activeCat===c.id ? c.color : '#fff';
+    chip.textContent = c.label;
+    chip.onclick = ()=>{ activeCat = c.id; renderCatFilters(); renderList(); };
+    wrap.appendChild(chip);
+  });
+}
+
+function renderList(){
+  const wrap = document.getElementById('list');
+  wrap.innerHTML = '';
+  const filtered = events.filter(ev =>
+    (activeStatus==='all' || ev.status===activeStatus) &&
+    (activeCat==='all' || ev.cat===activeCat) &&
+    (activeNeigh==='All neighbourhoods' || ev.neighborhood===activeNeigh)
+  );
+
+  if (filtered.length===0){
+    wrap.innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">No giveaways match those filters right now. Try widening your search.</div>';
+    return;
+  }
+
+  filtered.forEach((ev, i)=>{
+    const card = document.createElement('div');
+    card.className = 'card status-' + ev.status + (ev.sponsored ? ' sponsored' : '') + (selectedId===ev.id ? ' selected' : '');
+    const a = availInfo(ev);
+    card.innerHTML = `
+      ${ev.sponsored ? '<div class="sponsored-flag">Sponsored</div>' : ''}
+      <div class="card-top">
+        <div class="tag-row">
+          <span class="tag cat" style="color:${catColor[ev.cat]}">${catLabel[ev.cat]}</span>
+        </div>
+        ${statusBadge(ev)}
+      </div>
+      <div class="card-brand">${ev.brand}</div>
+      <div class="card-what">${ev.what}</div>
+      <div class="card-meta">
+        <span>${ev.neighborhood} &middot; ${ev.time}</span>
+        <span class="avail ${a.cls}">${a.text}</span>
+      </div>
+    `;
+    card.onclick = ()=>selectCard(ev.id, true);
+    wrap.appendChild(card);
+
+    if ((i+1) % 4 === 0 && i !== filtered.length-1){
+      const adCard = document.createElement('div');
+      adCard.className = 'card sponsored';
+      adCard.innerHTML = `
+        <div class="sponsored-flag">Advertisement</div>
+        <div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>
+        <div class="card-brand">This space is claimable</div>
+        <div class="card-what">Brands can place a featured listing here to reach hunters browsing by neighbourhood.</div>
+        <div class="card-meta"><span>freebiesnearme.ca &middot; inquire for rates</span></div>
+      `;
+      wrap.appendChild(adCard);
+    }
+  });
+}
+
+function selectCard(id, panMap){
+  selectedId = id;
+  renderList();
+  const ev = events.find(e=>e.id===id);
+  if (panMap && ev) map.flyTo([ev.lat, ev.lng], 14.5, {duration:0.6});
+  if (markers[id]) markers[id].openPopup();
+}
+
+function statusFromTimes(start, end){
+  const now = new Date();
+  if (!end) return now < new Date(start) ? 'soon' : 'live';
+  const s = new Date(start), e = new Date(end);
+  if (now < s) return 'soon';
+  if (now > e) return 'ended';
+  return 'live';
+}
+
+function formatTimeRange(start, end){
+  const s = new Date(start);
+  const day = s.toLocaleDateString('en-US', {weekday:'short'});
+  const startStr = s.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}).toLowerCase().replace(' ','');
+  if (!end) return day + ', from ' + startStr;
+  const e = new Date(end);
+  const endStr = e.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}).toLowerCase().replace(' ','');
+  return day + ', ' + startStr + ' to ' + endStr;
+}
+
+function transformRow(row){
+  return {
+    id: row.id,
+    brand: row.brand,
+    cat: row.category,
+    neighborhood: row.neighbourhood,
+    address: row.address,
+    lat: row.lat,
+    lng: row.lng,
+    what: row.what,
+    time: formatTimeRange(row.start_time, row.end_time),
+    claimed: row.claimed_count || 0,
+    total: row.total_count,
+    sponsored: row.sponsored,
+    status: statusFromTimes(row.start_time, row.end_time),
+  };
+}
+
+function buildNeighbourhoodOptions(){
+  const set = new Set(events.map(e=>e.neighborhood));
+  neighbourhoodOptions = ['All neighbourhoods', ...Array.from(set).sort()];
+}
+
+async function loadListings(){
+  document.getElementById('list').innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">Loading giveaways...</div>';
+  const { data, error } = await sb.from('listings').select('*').eq('moderation_status', 'approved');
+  if (error){
+    document.getElementById('list').innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">Could not load listings right now.</div>';
+    return;
+  }
+  events = data.map(transformRow);
+  buildNeighbourhoodOptions();
+  document.getElementById('liveCount').textContent = events.filter(e=>e.status==='live').length;
+  addMarkersToMap();
+  renderStatusFilters();
+  renderCatFilters();
+  renderList();
+}
+
+loadListings();
+</script>
+</body>
+</html>
