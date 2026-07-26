@@ -37,6 +37,7 @@
   }
   .logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;}
   .nav-links{display:flex;gap:26px;font-size:14px;font-weight:600;color:var(--muted);}
+  .nav-links a{text-decoration:none;}
   .nav-links span.on{color:var(--ink);}
   .nav-right{display:flex;align-items:center;gap:14px;}
   .btn-ghost{font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;}
@@ -204,14 +205,14 @@
     display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
   }
   footer p{font-size:12px;color:var(--muted);margin:0;}
-  .foot-link{font-size:13px;font-weight:700;color:var(--ink);border-bottom:2px solid var(--teal);cursor:pointer;}
+  .foot-link{font-size:13px;font-weight:700;color:var(--ink);border-bottom:2px solid var(--teal);cursor:pointer;text-decoration:none;}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo">Freebies Near Me</div>
-  <div class="nav-links"><span class="on">Explore</span><span>Map</span><span>For brands</span></div>
+  <div class="nav-links"><span class="on">Explore</span><span>Map</span><a href="submit.html">For brands</a></div>
   <div class="nav-right">
     <span class="btn-ghost">Sign in</span>
     <span class="btn-solid">Get notified</span>
@@ -249,14 +250,14 @@
 
 <footer>
   <p>Listings shown are submitted and reviewed by the Freebies Near Me team.</p>
-  <div class="foot-link">Submit an event or advertise &rarr;</div>
+  <a class="foot-link" href="submit.html">Submit an event or advertise &rarr;</a>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // Fill these in from Supabase, Project Settings, API
-const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const categories = [
