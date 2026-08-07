@@ -255,8 +255,10 @@
   .value-item p{font-size:13px;color:var(--muted);margin:0;line-height:1.4;}
 
   footer{
-    max-width:1220px;margin:34px auto 0;padding:24px 28px 34px;
-    border-top:1px solid var(--line);
+    margin-top:34px;border-top:1px solid var(--line);background:#fff;
+  }
+  .footer-inner{
+    max-width:1220px;margin:0 auto;padding:24px 28px 34px;
     display:flex;flex-direction:column;align-items:flex-start;gap:10px;
   }
   footer .logo{font-size:16px;}
@@ -316,9 +318,11 @@
 </div>
 
 <footer>
-  <a class="logo" href="/toronto">Freebies Near Me</a>
-  <a class="feedback-link" href="/toronto/feedback">Feedback</a>
-  <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
+  <div class="footer-inner">
+    <a class="logo" href="/toronto">Freebies Near Me</a>
+    <a class="feedback-link" href="/toronto/feedback">Feedback</a>
+    <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
+  </div>
 </footer>
 
 </div><!-- /page-scroll -->
@@ -415,11 +419,14 @@ function pinElement(ev){
 }
 
 function buildPopup(ev){
+  const directionsQuery = ev.address
+    ? encodeURIComponent(ev.address + ', ' + ev.location + ', Toronto, ON')
+    : ev.lat + ',' + ev.lng;
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${ev.what}</div>
   <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.time} &middot; ${ev.location}</div>
-  <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${ev.lat},${ev.lng}" target="_blank" rel="noopener">Get directions</a>`;
+  <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
 let activePopup = null;
@@ -451,9 +458,9 @@ function availInfo(ev){
 function reportWarning(ev){
   const s = updateStats[ev.id] || {};
   const cancelled = s.cancelled || 0, endedEarly = s.ended_early || 0, ranOut = s.ran_out || 0;
-  if (cancelled >= 2 && cancelled >= endedEarly && cancelled >= ranOut) return {label:'Cancelled', count:cancelled};
-  if (endedEarly >= 2 && endedEarly >= ranOut) return {label:'Ended early', count:endedEarly};
-  if (ranOut >= 2) return {label:'Reported sold out', count:ranOut};
+  if (cancelled >= 1 && cancelled >= endedEarly && cancelled >= ranOut) return {label:'Cancelled', count:cancelled};
+  if (endedEarly >= 1 && endedEarly >= ranOut) return {label:'Ended early', count:endedEarly};
+  if (ranOut >= 1) return {label:'Reported sold out', count:ranOut};
   return null;
 }
 

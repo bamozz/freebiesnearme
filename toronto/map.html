@@ -142,11 +142,14 @@ function pinElement(ev){
 }
 
 function buildPopup(ev){
+  const directionsQuery = ev.address
+    ? encodeURIComponent(ev.address + ', ' + ev.location + ', Toronto, ON')
+    : ev.lat + ',' + ev.lng;
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${ev.what}</div>
   <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.time} &middot; ${ev.location}</div>
-  <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${ev.lat},${ev.lng}" target="_blank" rel="noopener">Get directions</a>`;
+  <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
 function statusFromTimes(start, end){
@@ -187,6 +190,7 @@ function transformRow(row){
     brand: row.brand,
     cat: row.category,
     location: row.neighbourhood,
+    address: row.address,
     lat: row.lat,
     lng: row.lng,
     what: row.what,

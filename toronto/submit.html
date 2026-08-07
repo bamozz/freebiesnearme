@@ -32,8 +32,10 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);}
 
   footer{
-    max-width:640px;margin:34px auto 0;padding:24px 24px 40px;
-    border-top:1px solid var(--line);
+    margin-top:34px;border-top:1px solid var(--line);background:#fff;
+  }
+  .footer-inner{
+    max-width:640px;margin:0 auto;padding:24px 24px 40px;
     display:flex;flex-direction:column;align-items:flex-start;gap:10px;
   }
   footer .logo{font-size:16px;}
@@ -149,7 +151,7 @@
       </select>
     </label>
 
-    <label>Address<span style="font-weight:500;color:var(--muted);text-transform:none;">, add more than one if this is happening at multiple locations</span>
+    <label>Address<span style="font-weight:500;color:var(--muted);text-transform:none;"> add more than one if this is happening at multiple locations</span>
       <div class="locations-list" id="locationEntries"></div>
       <span class="add-location-btn" id="addLocationBtn">+ Add another location</span>
     </label>
@@ -190,9 +192,11 @@
 </div>
 
 <footer>
-  <a class="logo" href="/toronto">Freebies Near Me</a>
-  <a class="feedback-link" href="/toronto/feedback">Feedback</a>
-  <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
+  <div class="footer-inner">
+    <a class="logo" href="/toronto">Freebies Near Me</a>
+    <a class="feedback-link" href="/toronto/feedback">Feedback</a>
+    <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
+  </div>
 </footer>
 
 <script>
