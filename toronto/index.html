@@ -183,10 +183,11 @@
   .rating-label{font-size:11px;font-weight:700;color:var(--ink);margin-right:2px;}
   .rating-count{font-size:11px;color:var(--muted);}
   .undo-link{font-size:11px;color:var(--coral);cursor:pointer;text-decoration:underline;font-weight:600;}
-  .badge-group{display:flex;align-items:center;gap:6px;}
-  .confirm-note{font-size:10.5px;font-weight:700;color:var(--teal);}
-  .report-warning{font-size:11px;font-weight:600;color:var(--coral);margin-top:4px;}
-  .update-disclaimer{font-size:9.5px;color:var(--muted);font-weight:500;margin-top:2px;}
+  .update-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:6px;}
+  .update-tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;display:inline-flex;align-items:center;gap:4px;}
+  .update-tag.confirm{background:var(--teal-dim);color:var(--teal);}
+  .update-tag.warn{background:rgba(239,91,78,0.12);color:var(--coral);}
+  .update-disclaimer{font-size:9.5px;color:var(--muted);font-weight:500;}
   .report-section{margin-top:8px;}
   .report-toggle{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;}
   .long-line-note{font-size:11px;color:#9C6B14;font-weight:600;margin-left:10px;}
@@ -373,7 +374,7 @@ const REPORT_TYPES = [
   {id:'ran_out', label:'Ran out'},
   {id:'cancelled', label:'Cancelled'},
   {id:'ended_early', label:'Ended early'},
-  {id:'long_line', label:'Long line (20+ min wait)'},
+  {id:'long_line', label:'Long line (1 hr+ wait)'},
   {id:'still_active', label:'Still going'},
 ];
 let updateStats = {};
@@ -469,23 +470,19 @@ function statusBadge(ev){
   // The live/soon/ended badge always reflects the listing's own start/end time.
   // User reports never change it automatically — only an admin editing the
   // listing itself (via Supabase) changes what's shown here.
-  let badge;
-  if (ev.status==='live') badge = '<span class="status-badge live"><span class="dot"></span>Live now</span>';
-  else if (ev.status==='soon') badge = '<span class="status-badge soon"><span class="dot"></span>Starting soon</span>';
-  else badge = '<span class="status-badge ended">Wrapped up</span>';
+  if (ev.status==='live') return '<span class="status-badge live"><span class="dot"></span>Live now</span>';
+  if (ev.status==='soon') return '<span class="status-badge soon"><span class="dot"></span>Starting soon</span>';
+  return '<span class="status-badge ended">Wrapped up</span>';
+}
 
+function renderUpdateLine(ev){
   const stillActive = (updateStats[ev.id] || {}).still_active || 0;
   const warning = reportWarning(ev);
-  if (ev.status === 'live' && stillActive > 0){
-    badge = `<span class="badge-group">${badge}<span class="confirm-note">&#10003; ${stillActive} confirmed</span></span>`;
-  }
-  if (warning){
-    badge += `<div class="report-warning">&#9888; ${warning.label} (${warning.count} reports)</div>`;
-  }
-  if (warning || stillActive > 0){
-    badge += `<div class="update-disclaimer">User-submitted, not verified by our team</div>`;
-  }
-  return badge;
+  if (!warning && stillActive === 0) return '';
+  let tags = '';
+  if (stillActive > 0) tags += `<span class="update-tag confirm">&#10003; Still going (${stillActive})</span>`;
+  if (warning) tags += `<span class="update-tag warn">&#9888; ${warning.label} (${warning.count})</span>`;
+  return `<div class="update-line">${tags}<span class="update-disclaimer">User-submitted, not verified by our team</span></div>`;
 }
 
 function renderStars(ev){
@@ -709,6 +706,7 @@ function renderList(){
         </div>
         ${statusBadge(ev)}
       </div>
+      ${renderUpdateLine(ev)}
       <div class="card-what">${ev.what}</div>
       <div class="card-brand">${ev.brand}</div>
       ${renderStars(ev)}
