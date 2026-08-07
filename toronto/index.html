@@ -186,6 +186,7 @@
   .badge-group{display:flex;align-items:center;gap:6px;}
   .confirm-note{font-size:10.5px;font-weight:700;color:var(--teal);}
   .report-warning{font-size:11px;font-weight:600;color:var(--coral);margin-top:4px;}
+  .update-disclaimer{font-size:9.5px;color:var(--muted);font-weight:500;margin-top:2px;}
   .report-section{margin-top:8px;}
   .report-toggle{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;}
   .long-line-note{font-size:11px;color:#9C6B14;font-weight:600;margin-left:10px;}
@@ -372,7 +373,7 @@ const REPORT_TYPES = [
   {id:'ran_out', label:'Ran out'},
   {id:'cancelled', label:'Cancelled'},
   {id:'ended_early', label:'Ended early'},
-  {id:'long_line', label:'Long line'},
+  {id:'long_line', label:'Long line (20+ min wait)'},
   {id:'still_active', label:'Still going'},
 ];
 let updateStats = {};
@@ -481,6 +482,9 @@ function statusBadge(ev){
   if (warning){
     badge += `<div class="report-warning">&#9888; ${warning.label} (${warning.count} reports)</div>`;
   }
+  if (warning || stillActive > 0){
+    badge += `<div class="update-disclaimer">User-submitted, not verified by our team</div>`;
+  }
   return badge;
 }
 
@@ -515,7 +519,7 @@ function renderReportSection(ev){
   }
 
   html += `<span class="report-toggle">${isOpen ? 'Cancel' : 'Report an update'}</span>`;
-  if (longLine > 0) html += `<span class="long-line-note">&#8987; Long line reported (${longLine})</span>`;
+  if (longLine > 0) html += `<span class="long-line-note">&#8987; Long line reported (${longLine})</span><div class="update-disclaimer">User-submitted, not verified by our team</div>`;
   if (isOpen){
     if (showingQuantity){
       html += `<div class="quantity-prompt">
