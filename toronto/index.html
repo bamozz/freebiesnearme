@@ -209,7 +209,23 @@
     position:absolute;bottom:2px;right:2px;background:rgba(0,0,0,0.65);color:#fff;
     font-size:8px;font-weight:700;padding:1px 4px;border-radius:4px;text-decoration:none;letter-spacing:0.02em;
   }
+  .update-photo-remove{
+    position:absolute;top:-2px;right:-2px;width:16px;height:16px;border-radius:50%;
+    background:var(--ink);color:#fff;font-size:12px;line-height:16px;text-align:center;
+    cursor:pointer;font-weight:700;
+  }
   .update-disclaimer{font-size:9.5px;color:var(--muted);font-weight:500;}
+  .lightbox{
+    display:none;position:fixed;inset:0;background:rgba(10,12,14,0.88);z-index:2000;
+    align-items:center;justify-content:center;padding:32px;cursor:zoom-out;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:10px;cursor:default;box-shadow:0 10px 40px rgba(0,0,0,0.4);}
+  .lightbox-close{
+    position:absolute;top:18px;right:22px;color:#fff;font-size:28px;font-weight:400;
+    cursor:pointer;line-height:1;opacity:0.85;
+  }
+  .lightbox-close:hover{opacity:1;}
   .report-section{margin-top:8px;}
   .report-toggle{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;}
   .long-line-note{font-size:11px;color:#9C6B14;font-weight:600;margin-left:10px;}
@@ -379,6 +395,11 @@
 
 </div><!-- /page-scroll -->
 
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lightboxClose">&times;</span>
+  <img id="lightboxImg" src="" alt="Photo shared by a user">
+</div>
+
 <nav class="bottom-tabbar">
   <a href="/toronto" class="tab-item on"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m8.154 15.846l5.808-1.884l1.884-5.808l-5.807 1.885zm3.842-2.73q-.467 0-.79-.327q-.321-.327-.321-.793q0-.467.326-.79q.327-.321.793-.321q.467 0 .79.326q.322.327.322.793q0 .467-.327.79q-.327.322-.793.322M12.003 21q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.344 0 5.672-2.328T20 12t-2.328-5.672T12 4T6.328 6.328T4 12t2.328 5.672T12 20m0-8"/></svg></span>Explore</a>
   <a href="/toronto/map" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m15 19.923l-6-2.1l-3.958 1.53q-.384.143-.713-.083T4 18.634V6.404q0-.268.13-.489t.378-.307L9 4.077l6 2.1l3.958-1.53q.384-.143.713.054t.329.588v12.384q0 .287-.159.498q-.158.212-.426.298zm-.5-1.22v-11.7l-5-1.745v11.7zm1 0L19 17.55V5.7l-3.5 1.304zM5 18.3l3.5-1.342v-11.7L5 6.45zM15.5 7.004v11.7zm-7-1.746v11.7z"/></svg></span>Map</a>
@@ -451,6 +472,20 @@ function showToast(message, isError){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>{ el.classList.remove('show'); }, 3000);
 }
+
+const lightboxEl = document.getElementById('lightbox');
+const lightboxImgEl = document.getElementById('lightboxImg');
+function openLightbox(url){
+  lightboxImgEl.src = url;
+  lightboxEl.classList.add('open');
+}
+function closeLightbox(){
+  lightboxEl.classList.remove('open');
+  lightboxImgEl.src = '';
+}
+lightboxEl.onclick = (e) => { if (e.target === lightboxEl) closeLightbox(); };
+document.getElementById('lightboxClose').onclick = closeLightbox;
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
 const map = new maplibregl.Map({
   style: 'https://tiles.openfreemap.org/styles/liberty',
@@ -554,9 +589,12 @@ function renderUpdatePhotos(ev){
   if (!photos || !photos.length) return '';
   let html = '<div class="update-photos">';
   photos.forEach(p => {
-    html += `<div class="update-photo-thumb" data-image="${p.imageUrl}">
+    const mine = reportedByMe[ev.id + ':' + p.type];
+    const isMine = mine && mine.rowId === p.rowId;
+    html += `<div class="update-photo-thumb" data-image="${p.imageUrl}" data-type="${p.type}">
       <img src="${p.imageUrl}" alt="Photo shared by a user" loading="lazy">
       ${p.instaUrl ? `<a class="update-photo-insta" href="${p.instaUrl}" target="_blank" rel="noopener" title="View Instagram story">IG</a>` : ''}
+      ${isMine ? `<span class="update-photo-remove" data-action="remove-update-photo" data-type="${p.type}" title="Remove your photo">&times;</span>` : ''}
     </div>`;
   });
   html += '</div><div class="update-disclaimer">Photos shared by users, not verified by our team</div>';
@@ -615,7 +653,7 @@ function renderReportSection(ev){
       if (remaining.length){
         html += '<div class="report-picker">';
         remaining.forEach(t => {
-          const hint = t.id === 'still_active' ? ' <span class="chip-hint">(you can add a photo)</span>' : '';
+          const hint = t.id === 'still_active' ? ' <span class="chip-hint">(add photos)</span>' : '';
           html += `<span class="report-chip" data-type="${t.id}">${t.label}${hint}</span>`;
         });
         html += '</div>';
@@ -676,7 +714,7 @@ async function unrateListing(id){
 }
 
 async function loadUpdates(){
-  const { data, error } = await sb.from('event_updates').select('listing_id, type, image_url, insta_url, created_at').order('created_at', {ascending:false});
+  const { data, error } = await sb.from('event_updates').select('id, listing_id, type, image_url, insta_url, created_at').order('created_at', {ascending:false});
   if (error) return;
   updateStats = {};
   updatePhotos = {};
@@ -686,7 +724,7 @@ async function loadUpdates(){
     updateStats[r.listing_id] = s;
     if (r.image_url){
       const photos = updatePhotos[r.listing_id] || [];
-      if (photos.length < 6) photos.push({imageUrl: r.image_url, instaUrl: r.insta_url});
+      if (photos.length < 6) photos.push({rowId: r.id, type: r.type, imageUrl: r.image_url, instaUrl: r.insta_url});
       updatePhotos[r.listing_id] = photos;
     }
   });
@@ -751,7 +789,7 @@ async function submitReport(id, type, options){
   updateStats[id] = s;
   if (imageUrl){
     const photos = updatePhotos[id] || [];
-    photos.unshift({imageUrl, instaUrl: options.instaUrl || null});
+    photos.unshift({rowId: data.id, type, imageUrl, instaUrl: options.instaUrl || null});
     updatePhotos[id] = photos.slice(0, 6);
   }
   openReportPickerId = null;
@@ -770,10 +808,19 @@ async function undoReport(id, type){
     showToast("Couldn't undo your report. Try again in a moment.", true);
     return;
   }
+  const deletedImageUrl = data[0].image_url;
+  if (deletedImageUrl){
+    const marker = '/event-update-photos/';
+    const idx = deletedImageUrl.indexOf(marker);
+    if (idx !== -1){
+      try { await sb.storage.from('event-update-photos').remove([deletedImageUrl.slice(idx + marker.length)]); } catch (e){}
+    }
+  }
   delete reportedByMe[key];
   localStorage.setItem('reportedListings', JSON.stringify(reportedByMe));
   const s = updateStats[id];
   if (s && s[type]) s[type] = Math.max(0, s[type] - 1);
+  if (updatePhotos[id]) updatePhotos[id] = updatePhotos[id].filter(p => p.rowId !== entry.rowId);
   renderList();
   showToast('Report removed.');
 }
@@ -864,8 +911,14 @@ function renderList(){
     card.querySelectorAll('.update-photo-thumb').forEach(thumbEl => {
       thumbEl.onclick = (e) => {
         e.stopPropagation();
-        if (e.target.closest('.update-photo-insta')) return;
-        window.open(thumbEl.dataset.image, '_blank', 'noopener');
+        if (e.target.closest('.update-photo-insta') || e.target.closest('.update-photo-remove')) return;
+        openLightbox(thumbEl.dataset.image);
+      };
+    });
+    card.querySelectorAll('[data-action="remove-update-photo"]').forEach(removeEl => {
+      removeEl.onclick = (e) => {
+        e.stopPropagation();
+        undoReport(ev.id, removeEl.dataset.type);
       };
     });
 
@@ -971,7 +1024,7 @@ function renderList(){
         <div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>
         <div class="card-what">This space is claimable</div>
         <div class="card-brand">Brands can place a featured listing here to reach hunters browsing by location.</div>
-        <div class="card-meta"><span>freebiesnearme.ca &middot; inquire for rates</span></div>
+        <div class="card-meta"><span>freebiesnearme.app &middot; inquire for rates</span></div>
       `;
       wrap.appendChild(adCard);
     }
