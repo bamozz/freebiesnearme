@@ -21,11 +21,24 @@
   .stamp-type{font-family:'Anton',sans-serif;letter-spacing:0.04em;text-transform:uppercase;}
 
   nav{
-    display:flex;align-items:center;justify-content:space-between;padding:16px 28px;
     border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(254,252,246,0.92);
     backdrop-filter:blur(6px);z-index:500;
   }
+  .nav-inner{
+    max-width:640px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);}
+
+  footer{
+    max-width:640px;margin:34px auto 0;padding:24px 24px 40px;
+    border-top:1px solid var(--line);
+    display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+  }
+  footer .logo{font-size:16px;}
+  footer .feedback-link{font-size:13px;font-weight:400;color:var(--muted);text-decoration:none;}
+  footer .feedback-link:hover{color:var(--ink);}
+  footer p{font-size:12px;color:var(--muted);margin:0;}
 
   .wrap{max-width:640px;margin:0 auto;padding:36px 24px 60px;}
   h1{font-size:clamp(26px,4vw,34px);margin:0 0 6px;}
@@ -91,7 +104,7 @@
 </head>
 <body>
 
-<nav><a class="logo" href="index.html">Freebies Near Me</a></nav>
+<nav><div class="nav-inner"><a class="logo" href="index.html">Freebies Near Me</a></div></nav>
 
 <div class="wrap">
   <h1 class="display">Submit a giveaway</h1>
@@ -121,9 +134,9 @@
           <option value="wellness">Wellness</option>
         </select>
       </label>
-      <label>Neighbourhood
-        <select id="neighbourhood" required>
-          <option value="" disabled selected>Select a neighbourhood</option>
+      <label>Location
+        <select id="location" required>
+          <option value="" disabled selected>Select a location</option>
         </select>
       </label>
     </div>
@@ -171,26 +184,36 @@
   </form>
 </div>
 
+<footer>
+  <a class="logo" href="index.html">Freebies Near Me</a>
+  <a class="feedback-link" href="feedback.html">Feedback</a>
+  <p>Listings shown are submitted and reviewed by the Freebies Near Me team.</p>
+</footer>
+
 <script>
   // Fill these in from Supabase, Project Settings, API
   const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const NEIGHBOURHOODS = [
+  const LOCATIONS = [
     'The Annex','Bloorcourt','Bloordale','Chinatown','Church-Wellesley Village',
-    'Corktown','Don Mills','Dundas West','Entertainment District','Etobicoke',
-    'Financial District','Geary Avenue','Harbord Village','Kensington Market',
-    'King West','Leslieville','Liberty Village','Little Italy','Little Portugal',
-    'North York','Old Town','Ossington','Queen West','Regent Park','Riverdale',
-    'Riverside','Scarborough','The Well','Wellington','Yonge and Eglinton','Yorkville',
+    'Corktown','Distillery District','Don Mills','Dundas West','CF Eaton Centre',
+    'Entertainment District','Etobicoke','Evergreen Brick Works','Exhibition Place',
+    'Financial District','Geary Avenue','Harbord Village','Harbourfront Centre',
+    'High Park','Kensington Market','King West','Leslieville','Liberty Village',
+    'Little Italy','Little Portugal','Nathan Phillips Square','North York','Old Town',
+    'Ontario Place','Ossington','Queen West','Regent Park','Riverdale','Riverside',
+    'Sankofa Square','Scarborough','CF Sherway Gardens','St. Lawrence Market',
+    'Toronto Islands','Trinity Bellwoods Park','Union Station','The Well','Wellington',
+    'Yonge and Eglinton','Yorkdale Mall','Yorkville',
   ];
-  const neighSelect = document.getElementById('neighbourhood');
-  NEIGHBOURHOODS.forEach(n => {
+  const locationSelect = document.getElementById('location');
+  LOCATIONS.forEach(n => {
     const opt = document.createElement('option');
     opt.value = n;
     opt.textContent = n;
-    neighSelect.appendChild(opt);
+    locationSelect.appendChild(opt);
   });
 
   function combineDateTime(dateVal, timeVal){
@@ -205,6 +228,8 @@
     style: 'https://tiles.openfreemap.org/styles/liberty',
     center: [-79.3832, 43.6532],
     zoom: 12,
+    minZoom: 10,
+    maxBounds: [[-79.75, 43.53], [-79.05, 43.90]],
     container: 'pickMap',
   });
   map.addControl(new maplibregl.NavigationControl(), 'top-left');
@@ -351,7 +376,7 @@
     const payload = {
       brand: document.getElementById('brand').value,
       category: document.getElementById('category').value,
-      neighbourhood: document.getElementById('neighbourhood').value,
+      neighbourhood: document.getElementById('location').value,
       address: document.getElementById('address').value || null,
       lat: picked.lat,
       lng: picked.lng,

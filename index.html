@@ -30,15 +30,18 @@
 
   /* ===== Top nav ===== */
   nav{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:16px 28px;border-bottom:1px solid var(--line);
+    border-bottom:1px solid var(--line);
     position:sticky;top:0;background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);
     z-index:500;
   }
+  .nav-inner{
+    max-width:1220px;margin:0 auto;padding:16px 28px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
   .logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);}
   .nav-links{display:flex;gap:26px;font-size:14px;font-weight:600;color:var(--muted);}
-  .nav-links a{text-decoration:none;}
-  .nav-links span.on{color:var(--ink);}
+  .nav-links a{text-decoration:none;color:inherit;}
+  .nav-links .on{color:var(--ink);}
   .nav-right{display:flex;align-items:center;gap:14px;}
   .btn-solid{
     background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;
@@ -61,8 +64,9 @@
     padding:14px 18px;min-width:210px;position:relative;
   }
   .hero-stat::before{
-    content:"";position:absolute;left:-6px;top:50%;transform:translateY(-50%);
+    content:"";position:absolute;left:-7px;top:50%;transform:translateY(-50%);
     width:11px;height:11px;background:var(--paper);border:1px solid var(--line);border-radius:50%;
+    clip-path:inset(0 0 0 50%);
   }
   .hero-stat .num{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--teal);}
   .hero-stat .lbl{font-size:12px;color:var(--muted);margin-top:2px;}
@@ -95,7 +99,7 @@
     border:1px solid var(--line);cursor:pointer;color:var(--muted);background:#fff;
   }
   .cat-chip.active{color:#fff;border-color:transparent;}
-  .cat-chip.neigh.active{background:var(--ink);}
+  .cat-chip.location.active{background:var(--ink);}
 
   /* ===== Layout ===== */
   .layout{
@@ -104,7 +108,7 @@
   }
   @media (max-width:920px){ .layout{grid-template-columns:1fr;} #map{height:420px !important;} }
 
-  .list-scroll{max-height:660px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px;}
+  .list-scroll{max-height:660px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:10px;padding-right:4px;}
   .list-scroll::-webkit-scrollbar{width:7px;}
   .list-scroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
 
@@ -118,7 +122,7 @@
     content:"";position:absolute;top:50%;transform:translateY(-50%);
     width:13px;height:13px;background:var(--paper);border:1px solid var(--line);border-radius:50%;
   }
-  .card::before{left:-6.5px;clip-path:inset(0 0 0 50%);}
+  .card::before{left:-9.5px;clip-path:inset(0 0 0 50%);}
   .card::after{right:-6.5px;clip-path:inset(0 50% 0 0);}
   .card:hover{box-shadow:0 3px 14px rgba(21,27,33,0.07);}
   .card.selected{border-color:var(--teal);box-shadow:0 0 0 2px var(--teal-dim);}
@@ -139,6 +143,26 @@
   .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
   .card-brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;}
   .card-what{font-size:13px;color:var(--ink);margin:0 0 8px;line-height:1.35;}
+  .rating-row{display:flex;align-items:center;gap:6px;margin:0 0 8px;}
+  .rating-row .star{font-size:15px;line-height:1;color:var(--line);cursor:pointer;}
+  .rating-row .star.filled{color:var(--amber);}
+  .rating-row .star:hover{color:var(--amber);}
+  .rating-row.locked .star{cursor:default;}
+  .rating-row.locked .star:hover{color:inherit;}
+  .rating-row.locked .star.filled:hover{color:var(--amber);}
+  .rating-label{font-size:11px;font-weight:700;color:var(--ink);margin-right:2px;}
+  .rating-count{font-size:11px;color:var(--muted);}
+  .badge-group{display:flex;align-items:center;gap:6px;}
+  .confirm-note{font-size:10.5px;font-weight:700;color:var(--teal);}
+  .report-section{margin-top:8px;}
+  .report-toggle{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;}
+  .long-line-note{font-size:11px;color:#9C6B14;font-weight:600;margin-left:10px;}
+  .report-picker{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .report-chip{
+    font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;
+    border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--muted);
+  }
+  .report-chip:hover{border-color:var(--coral);color:var(--coral);}
   .card-meta{
     display:flex;justify-content:space-between;align-items:center;
     border-top:1.5px dashed #D6D1BF;padding-top:8px;margin-top:2px;
@@ -173,7 +197,6 @@
     content:"";position:absolute;top:4px;left:4px;width:4px;height:4px;
     border-radius:50%;background:rgba(255,255,255,0.75);
   }
-  .pin span{transform:rotate(45deg);font-size:12px;}
   .pin.sponsored{background:var(--amber) !important;}
 
   /* ===== Value strip ===== */
@@ -188,19 +211,25 @@
   .value-item p{font-size:13px;color:var(--muted);margin:0;line-height:1.4;}
 
   footer{
-    max-width:1220px;margin:0 auto 34px;padding:0 28px;
-    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+    max-width:1220px;margin:34px auto 0;padding:24px 28px 34px;
+    border-top:1px solid var(--line);
+    display:flex;flex-direction:column;align-items:flex-start;gap:10px;
   }
+  footer .logo{font-size:16px;}
+  footer .feedback-link{font-size:13px;font-weight:400;color:var(--muted);text-decoration:none;}
+  footer .feedback-link:hover{color:var(--ink);}
   footer p{font-size:12px;color:var(--muted);margin:0;}
 </style>
 </head>
 <body>
 
 <nav>
-  <a class="logo" href="index.html">Freebies Near Me</a>
-  <div class="nav-links"><span class="on">Explore</span></div>
-  <div class="nav-right">
-    <a class="btn-solid" href="submit.html">Submit an event</a>
+  <div class="nav-inner">
+    <a class="logo" href="index.html">Freebies Near Me</a>
+    <div class="nav-links"><span class="on">Explore</span><a href="map.html">Map</a></div>
+    <div class="nav-right">
+      <a class="btn-solid" href="submit.html">Submit an event</a>
+    </div>
   </div>
 </nav>
 
@@ -216,7 +245,7 @@
 </div>
 
 <div class="filter-bar" id="statusFilters"></div>
-<div class="chip-row scroll" id="neighFilters"></div>
+<div class="chip-row scroll" id="locationFilters"></div>
 <div class="chip-row" id="catFilters"></div>
 
 <div class="layout">
@@ -227,6 +256,8 @@
 </div>
 
 <footer>
+  <a class="logo" href="index.html">Freebies Near Me</a>
+  <a class="feedback-link" href="feedback.html">Feedback</a>
   <p>Listings shown are submitted and reviewed by the Freebies Near Me team.</p>
 </footer>
 
@@ -248,26 +279,45 @@ const categories = [
 const catColor = Object.fromEntries(categories.map(c=>[c.id,c.color]));
 const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
 
-const NEIGHBOURHOODS = [
+const LOCATIONS = [
   'The Annex','Bloorcourt','Bloordale','Chinatown','Church-Wellesley Village',
-  'Corktown','Don Mills','Dundas West','Entertainment District','Etobicoke',
-  'Financial District','Geary Avenue','Harbord Village','Kensington Market',
-  'King West','Leslieville','Liberty Village','Little Italy','Little Portugal',
-  'North York','Old Town','Ossington','Queen West','Regent Park','Riverdale',
-  'Riverside','Scarborough','The Well','Wellington','Yonge and Eglinton','Yorkville',
+  'Corktown','Distillery District','Don Mills','Dundas West','CF Eaton Centre',
+  'Entertainment District','Etobicoke','Evergreen Brick Works','Exhibition Place',
+  'Financial District','Geary Avenue','Harbord Village','Harbourfront Centre',
+  'High Park','Kensington Market','King West','Leslieville','Liberty Village',
+  'Little Italy','Little Portugal','Nathan Phillips Square','North York','Old Town',
+  'Ontario Place','Ossington','Queen West','Regent Park','Riverdale','Riverside',
+  'Sankofa Square','Scarborough','CF Sherway Gardens','St. Lawrence Market',
+  'Toronto Islands','Trinity Bellwoods Park','Union Station','The Well','Wellington',
+  'Yonge and Eglinton','Yorkdale Mall','Yorkville',
 ];
 
 let events = [];
-const neighbourhoodOptions = ['All neighbourhoods', ...NEIGHBOURHOODS];
+const locationOptions = ['All locations', ...LOCATIONS];
 let activeStatus = 'all';
 let activeCat = 'all';
-let activeNeigh = 'All neighbourhoods';
+let activeLocation = 'All locations';
 let selectedId = null;
+let ratingStats = {};
+let ratedByMe = new Set(JSON.parse(localStorage.getItem('ratedListings') || '[]'));
+
+const REPORT_TYPES = [
+  {id:'ran_out', label:'Ran out'},
+  {id:'cancelled', label:'Cancelled'},
+  {id:'ended_early', label:'Ended early'},
+  {id:'long_line', label:'Long line'},
+  {id:'still_active', label:'Still going'},
+];
+let updateStats = {};
+let reportedByMe = new Set(JSON.parse(localStorage.getItem('reportedListings') || '[]'));
+let openReportPickerId = null;
 
 const map = new maplibregl.Map({
   style: 'https://tiles.openfreemap.org/styles/liberty',
   center: [-79.3832, 43.6532],
   zoom: 12.2,
+  minZoom: 10,
+  maxBounds: [[-79.75, 43.53], [-79.05, 43.90]],
   container: 'map',
 });
 map.addControl(new maplibregl.NavigationControl(), 'top-left');
@@ -276,14 +326,12 @@ window.addEventListener('load', ()=>map.resize());
 map.on('error', e => console.error('maplibre error:', e && e.error && e.error.message, e));
 
 const markers = {};
-function iconFor(cat){ return {food:'\u2615', beauty:'\u2728', fashion:'\uD83D\uDC5C', tech:'\uD83D\uDD0C', wellness:'\uD83C\uDF3F'}[cat] || '\u2605'; }
 
 function pinElement(ev){
   const color = ev.sponsored ? '#F0A430' : catColor[ev.cat];
   const el = document.createElement('div');
   el.className = 'pin' + (ev.sponsored ? ' sponsored' : '');
   el.style.background = color;
-  el.innerHTML = `<span>${iconFor(ev.cat)}</span>`;
   return el;
 }
 
@@ -291,7 +339,7 @@ function buildPopup(ev){
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${ev.what}</div>
-  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.time} &middot; ${ev.neighborhood}</div>
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.time} &middot; ${ev.location}</div>
   <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${ev.lat},${ev.lng}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
@@ -321,10 +369,106 @@ function availInfo(ev){
   return {cls, text};
 }
 
+function statusOverride(ev){
+  const s = updateStats[ev.id] || {};
+  const cancelled = s.cancelled || 0, endedEarly = s.ended_early || 0, ranOut = s.ran_out || 0;
+  if (cancelled >= 2 && cancelled >= endedEarly && cancelled >= ranOut) return 'Cancelled';
+  if (endedEarly >= 2 && endedEarly >= ranOut) return 'Ended early';
+  if (ranOut >= 2) return 'Reported sold out';
+  return null;
+}
+
 function statusBadge(ev){
-  if (ev.status==='live') return '<span class="status-badge live"><span class="dot"></span>Live now</span>';
-  if (ev.status==='soon') return '<span class="status-badge soon"><span class="dot"></span>Starting soon</span>';
-  return '<span class="status-badge ended">Wrapped up</span>';
+  const override = statusOverride(ev);
+  if (override) return `<span class="status-badge ended">${override}</span>`;
+  let badge;
+  if (ev.status==='live') badge = '<span class="status-badge live"><span class="dot"></span>Live now</span>';
+  else if (ev.status==='soon') badge = '<span class="status-badge soon"><span class="dot"></span>Starting soon</span>';
+  else badge = '<span class="status-badge ended">Wrapped up</span>';
+  const stillActive = (updateStats[ev.id] || {}).still_active || 0;
+  if (ev.status === 'live' && stillActive > 0){
+    return `<span class="badge-group">${badge}<span class="confirm-note">&#10003; ${stillActive} confirmed</span></span>`;
+  }
+  return badge;
+}
+
+function renderStars(ev){
+  const stats = ratingStats[ev.id] || {sum:0, count:0};
+  const avg = stats.count ? stats.sum / stats.count : 0;
+  const rated = ratedByMe.has(ev.id);
+  let starsHtml = '';
+  for (let i=1; i<=5; i++){
+    starsHtml += `<span class="star${i <= Math.round(avg) ? ' filled' : ''}" data-star="${i}">&#9733;</span>`;
+  }
+  const countText = stats.count ? stats.count + (stats.count===1 ? ' person' : ' people') + ' found this worth it' : 'Worth it? Be the first to rate';
+  return `<div class="rating-row${rated ? ' locked' : ''}" data-id="${ev.id}"><span class="rating-label">Worthy?</span>${starsHtml}<span class="rating-count">${countText}</span></div>`;
+}
+
+function renderReportSection(ev){
+  const longLine = (updateStats[ev.id] || {}).long_line || 0;
+  const isOpen = openReportPickerId === ev.id;
+  let html = `<div class="report-section" data-id="${ev.id}">`;
+  html += `<span class="report-toggle">${isOpen ? 'Cancel' : 'Report an update'}</span>`;
+  if (longLine > 0) html += `<span class="long-line-note">&#8987; Long line reported (${longLine})</span>`;
+  if (isOpen){
+    html += '<div class="report-picker">';
+    REPORT_TYPES.forEach(t => {
+      html += `<span class="report-chip" data-type="${t.id}">${t.label}</span>`;
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+async function loadRatings(){
+  const { data, error } = await sb.from('ratings').select('listing_id, stars');
+  if (error) return;
+  ratingStats = {};
+  (data || []).forEach(r => {
+    const s = ratingStats[r.listing_id] || {sum:0, count:0};
+    s.sum += r.stars;
+    s.count += 1;
+    ratingStats[r.listing_id] = s;
+  });
+}
+
+async function rateListing(id, stars){
+  if (ratedByMe.has(id)) return;
+  const { error } = await sb.from('ratings').insert({listing_id: id, stars});
+  if (error) return;
+  ratedByMe.add(id);
+  localStorage.setItem('ratedListings', JSON.stringify([...ratedByMe]));
+  const s = ratingStats[id] || {sum:0, count:0};
+  s.sum += stars;
+  s.count += 1;
+  ratingStats[id] = s;
+  renderList();
+}
+
+async function loadUpdates(){
+  const { data, error } = await sb.from('event_updates').select('listing_id, type');
+  if (error) return;
+  updateStats = {};
+  (data || []).forEach(r => {
+    const s = updateStats[r.listing_id] || {};
+    s[r.type] = (s[r.type] || 0) + 1;
+    updateStats[r.listing_id] = s;
+  });
+}
+
+async function submitReport(id, type){
+  const key = id + ':' + type;
+  if (reportedByMe.has(key)) return;
+  const { error } = await sb.from('event_updates').insert({listing_id: id, type});
+  if (error) return;
+  reportedByMe.add(key);
+  localStorage.setItem('reportedListings', JSON.stringify([...reportedByMe]));
+  const s = updateStats[id] || {};
+  s[type] = (s[type] || 0) + 1;
+  updateStats[id] = s;
+  openReportPickerId = null;
+  renderList();
 }
 
 function renderStatusFilters(){
@@ -344,14 +488,14 @@ function renderStatusFilters(){
   });
 }
 
-function renderNeighFilters(){
-  const wrap = document.getElementById('neighFilters');
+function renderLocationFilters(){
+  const wrap = document.getElementById('locationFilters');
   wrap.innerHTML = '';
-  neighbourhoodOptions.forEach(n=>{
+  locationOptions.forEach(n=>{
     const chip = document.createElement('div');
-    chip.className = 'cat-chip neigh' + (activeNeigh===n ? ' active' : '');
+    chip.className = 'cat-chip location' + (activeLocation===n ? ' active' : '');
     chip.textContent = n;
-    chip.onclick = ()=>{ activeNeigh = n; renderNeighFilters(); renderList(); };
+    chip.onclick = ()=>{ activeLocation = n; renderLocationFilters(); renderList(); };
     wrap.appendChild(chip);
   });
 }
@@ -375,7 +519,7 @@ function renderList(){
   const filtered = events.filter(ev =>
     (activeStatus==='all' || ev.status===activeStatus) &&
     (activeCat==='all' || ev.cat===activeCat) &&
-    (activeNeigh==='All neighbourhoods' || ev.neighborhood===activeNeigh)
+    (activeLocation==='All locations' || ev.location===activeLocation)
   );
 
   if (filtered.length===0){
@@ -397,12 +541,38 @@ function renderList(){
       </div>
       <div class="card-brand">${ev.brand}</div>
       <div class="card-what">${ev.what}</div>
+      ${renderStars(ev)}
       <div class="card-meta">
-        <span>${ev.neighborhood} &middot; ${ev.time}</span>
+        <span>${ev.location} &middot; ${ev.time}</span>
         <span class="avail ${a.cls}">${a.text}</span>
       </div>
+      ${renderReportSection(ev)}
     `;
     card.onclick = ()=>selectCard(ev.id, true);
+
+    const ratingRow = card.querySelector('.rating-row');
+    if (!ratingRow.classList.contains('locked')){
+      ratingRow.querySelectorAll('.star').forEach(starEl => {
+        starEl.onclick = (e) => {
+          e.stopPropagation();
+          rateListing(ev.id, parseInt(starEl.dataset.star, 10));
+        };
+      });
+    }
+
+    const reportToggle = card.querySelector('.report-toggle');
+    reportToggle.onclick = (e) => {
+      e.stopPropagation();
+      openReportPickerId = openReportPickerId === ev.id ? null : ev.id;
+      renderList();
+    };
+    card.querySelectorAll('.report-chip').forEach(chipEl => {
+      chipEl.onclick = (e) => {
+        e.stopPropagation();
+        submitReport(ev.id, chipEl.dataset.type);
+      };
+    });
+
     wrap.appendChild(card);
 
     if ((i+1) % 4 === 0 && i !== filtered.length-1){
@@ -412,7 +582,7 @@ function renderList(){
         <div class="sponsored-flag">Advertisement</div>
         <div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>
         <div class="card-brand">This space is claimable</div>
-        <div class="card-what">Brands can place a featured listing here to reach hunters browsing by neighbourhood.</div>
+        <div class="card-what">Brands can place a featured listing here to reach hunters browsing by location.</div>
         <div class="card-meta"><span>freebiesnearme.ca &middot; inquire for rates</span></div>
       `;
       wrap.appendChild(adCard);
@@ -428,6 +598,8 @@ function selectCard(id, panMap){
   if (panMap) map.flyTo({center:[ev.lng, ev.lat], zoom:14.5, duration:600});
   if (activePopup) activePopup.remove();
   activePopup = new maplibregl.Popup({offset:22}).setLngLat([ev.lng, ev.lat]).setHTML(buildPopup(ev)).addTo(map);
+  const cardEl = document.querySelector('.card.selected');
+  if (cardEl) cardEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function statusFromTimes(start, end){
@@ -439,14 +611,41 @@ function statusFromTimes(start, end){
   return 'live';
 }
 
+function hasClockTime(d){
+  return d.getHours() !== 0 || d.getMinutes() !== 0;
+}
+
+function formatDay(d){
+  return d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}).replace(',', '');
+}
+
+function formatClock(d){
+  return d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}).toLowerCase().replace(' ','');
+}
+
 function formatTimeRange(start, end){
   const s = new Date(start);
-  const day = s.toLocaleDateString('en-US', {weekday:'short'});
-  const startStr = s.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}).toLowerCase().replace(' ','');
-  if (!end) return day + ', from ' + startStr;
+  const sDay = formatDay(s);
+  const sHasTime = hasClockTime(s);
+
+  if (!end){
+    return sHasTime ? sDay + ', from ' + formatClock(s) : sDay;
+  }
+
   const e = new Date(end);
-  const endStr = e.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}).toLowerCase().replace(' ','');
-  return day + ', ' + startStr + ' to ' + endStr;
+  const eHasTime = hasClockTime(e);
+  const sameDay = s.toDateString() === e.toDateString();
+
+  if (sameDay){
+    if (sHasTime && eHasTime) return sDay + ', ' + formatClock(s) + ' to ' + formatClock(e);
+    if (sHasTime) return sDay + ', from ' + formatClock(s);
+    return sDay;
+  }
+
+  const eDay = formatDay(e);
+  const startPart = sHasTime ? sDay + ' ' + formatClock(s) : sDay;
+  const endPart = eHasTime ? eDay + ' ' + formatClock(e) : eDay;
+  return startPart + ' - ' + endPart;
 }
 
 function transformRow(row){
@@ -454,7 +653,7 @@ function transformRow(row){
     id: row.id,
     brand: row.brand,
     cat: row.category,
-    neighborhood: row.neighbourhood,
+    location: row.neighbourhood,
     address: row.address,
     lat: row.lat,
     lng: row.lng,
@@ -468,22 +667,28 @@ function transformRow(row){
 }
 
 async function loadListings(){
-  document.getElementById('list').innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">Loading giveaways...</div>';
   const { data, error } = await sb.from('listings').select('*').eq('moderation_status', 'approved');
-  if (error){
+  if (error) return false;
+  events = data.map(transformRow);
+  return true;
+}
+
+async function init(){
+  document.getElementById('list').innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">Loading giveaways...</div>';
+  const [listingsOk] = await Promise.all([loadListings(), loadRatings(), loadUpdates()]);
+  if (!listingsOk){
     document.getElementById('list').innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">Could not load listings right now.</div>';
     return;
   }
-  events = data.map(transformRow);
   document.getElementById('liveCount').textContent = events.filter(e=>e.status==='live').length;
   addMarkersToMap();
   renderList();
 }
 
 renderStatusFilters();
-renderNeighFilters();
+renderLocationFilters();
 renderCatFilters();
-loadListings();
+init();
 </script>
 </body>
 </html>
