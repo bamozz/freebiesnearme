@@ -202,7 +202,7 @@
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const LOCATIONS = [
-    'The Annex','Chinatown','Church-Wellesley Village','Corktown','Distillery District',
+    'The Annex','Chinatown','Church-Wellesley Village','Corktown','Danforth','Distillery District',
     'CF Eaton Centre','Entertainment District','Financial District','Harbord Village',
     'Harbourfront Centre','Kensington Market','King West','Nathan Phillips Square',
     'Old Town','Queen West','Regent Park','Sankofa Square','St. Lawrence Market',
@@ -211,15 +211,18 @@
 
   function detectLocationFromFeature(f){
     const p = f.properties;
-    // Deliberately excludes p.city ("Toronto" for nearly every result) and only
-    // checks candidate.includes(location) — not the reverse — since a short,
-    // generic candidate would otherwise false-match inside a longer location
-    // name (e.g. city="Toronto" matching inside "Toronto Islands").
-    const candidates = [p.name, p.district, p.suburb, p.neighbourhood]
+    // Deliberately excludes p.city ("Toronto" for nearly every result). Matches
+    // are done on whole-word boundaries, not raw substring, since a short
+    // location name like "well" (from "The Well") would otherwise false-match
+    // inside an unrelated word like "Wellington" (as in the real Toronto
+    // locality "Wellington Place") even though there's no actual connection.
+    const candidates = [p.name, p.district, p.suburb, p.neighbourhood, p.locality]
       .filter(Boolean).map(s => s.toLowerCase());
     for (const loc of LOCATIONS){
       const locLower = loc.toLowerCase().replace(/^(the|cf)\s+/, '');
-      if (candidates.some(c => c.includes(locLower))) return loc;
+      const escaped = locLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const pattern = new RegExp('\\b' + escaped + '\\b', 'i');
+      if (candidates.some(c => pattern.test(c))) return loc;
     }
     return null;
   }
