@@ -678,7 +678,7 @@ function renderList(){
     (activeCat==='all' || ev.cat===activeCat) &&
     (activeLocation==='All locations' || ev.location===activeLocation) &&
     (!searchQuery || ev.brand.toLowerCase().includes(searchQuery) || ev.location.toLowerCase().includes(searchQuery))
-  );
+  ).sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
 
   if (filtered.length===0){
     wrap.innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">No giveaways match those filters right now. Try widening your search.</div>';
@@ -843,6 +843,7 @@ function transformRow(row){
     lng: row.lng,
     what: row.what,
     time: formatTimeRange(row.start_time, row.end_time),
+    startTime: row.start_time,
     claimed: row.claimed_count || 0,
     total: row.total_count,
     sponsored: row.sponsored,
