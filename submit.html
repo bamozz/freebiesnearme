@@ -105,7 +105,9 @@
         </select>
       </label>
       <label>Neighbourhood
-        <input type="text" id="neighbourhood" required placeholder="e.g. Queen West">
+        <select id="neighbourhood" required>
+          <option value="" disabled selected>Select a neighbourhood</option>
+        </select>
       </label>
     </div>
 
@@ -148,6 +150,22 @@
   const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const NEIGHBOURHOODS = [
+    'The Annex','Bloorcourt','Bloordale','Chinatown','Church-Wellesley Village',
+    'Corktown','Don Mills','Dundas West','Entertainment District','Etobicoke',
+    'Financial District','Geary Avenue','Harbord Village','Kensington Market',
+    'King West','Leslieville','Liberty Village','Little Italy','Little Portugal',
+    'North York','Old Town','Ossington','Queen West','Regent Park','Riverdale',
+    'Riverside','Scarborough','The Well','Wellington','Yonge and Eglinton','Yorkville',
+  ];
+  const neighSelect = document.getElementById('neighbourhood');
+  NEIGHBOURHOODS.forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n;
+    opt.textContent = n;
+    neighSelect.appendChild(opt);
+  });
 
   let mode = 'brand';
   let picked = null;
