@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759" crossorigin="anonymous"></script>
-<title>Freebies Near Me — Toronto</title>
+<title>Free Giveaways and Pop Up Events in Toronto | Freebies Near Me</title>
+<meta name="description" content="Find free giveaways, samples, and pop up events happening in Toronto right now. Browse by neighbourhood, brand, or category to see what is live today.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
@@ -374,7 +375,9 @@ const REPORT_TYPES = [
   {id:'ran_out', label:'Ran out'},
   {id:'cancelled', label:'Cancelled'},
   {id:'ended_early', label:'Ended early'},
-  {id:'long_line', label:'Long line (1 hr+ wait)'},
+  {id:'wait_under_30', label:'Under 30 mins wait'},
+  {id:'wait_30_60', label:'30 mins - 1 hr wait'},
+  {id:'wait_1hr_plus', label:'1 hr+ wait'},
   {id:'still_active', label:'Still going'},
 ];
 let updateStats = {};
@@ -466,6 +469,15 @@ function reportWarning(ev){
   return null;
 }
 
+function waitReport(ev){
+  const s = updateStats[ev.id] || {};
+  const under30 = s.wait_under_30 || 0, w30to60 = s.wait_30_60 || 0, over1hr = s.wait_1hr_plus || 0;
+  if (over1hr >= 1 && over1hr >= w30to60 && over1hr >= under30) return {label:'1 hr+ wait', count:over1hr};
+  if (w30to60 >= 1 && w30to60 >= under30) return {label:'30 mins - 1 hr wait', count:w30to60};
+  if (under30 >= 1) return {label:'Under 30 mins wait', count:under30};
+  return null;
+}
+
 function statusBadge(ev){
   // The live/soon/ended badge always reflects the listing's own start/end time.
   // User reports never change it automatically — only an admin editing the
@@ -499,7 +511,7 @@ function renderStars(ev){
 }
 
 function renderReportSection(ev){
-  const longLine = (updateStats[ev.id] || {}).long_line || 0;
+  const wait = waitReport(ev);
   const isOpen = openReportPickerId === ev.id;
   const showingQuantity = ranOutQuantityPromptId === ev.id;
   const myTypes = REPORT_TYPES.filter(t => reportedByMe[ev.id + ':' + t.id]);
@@ -516,7 +528,7 @@ function renderReportSection(ev){
   }
 
   html += `<span class="report-toggle">${isOpen ? 'Cancel' : 'Report an update'}</span>`;
-  if (longLine > 0) html += `<span class="long-line-note">&#8987; Long line reported (${longLine})</span><div class="update-disclaimer">User-submitted, not verified by our team</div>`;
+  if (wait) html += `<span class="long-line-note">&#8987; ${wait.label} reported (${wait.count})</span><div class="update-disclaimer">User-submitted, not verified by our team</div>`;
   if (isOpen){
     if (showingQuantity){
       html += `<div class="quantity-prompt">
