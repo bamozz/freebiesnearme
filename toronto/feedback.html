@@ -26,6 +26,11 @@
     display:flex;align-items:center;justify-content:space-between;
   }
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);}
+  .btn-solid{
+    background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;
+    padding:9px 16px;border-radius:20px;cursor:pointer;white-space:nowrap;
+    text-decoration:none;
+  }
 
   footer{
     max-width:640px;margin:34px auto 0;padding:24px 24px 40px;
@@ -80,7 +85,12 @@
 </head>
 <body>
 
-<nav><div class="nav-inner"><a class="logo" href="/toronto">Freebies Near Me</a></div></nav>
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="/toronto">Freebies Near Me</a>
+    <a class="btn-solid" href="/toronto/submit.html">Submit an event</a>
+  </div>
+</nav>
 
 <div class="wrap">
   <h1 class="display">Help us improve</h1>
