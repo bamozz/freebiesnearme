@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759" crossorigin="anonymous"></script>
 <title>Submit a Giveaway — Freebies Near Me</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -81,7 +82,21 @@
   .suggestion-item:hover,.suggestion-item.highlighted{background:var(--paper-alt);}
   .suggestion-item .sub{display:block;font-size:11.5px;font-weight:500;color:var(--muted);margin-top:1px;}
 
-  #pickMap{height:220px;border-radius:10px;border:1px solid var(--line);margin-top:2px;overflow:hidden;}
+  .location-entry{
+    border:1px solid var(--line);border-radius:10px;padding:12px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .location-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .location-row select{flex:1;min-width:160px;font-size:13px;}
+  .coords-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--teal);white-space:nowrap;}
+  .remove-location-btn{font-size:12px;font-weight:700;color:var(--coral);cursor:pointer;white-space:nowrap;}
+  .locations-list{display:flex;flex-direction:column;gap:10px;}
+  .add-location-btn{
+    font-size:13px;font-weight:700;color:var(--teal);cursor:pointer;
+    margin-top:8px;display:inline-block;
+  }
+
+  #pickMap{height:260px;border-radius:10px;border:1px solid var(--line);margin-top:2px;overflow:hidden;}
   .map-hint{font-size:11.5px;color:var(--muted);font-weight:500;margin-top:4px;}
   .coords{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--teal);margin-top:4px;}
 
@@ -124,34 +139,24 @@
       <textarea id="what" required placeholder="e.g. free cold brew samples, first 150 people"></textarea>
     </label>
 
-    <div class="row2">
-      <label>Category
-        <select id="category" required>
-          <option value="food">Food & Drink</option>
-          <option value="beauty">Beauty</option>
-          <option value="fashion">Fashion</option>
-          <option value="tech">Tech</option>
-          <option value="wellness">Wellness</option>
-        </select>
-      </label>
-      <label>Location
-        <select id="location" required>
-          <option value="" disabled selected>Select a location</option>
-        </select>
-      </label>
-    </div>
-
-    <label>Street address
-      <div class="address-wrap">
-        <input type="text" id="address" required placeholder="Start typing an address..." autocomplete="off">
-        <div class="suggestions" id="addressSuggestions"></div>
-      </div>
+    <label>Category
+      <select id="category" required>
+        <option value="food">Food & Drink</option>
+        <option value="beauty">Beauty</option>
+        <option value="fashion">Fashion</option>
+        <option value="tech">Tech</option>
+        <option value="wellness">Wellness</option>
+      </select>
     </label>
 
-    <label>Drop a pin at the location
+    <label>Address<span style="font-weight:500;color:var(--muted);text-transform:none;">, add more than one if this is happening at multiple locations</span>
+      <div class="locations-list" id="locationEntries"></div>
+      <span class="add-location-btn" id="addLocationBtn">+ Add another location</span>
+    </label>
+
+    <label class="optional">Confirm on map
       <div id="pickMap"></div>
-      <span class="map-hint">Selecting an address above drops a pin automatically. You can also click the map to fine-tune it.</span>
-      <span class="coords" id="coordsLabel">No location set yet</span>
+      <span class="map-hint">Selecting an address drops a pin automatically. Click the map to fine-tune whichever address you're currently editing.</span>
     </label>
 
     <div class="row2">
@@ -186,7 +191,7 @@
 
 <footer>
   <a class="logo" href="/toronto">Freebies Near Me</a>
-  <a class="feedback-link" href="/toronto/feedback.html">Feedback</a>
+  <a class="feedback-link" href="/toronto/feedback">Feedback</a>
   <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
 </footer>
 
@@ -201,15 +206,23 @@
     'CF Eaton Centre','Entertainment District','Financial District','Harbord Village',
     'Harbourfront Centre','Kensington Market','King West','Nathan Phillips Square',
     'Old Town','Queen West','Regent Park','Sankofa Square','St. Lawrence Market',
-    'Toronto Islands','Union Station','The Well','Wellington','Yonge and Eglinton','Yorkville',
+    'Union Station','The Well','Yonge and Eglinton','Yorkville',
   ];
-  const locationSelect = document.getElementById('location');
-  LOCATIONS.forEach(n => {
-    const opt = document.createElement('option');
-    opt.value = n;
-    opt.textContent = n;
-    locationSelect.appendChild(opt);
-  });
+
+  function detectLocationFromFeature(f){
+    const p = f.properties;
+    // Deliberately excludes p.city ("Toronto" for nearly every result) and only
+    // checks candidate.includes(location) — not the reverse — since a short,
+    // generic candidate would otherwise false-match inside a longer location
+    // name (e.g. city="Toronto" matching inside "Toronto Islands").
+    const candidates = [p.name, p.district, p.suburb, p.neighbourhood]
+      .filter(Boolean).map(s => s.toLowerCase());
+    for (const loc of LOCATIONS){
+      const locLower = loc.toLowerCase().replace(/^(the|cf)\s+/, '');
+      if (candidates.some(c => c.includes(locLower))) return loc;
+    }
+    return null;
+  }
 
   function combineDateTime(dateVal, timeVal){
     if (!dateVal) return null;
@@ -217,7 +230,6 @@
   }
 
   let mode = 'brand';
-  let picked = null;
 
   const map = new maplibregl.Map({
     style: 'https://tiles.openfreemap.org/styles/liberty',
@@ -230,105 +242,176 @@
   map.addControl(new maplibregl.NavigationControl(), 'top-left');
   requestAnimationFrame(()=>map.resize());
   window.addEventListener('load', ()=>map.resize());
-  let marker = null;
-  function dropPin(lng, lat, pan){
-    picked = new maplibregl.LngLat(lng, lat);
-    if (marker) marker.remove();
-    marker = new maplibregl.Marker().setLngLat(picked).addTo(map);
-    document.getElementById('coordsLabel').textContent =
-      'Pin set at ' + picked.lat.toFixed(5) + ', ' + picked.lng.toFixed(5);
-    if (pan) map.flyTo({center:picked, zoom:15, duration:600});
-  }
-  map.on('click', (e) => dropPin(e.lngLat.lng, e.lngLat.lat, false));
 
-  const addressInput = document.getElementById('address');
-  const suggestionsEl = document.getElementById('addressSuggestions');
-  let suggestTimer = null;
-  let suggestAbort = null;
-  let currentFeatures = [];
-  let highlightedIndex = -1;
+  let locationEntries = [];
+  let activeEntry = null;
 
-  function closeSuggestions(){
-    suggestionsEl.classList.remove('open');
-    suggestionsEl.innerHTML = '';
-    currentFeatures = [];
-    highlightedIndex = -1;
+  function dropPinForEntry(entry, lng, lat, pan){
+    entry.lat = lat;
+    entry.lng = lng;
+    if (entry.marker) entry.marker.remove();
+    entry.marker = new maplibregl.Marker().setLngLat([lng, lat]).addTo(map);
+    entry.coordsLabel.textContent = 'Pin set at ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+    if (pan) map.flyTo({center:[lng, lat], zoom:15, duration:600});
   }
 
-  function pickFeature(f){
-    const p = f.properties;
-    const main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
-    addressInput.value = main || p.name;
-    const [lng, lat] = f.geometry.coordinates;
-    dropPin(lng, lat, true);
-    closeSuggestions();
+  map.on('click', (e) => {
+    if (!activeEntry) activeEntry = locationEntries[0];
+    dropPinForEntry(activeEntry, e.lngLat.lng, e.lngLat.lat, false);
+  });
+
+  function updateRemoveButtons(){
+    locationEntries.forEach(en => {
+      en.removeBtn.style.display = locationEntries.length > 1 ? 'inline' : 'none';
+    });
   }
 
-  function setHighlighted(index){
-    const items = suggestionsEl.querySelectorAll('.suggestion-item');
-    items.forEach(el => el.classList.remove('highlighted'));
-    if (index >= 0 && index < items.length){
-      items[index].classList.add('highlighted');
-      items[index].scrollIntoView({block:'nearest'});
+  function removeLocationEntry(entry){
+    if (locationEntries.length <= 1) return;
+    if (entry.marker) entry.marker.remove();
+    entry.el.remove();
+    locationEntries = locationEntries.filter(en => en !== entry);
+    if (activeEntry === entry) activeEntry = locationEntries[0];
+    updateRemoveButtons();
+  }
+
+  function createLocationEntry(){
+    const wrap = document.createElement('div');
+    wrap.className = 'location-entry';
+    wrap.innerHTML = `
+      <div class="address-wrap">
+        <input type="text" class="address-input" placeholder="Start typing an address..." autocomplete="off" required>
+        <div class="suggestions"></div>
+      </div>
+      <div class="location-row">
+        <select class="location-select">
+          <option value="">Neighbourhood (auto-detected)</option>
+          ${LOCATIONS.map(l => `<option value="${l}">${l}</option>`).join('')}
+        </select>
+        <span class="coords-label">No pin set yet</span>
+        <span class="remove-location-btn">&times; Remove</span>
+      </div>
+    `;
+    document.getElementById('locationEntries').appendChild(wrap);
+
+    const entry = {
+      el: wrap,
+      addressInput: wrap.querySelector('.address-input'),
+      suggestionsEl: wrap.querySelector('.suggestions'),
+      locationSelect: wrap.querySelector('.location-select'),
+      coordsLabel: wrap.querySelector('.coords-label'),
+      removeBtn: wrap.querySelector('.remove-location-btn'),
+      lat: null, lng: null, marker: null,
+      currentFeatures: [], highlightedIndex: -1, suggestTimer: null, suggestAbort: null,
+    };
+    locationEntries.push(entry);
+    wireEntry(entry);
+    updateRemoveButtons();
+    return entry;
+  }
+
+  function wireEntry(entry){
+    function closeSuggestions(){
+      entry.suggestionsEl.classList.remove('open');
+      entry.suggestionsEl.innerHTML = '';
+      entry.currentFeatures = [];
+      entry.highlightedIndex = -1;
     }
-    highlightedIndex = index;
-  }
+    entry._closeSuggestions = closeSuggestions;
 
-  function renderSuggestions(features){
-    if (!features.length){ closeSuggestions(); return; }
-    currentFeatures = features;
-    suggestionsEl.innerHTML = '';
-    features.forEach((f, i) => {
+    function pickFeature(f){
       const p = f.properties;
       const main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
-      const sub = [p.city, p.state].filter(Boolean).join(', ');
-      const item = document.createElement('div');
-      item.className = 'suggestion-item';
-      item.innerHTML = `${main || p.name}${sub ? `<span class="sub">${sub}</span>` : ''}`;
-      item.onclick = () => pickFeature(f);
-      suggestionsEl.appendChild(item);
+      entry.addressInput.value = main || p.name;
+      const [lng, lat] = f.geometry.coordinates;
+      activeEntry = entry;
+      dropPinForEntry(entry, lng, lat, true);
+      const detected = detectLocationFromFeature(f);
+      if (detected) entry.locationSelect.value = detected;
+      closeSuggestions();
+    }
+
+    function setHighlighted(index){
+      const items = entry.suggestionsEl.querySelectorAll('.suggestion-item');
+      items.forEach(el => el.classList.remove('highlighted'));
+      if (index >= 0 && index < items.length){
+        items[index].classList.add('highlighted');
+        items[index].scrollIntoView({block:'nearest'});
+      }
+      entry.highlightedIndex = index;
+    }
+
+    function renderSuggestions(features){
+      if (!features.length){ closeSuggestions(); return; }
+      entry.currentFeatures = features;
+      entry.suggestionsEl.innerHTML = '';
+      features.forEach((f) => {
+        const p = f.properties;
+        const main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+        const sub = [p.city, p.state].filter(Boolean).join(', ');
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+        item.innerHTML = `${main || p.name}${sub ? `<span class="sub">${sub}</span>` : ''}`;
+        item.onclick = () => pickFeature(f);
+        entry.suggestionsEl.appendChild(item);
+      });
+      entry.suggestionsEl.classList.add('open');
+      setHighlighted(0);
+    }
+
+    entry.addressInput.addEventListener('focus', () => { activeEntry = entry; });
+
+    entry.addressInput.addEventListener('input', () => {
+      activeEntry = entry;
+      const q = entry.addressInput.value.trim();
+      clearTimeout(entry.suggestTimer);
+      if (q.length < 3){ closeSuggestions(); return; }
+      entry.suggestTimer = setTimeout(async () => {
+        if (entry.suggestAbort) entry.suggestAbort.abort();
+        entry.suggestAbort = new AbortController();
+        try {
+          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=43.6532&lon=-79.3832&limit=6`;
+          const res = await fetch(url, {signal: entry.suggestAbort.signal});
+          const data = await res.json();
+          renderSuggestions(data.features || []);
+        } catch (err) {
+          if (err.name !== 'AbortError') closeSuggestions();
+        }
+      }, 300);
     });
-    suggestionsEl.classList.add('open');
-    setHighlighted(0);
+
+    entry.addressInput.addEventListener('keydown', (e) => {
+      if (!entry.currentFeatures.length) return;
+      if (e.key === 'ArrowDown'){
+        e.preventDefault();
+        setHighlighted((entry.highlightedIndex + 1) % entry.currentFeatures.length);
+      } else if (e.key === 'ArrowUp'){
+        e.preventDefault();
+        setHighlighted((entry.highlightedIndex - 1 + entry.currentFeatures.length) % entry.currentFeatures.length);
+      } else if (e.key === 'Enter'){
+        e.preventDefault();
+        pickFeature(entry.currentFeatures[entry.highlightedIndex >= 0 ? entry.highlightedIndex : 0]);
+      } else if (e.key === 'Escape'){
+        closeSuggestions();
+      }
+    });
+
+    entry.removeBtn.onclick = () => removeLocationEntry(entry);
   }
 
-  addressInput.addEventListener('input', () => {
-    const q = addressInput.value.trim();
-    clearTimeout(suggestTimer);
-    if (q.length < 3){ closeSuggestions(); return; }
-    suggestTimer = setTimeout(async () => {
-      if (suggestAbort) suggestAbort.abort();
-      suggestAbort = new AbortController();
-      try {
-        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=43.6532&lon=-79.3832&limit=6`;
-        const res = await fetch(url, {signal: suggestAbort.signal});
-        const data = await res.json();
-        renderSuggestions(data.features || []);
-      } catch (err) {
-        if (err.name !== 'AbortError') closeSuggestions();
-      }
-    }, 300);
-  });
-
-  addressInput.addEventListener('keydown', (e) => {
-    if (!currentFeatures.length) return;
-    if (e.key === 'ArrowDown'){
-      e.preventDefault();
-      setHighlighted((highlightedIndex + 1) % currentFeatures.length);
-    } else if (e.key === 'ArrowUp'){
-      e.preventDefault();
-      setHighlighted((highlightedIndex - 1 + currentFeatures.length) % currentFeatures.length);
-    } else if (e.key === 'Enter'){
-      e.preventDefault();
-      pickFeature(currentFeatures[highlightedIndex >= 0 ? highlightedIndex : 0]);
-    } else if (e.key === 'Escape'){
-      closeSuggestions();
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.address-wrap')){
+      locationEntries.forEach(entry => entry._closeSuggestions());
     }
   });
 
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.address-wrap')) closeSuggestions();
-  });
+  document.getElementById('addLocationBtn').onclick = () => {
+    const entry = createLocationEntry();
+    activeEntry = entry;
+    entry.addressInput.focus();
+  };
+
+  activeEntry = createLocationEntry();
 
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.onclick = () => {
@@ -354,9 +437,10 @@
     const resultEl = document.getElementById('result');
     const btn = document.getElementById('submitBtn');
 
-    if (!picked) {
+    const validEntries = locationEntries.filter(en => en.lat !== null && en.lng !== null);
+    if (!validEntries.length) {
       resultEl.className = 'result err';
-      resultEl.textContent = 'Please drop a pin on the map so we know where this is.';
+      resultEl.textContent = 'Please select at least one address so we know where this is.';
       return;
     }
 
@@ -368,13 +452,9 @@
     const endDateVal = document.getElementById('endDate').value;
     const endTimeVal = document.getElementById('endTimeOfDay').value;
 
-    const payload = {
+    const basePayload = {
       brand: document.getElementById('brand').value,
       category: document.getElementById('category').value,
-      neighbourhood: document.getElementById('location').value,
-      address: document.getElementById('address').value || null,
-      lat: picked.lat,
-      lng: picked.lng,
       what: document.getElementById('what').value,
       start_time: combineDateTime(startDateVal, startTimeVal),
       end_time: combineDateTime(endDateVal, endTimeVal),
@@ -382,10 +462,18 @@
       claimed_count: 0,
       submitted_by: mode,
       submitter_contact: document.getElementById('contact').value || null,
-      moderation_status: 'pending'
+      moderation_status: 'pending',
     };
 
-    const { error } = await sb.from('listings').insert(payload);
+    const payloads = validEntries.map(en => ({
+      ...basePayload,
+      neighbourhood: en.locationSelect.value || null,
+      address: en.addressInput.value || null,
+      lat: en.lat,
+      lng: en.lng,
+    }));
+
+    const { error } = await sb.from('listings').insert(payloads);
 
     btn.disabled = false;
     btn.textContent = 'Submit for review';
@@ -395,11 +483,14 @@
       resultEl.textContent = 'Something went wrong: ' + error.message;
     } else {
       resultEl.className = 'result ok';
-      resultEl.textContent = 'Thanks, this is in for review and will show up on the map once approved.';
+      resultEl.textContent = validEntries.length > 1
+        ? `Thanks, all ${validEntries.length} locations are in for review.`
+        : 'Thanks, this is in for review and will show up on the map once approved.';
       document.getElementById('submitForm').reset();
-      if (marker) { marker.remove(); marker = null; picked = null; }
-      document.getElementById('coordsLabel').textContent = 'No location set yet';
-      closeSuggestions();
+      locationEntries.forEach(en => { if (en.marker) en.marker.remove(); });
+      document.getElementById('locationEntries').innerHTML = '';
+      locationEntries = [];
+      activeEntry = createLocationEntry();
     }
   });
 </script>

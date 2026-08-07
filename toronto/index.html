@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759" crossorigin="anonymous"></script>
 <title>Freebies Near Me — Toronto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -170,8 +171,8 @@
   .status-badge.soon{background:var(--amber-dim);color:#9C6B14;}
   .status-badge.ended{background:var(--paper-alt);color:var(--muted);}
   .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
-  .card-brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;}
-  .card-what{font-size:13px;color:var(--ink);margin:0 0 8px;line-height:1.35;}
+  .card-what{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;line-height:1.3;}
+  .card-brand{font-size:13px;color:var(--muted);font-weight:600;margin:0 0 8px;line-height:1.35;}
   .rating-row{display:flex;align-items:center;gap:6px;margin:0 0 8px;}
   .rating-row .star{font-size:15px;line-height:1;color:var(--line);cursor:pointer;}
   .rating-row .star.filled{color:var(--amber);}
@@ -184,12 +185,22 @@
   .undo-link{font-size:11px;color:var(--coral);cursor:pointer;text-decoration:underline;font-weight:600;}
   .badge-group{display:flex;align-items:center;gap:6px;}
   .confirm-note{font-size:10.5px;font-weight:700;color:var(--teal);}
+  .report-warning{font-size:11px;font-weight:600;color:var(--coral);margin-top:4px;}
   .report-section{margin-top:8px;}
   .report-toggle{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;}
   .long-line-note{font-size:11px;color:#9C6B14;font-weight:600;margin-left:10px;}
   .my-reports{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px;}
   .my-reports-label{font-size:11px;font-weight:700;color:var(--ink);}
   .report-picker{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .quantity-prompt{display:flex;align-items:center;gap:8px;margin-top:8px;}
+  .quantity-input{
+    flex:1;font-size:12.5px;padding:6px 10px;border-radius:10px;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+  }
+  .quantity-submit{
+    font-size:11px;font-weight:700;padding:6px 12px;border-radius:12px;
+    background:var(--ink);color:#fff;cursor:pointer;white-space:nowrap;
+  }
   .report-chip{
     font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;
     border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--muted);
@@ -271,9 +282,9 @@
 <nav>
   <div class="nav-inner">
     <a class="logo" href="/toronto">Freebies Near Me</a>
-    <div class="nav-links"><span class="on">Explore</span><a href="/toronto/map.html">Map</a></div>
+    <div class="nav-links"><span class="on">Explore</span><a href="/toronto/map">Map</a></div>
     <div class="nav-right">
-      <a class="btn-solid" href="/toronto/submit.html">Submit an event</a>
+      <a class="btn-solid" href="/toronto/submit">Submit an event</a>
     </div>
   </div>
 </nav>
@@ -306,7 +317,7 @@
 
 <footer>
   <a class="logo" href="/toronto">Freebies Near Me</a>
-  <a class="feedback-link" href="/toronto/feedback.html">Feedback</a>
+  <a class="feedback-link" href="/toronto/feedback">Feedback</a>
   <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
 </footer>
 
@@ -314,7 +325,7 @@
 
 <nav class="bottom-tabbar">
   <a href="/toronto" class="tab-item on"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m8.154 15.846l5.808-1.884l1.884-5.808l-5.807 1.885zm3.842-2.73q-.467 0-.79-.327q-.321-.327-.321-.793q0-.467.326-.79q.327-.321.793-.321q.467 0 .79.326q.322.327.322.793q0 .467-.327.79q-.327.322-.793.322M12.003 21q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.344 0 5.672-2.328T20 12t-2.328-5.672T12 4T6.328 6.328T4 12t2.328 5.672T12 20m0-8"/></svg></span>Explore</a>
-  <a href="/toronto/map.html" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m15 19.923l-6-2.1l-3.958 1.53q-.384.143-.713-.083T4 18.634V6.404q0-.268.13-.489t.378-.307L9 4.077l6 2.1l3.958-1.53q.384-.143.713.054t.329.588v12.384q0 .287-.159.498q-.158.212-.426.298zm-.5-1.22v-11.7l-5-1.745v11.7zm1 0L19 17.55V5.7l-3.5 1.304zM5 18.3l3.5-1.342v-11.7L5 6.45zM15.5 7.004v11.7zm-7-1.746v11.7z"/></svg></span>Map</a>
+  <a href="/toronto/map" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m15 19.923l-6-2.1l-3.958 1.53q-.384.143-.713-.083T4 18.634V6.404q0-.268.13-.489t.378-.307L9 4.077l6 2.1l3.958-1.53q.384-.143.713.054t.329.588v12.384q0 .287-.159.498q-.158.212-.426.298zm-.5-1.22v-11.7l-5-1.745v11.7zm1 0L19 17.55V5.7l-3.5 1.304zM5 18.3l3.5-1.342v-11.7L5 6.45zM15.5 7.004v11.7zm-7-1.746v11.7z"/></svg></span>Map</a>
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -340,7 +351,7 @@ const LOCATIONS = [
   'CF Eaton Centre','Entertainment District','Financial District','Harbord Village',
   'Harbourfront Centre','Kensington Market','King West','Nathan Phillips Square',
   'Old Town','Queen West','Regent Park','Sankofa Square','St. Lawrence Market',
-  'Toronto Islands','Union Station','The Well','Wellington','Yonge and Eglinton','Yorkville',
+  'Union Station','The Well','Yonge and Eglinton','Yorkville',
 ];
 
 let events = [];
@@ -363,6 +374,7 @@ const REPORT_TYPES = [
 let updateStats = {};
 let reportedByMe = JSON.parse(localStorage.getItem('reportedListings') || '{}');
 let openReportPickerId = null;
+let ranOutQuantityPromptId = null;
 
 let toastTimer = null;
 function showToast(message, isError){
@@ -436,25 +448,31 @@ function availInfo(ev){
   return {cls, text};
 }
 
-function statusOverride(ev){
+function reportWarning(ev){
   const s = updateStats[ev.id] || {};
   const cancelled = s.cancelled || 0, endedEarly = s.ended_early || 0, ranOut = s.ran_out || 0;
-  if (cancelled >= 2 && cancelled >= endedEarly && cancelled >= ranOut) return 'Cancelled';
-  if (endedEarly >= 2 && endedEarly >= ranOut) return 'Ended early';
-  if (ranOut >= 2) return 'Reported sold out';
+  if (cancelled >= 2 && cancelled >= endedEarly && cancelled >= ranOut) return {label:'Cancelled', count:cancelled};
+  if (endedEarly >= 2 && endedEarly >= ranOut) return {label:'Ended early', count:endedEarly};
+  if (ranOut >= 2) return {label:'Reported sold out', count:ranOut};
   return null;
 }
 
 function statusBadge(ev){
-  const override = statusOverride(ev);
-  if (override) return `<span class="status-badge ended">${override}</span>`;
+  // The live/soon/ended badge always reflects the listing's own start/end time.
+  // User reports never change it automatically — only an admin editing the
+  // listing itself (via Supabase) changes what's shown here.
   let badge;
   if (ev.status==='live') badge = '<span class="status-badge live"><span class="dot"></span>Live now</span>';
   else if (ev.status==='soon') badge = '<span class="status-badge soon"><span class="dot"></span>Starting soon</span>';
   else badge = '<span class="status-badge ended">Wrapped up</span>';
+
   const stillActive = (updateStats[ev.id] || {}).still_active || 0;
+  const warning = reportWarning(ev);
   if (ev.status === 'live' && stillActive > 0){
-    return `<span class="badge-group">${badge}<span class="confirm-note">&#10003; ${stillActive} confirmed</span></span>`;
+    badge = `<span class="badge-group">${badge}<span class="confirm-note">&#10003; ${stillActive} confirmed</span></span>`;
+  }
+  if (warning){
+    badge += `<div class="report-warning">&#9888; ${warning.label} (${warning.count} reports)</div>`;
   }
   return badge;
 }
@@ -475,13 +493,16 @@ function renderStars(ev){
 function renderReportSection(ev){
   const longLine = (updateStats[ev.id] || {}).long_line || 0;
   const isOpen = openReportPickerId === ev.id;
+  const showingQuantity = ranOutQuantityPromptId === ev.id;
   const myTypes = REPORT_TYPES.filter(t => reportedByMe[ev.id + ':' + t.id]);
   let html = `<div class="report-section" data-id="${ev.id}">`;
 
   if (myTypes.length){
     html += '<div class="my-reports"><span class="my-reports-label">You reported:</span>';
     myTypes.forEach(t => {
-      html += `<span class="report-chip active" data-type="${t.id}" data-action="undo-report">${t.label} &times;</span>`;
+      const entry = reportedByMe[ev.id + ':' + t.id];
+      const qtyText = (t.id === 'ran_out' && entry.quantity !== null && entry.quantity !== undefined) ? ` (${entry.quantity} left)` : '';
+      html += `<span class="report-chip active" data-type="${t.id}" data-action="undo-report">${t.label}${qtyText} &times;</span>`;
     });
     html += '</div>';
   }
@@ -489,13 +510,20 @@ function renderReportSection(ev){
   html += `<span class="report-toggle">${isOpen ? 'Cancel' : 'Report an update'}</span>`;
   if (longLine > 0) html += `<span class="long-line-note">&#8987; Long line reported (${longLine})</span>`;
   if (isOpen){
-    const remaining = REPORT_TYPES.filter(t => !reportedByMe[ev.id + ':' + t.id]);
-    if (remaining.length){
-      html += '<div class="report-picker">';
-      remaining.forEach(t => {
-        html += `<span class="report-chip" data-type="${t.id}">${t.label}</span>`;
-      });
-      html += '</div>';
+    if (showingQuantity){
+      html += `<div class="quantity-prompt">
+        <input type="number" min="0" class="quantity-input" placeholder="How many left? (optional)">
+        <span class="quantity-submit">Submit</span>
+      </div>`;
+    } else {
+      const remaining = REPORT_TYPES.filter(t => !reportedByMe[ev.id + ':' + t.id]);
+      if (remaining.length){
+        html += '<div class="report-picker">';
+        remaining.forEach(t => {
+          html += `<span class="report-chip" data-type="${t.id}">${t.label}</span>`;
+        });
+        html += '</div>';
+      }
     }
   }
   html += '</div>';
@@ -562,29 +590,32 @@ async function loadUpdates(){
   });
 }
 
-async function submitReport(id, type){
+async function submitReport(id, type, quantity){
   const key = id + ':' + type;
   if (reportedByMe[key]) return;
-  const { data, error } = await sb.from('event_updates').insert({listing_id: id, type}).select('id').single();
+  const payload = {listing_id: id, type};
+  if (type === 'ran_out' && quantity !== null && quantity !== undefined) payload.quantity = quantity;
+  const { data, error } = await sb.from('event_updates').insert(payload).select('id').single();
   if (error){
     showToast("Couldn't submit your report. Try again in a moment.", true);
     return;
   }
-  reportedByMe[key] = data.id;
+  reportedByMe[key] = {rowId: data.id, quantity: payload.quantity ?? null};
   localStorage.setItem('reportedListings', JSON.stringify(reportedByMe));
   const s = updateStats[id] || {};
   s[type] = (s[type] || 0) + 1;
   updateStats[id] = s;
   openReportPickerId = null;
+  ranOutQuantityPromptId = null;
   renderList();
   showToast('Thanks for the update!');
 }
 
 async function undoReport(id, type){
   const key = id + ':' + type;
-  const rowId = reportedByMe[key];
-  if (!rowId) return;
-  const { data, error } = await sb.from('event_updates').delete().eq('id', rowId).select();
+  const entry = reportedByMe[key];
+  if (!entry) return;
+  const { data, error } = await sb.from('event_updates').delete().eq('id', entry.rowId).select();
   if (error || !data || !data.length){
     showToast("Couldn't undo your report. Try again in a moment.", true);
     return;
@@ -667,8 +698,8 @@ function renderList(){
         </div>
         ${statusBadge(ev)}
       </div>
-      <div class="card-brand">${ev.brand}</div>
       <div class="card-what">${ev.what}</div>
+      <div class="card-brand">${ev.brand}</div>
       ${renderStars(ev)}
       <div class="card-meta">
         <span>${ev.location} &middot; ${ev.time}</span>
@@ -698,6 +729,7 @@ function renderList(){
     reportToggle.onclick = (e) => {
       e.stopPropagation();
       openReportPickerId = openReportPickerId === ev.id ? null : ev.id;
+      ranOutQuantityPromptId = null;
       renderList();
     };
     card.querySelectorAll('.report-chip').forEach(chipEl => {
@@ -705,11 +737,25 @@ function renderList(){
         e.stopPropagation();
         if (chipEl.dataset.action === 'undo-report'){
           undoReport(ev.id, chipEl.dataset.type);
+        } else if (chipEl.dataset.type === 'ran_out'){
+          ranOutQuantityPromptId = ev.id;
+          renderList();
         } else {
           submitReport(ev.id, chipEl.dataset.type);
         }
       };
     });
+    const quantityInput = card.querySelector('.quantity-input');
+    if (quantityInput) quantityInput.onclick = (e) => e.stopPropagation();
+    const quantitySubmit = card.querySelector('.quantity-submit');
+    if (quantitySubmit){
+      quantitySubmit.onclick = (e) => {
+        e.stopPropagation();
+        const val = quantityInput.value.trim();
+        const quantity = val === '' ? null : parseInt(val, 10);
+        submitReport(ev.id, 'ran_out', quantity);
+      };
+    }
 
     wrap.appendChild(card);
 
@@ -719,8 +765,8 @@ function renderList(){
       adCard.innerHTML = `
         <div class="sponsored-flag">Advertisement</div>
         <div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>
-        <div class="card-brand">This space is claimable</div>
-        <div class="card-what">Brands can place a featured listing here to reach hunters browsing by location.</div>
+        <div class="card-what">This space is claimable</div>
+        <div class="card-brand">Brands can place a featured listing here to reach hunters browsing by location.</div>
         <div class="card-meta"><span>freebiesnearme.ca &middot; inquire for rates</span></div>
       `;
       wrap.appendChild(adCard);
