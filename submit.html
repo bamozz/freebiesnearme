@@ -6,8 +6,8 @@
 <title>Submit a Giveaway — Freebies Near Me</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -50,8 +50,25 @@
   textarea{resize:vertical;min-height:70px;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   @media (max-width:520px){ .row2{grid-template-columns:1fr;} }
+  .date-time-row{display:flex;gap:6px;}
+  .date-time-row input{flex:1;min-width:0;}
 
-  #pickMap{height:220px;border-radius:10px;border:1px solid var(--line);margin-top:2px;}
+  .address-wrap{position:relative;}
+  .suggestions{
+    display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:50;
+    background:#fff;border:1px solid var(--line);border-radius:8px;
+    max-height:220px;overflow-y:auto;box-shadow:0 6px 18px rgba(21,27,33,0.1);
+  }
+  .suggestions.open{display:block;}
+  .suggestion-item{
+    padding:9px 12px;font-size:13.5px;font-weight:500;cursor:pointer;
+    border-bottom:1px solid var(--line);
+  }
+  .suggestion-item:last-child{border-bottom:none;}
+  .suggestion-item:hover,.suggestion-item.highlighted{background:var(--paper-alt);}
+  .suggestion-item .sub{display:block;font-size:11.5px;font-weight:500;color:var(--muted);margin-top:1px;}
+
+  #pickMap{height:220px;border-radius:10px;border:1px solid var(--line);margin-top:2px;overflow:hidden;}
   .map-hint{font-size:11.5px;color:var(--muted);font-weight:500;margin-top:4px;}
   .coords{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--teal);margin-top:4px;}
 
@@ -111,22 +128,31 @@
       </label>
     </div>
 
-    <label class="optional">Street address
-      <input type="text" id="address" placeholder="Helps hunters find the exact spot">
+    <label>Street address
+      <div class="address-wrap">
+        <input type="text" id="address" required placeholder="Start typing an address..." autocomplete="off">
+        <div class="suggestions" id="addressSuggestions"></div>
+      </div>
     </label>
 
     <label>Drop a pin at the location
       <div id="pickMap"></div>
-      <span class="map-hint">Click the map to set the exact spot.</span>
+      <span class="map-hint">Selecting an address above drops a pin automatically. You can also click the map to fine-tune it.</span>
       <span class="coords" id="coordsLabel">No location set yet</span>
     </label>
 
     <div class="row2">
       <label>Starts
-        <input type="datetime-local" id="startTime" required>
+        <div class="date-time-row">
+          <input type="date" id="startDate" required>
+          <input type="time" id="startTimeOfDay">
+        </div>
       </label>
       <label id="endLabel">Ends
-        <input type="datetime-local" id="endTime" required>
+        <div class="date-time-row">
+          <input type="date" id="endDate" required>
+          <input type="time" id="endTimeOfDay">
+        </div>
       </label>
     </div>
 
@@ -167,20 +193,121 @@
     neighSelect.appendChild(opt);
   });
 
+  function combineDateTime(dateVal, timeVal){
+    if (!dateVal) return null;
+    return new Date(dateVal + 'T' + (timeVal || '00:00')).toISOString();
+  }
+
   let mode = 'brand';
   let picked = null;
 
-  const map = L.map('pickMap').setView([43.6532, -79.3832], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors', maxZoom: 19
-  }).addTo(map);
+  const map = new maplibregl.Map({
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    center: [-79.3832, 43.6532],
+    zoom: 12,
+    container: 'pickMap',
+  });
+  map.addControl(new maplibregl.NavigationControl(), 'top-left');
+  requestAnimationFrame(()=>map.resize());
+  window.addEventListener('load', ()=>map.resize());
   let marker = null;
-  map.on('click', (e) => {
-    picked = e.latlng;
+  function dropPin(lng, lat, pan){
+    picked = new maplibregl.LngLat(lng, lat);
     if (marker) marker.remove();
-    marker = L.marker(picked).addTo(map);
+    marker = new maplibregl.Marker().setLngLat(picked).addTo(map);
     document.getElementById('coordsLabel').textContent =
       'Pin set at ' + picked.lat.toFixed(5) + ', ' + picked.lng.toFixed(5);
+    if (pan) map.flyTo({center:picked, zoom:15, duration:600});
+  }
+  map.on('click', (e) => dropPin(e.lngLat.lng, e.lngLat.lat, false));
+
+  const addressInput = document.getElementById('address');
+  const suggestionsEl = document.getElementById('addressSuggestions');
+  let suggestTimer = null;
+  let suggestAbort = null;
+  let currentFeatures = [];
+  let highlightedIndex = -1;
+
+  function closeSuggestions(){
+    suggestionsEl.classList.remove('open');
+    suggestionsEl.innerHTML = '';
+    currentFeatures = [];
+    highlightedIndex = -1;
+  }
+
+  function pickFeature(f){
+    const p = f.properties;
+    const main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+    addressInput.value = main || p.name;
+    const [lng, lat] = f.geometry.coordinates;
+    dropPin(lng, lat, true);
+    closeSuggestions();
+  }
+
+  function setHighlighted(index){
+    const items = suggestionsEl.querySelectorAll('.suggestion-item');
+    items.forEach(el => el.classList.remove('highlighted'));
+    if (index >= 0 && index < items.length){
+      items[index].classList.add('highlighted');
+      items[index].scrollIntoView({block:'nearest'});
+    }
+    highlightedIndex = index;
+  }
+
+  function renderSuggestions(features){
+    if (!features.length){ closeSuggestions(); return; }
+    currentFeatures = features;
+    suggestionsEl.innerHTML = '';
+    features.forEach((f, i) => {
+      const p = f.properties;
+      const main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+      const sub = [p.city, p.state].filter(Boolean).join(', ');
+      const item = document.createElement('div');
+      item.className = 'suggestion-item';
+      item.innerHTML = `${main || p.name}${sub ? `<span class="sub">${sub}</span>` : ''}`;
+      item.onclick = () => pickFeature(f);
+      suggestionsEl.appendChild(item);
+    });
+    suggestionsEl.classList.add('open');
+    setHighlighted(0);
+  }
+
+  addressInput.addEventListener('input', () => {
+    const q = addressInput.value.trim();
+    clearTimeout(suggestTimer);
+    if (q.length < 3){ closeSuggestions(); return; }
+    suggestTimer = setTimeout(async () => {
+      if (suggestAbort) suggestAbort.abort();
+      suggestAbort = new AbortController();
+      try {
+        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=43.6532&lon=-79.3832&limit=6`;
+        const res = await fetch(url, {signal: suggestAbort.signal});
+        const data = await res.json();
+        renderSuggestions(data.features || []);
+      } catch (err) {
+        if (err.name !== 'AbortError') closeSuggestions();
+      }
+    }, 300);
+  });
+
+  addressInput.addEventListener('keydown', (e) => {
+    if (!currentFeatures.length) return;
+    if (e.key === 'ArrowDown'){
+      e.preventDefault();
+      setHighlighted((highlightedIndex + 1) % currentFeatures.length);
+    } else if (e.key === 'ArrowUp'){
+      e.preventDefault();
+      setHighlighted((highlightedIndex - 1 + currentFeatures.length) % currentFeatures.length);
+    } else if (e.key === 'Enter'){
+      e.preventDefault();
+      pickFeature(currentFeatures[highlightedIndex >= 0 ? highlightedIndex : 0]);
+    } else if (e.key === 'Escape'){
+      closeSuggestions();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.address-wrap')) closeSuggestions();
   });
 
   document.querySelectorAll('.mode-btn').forEach(btn => {
@@ -189,14 +316,14 @@
       btn.classList.add('active');
       mode = btn.dataset.mode;
       const totalInput = document.getElementById('totalCount');
-      const endInput = document.getElementById('endTime');
+      const endDateInput = document.getElementById('endDate');
       const note = document.getElementById('modeNote');
       if (mode === 'hunter') {
         totalInput.removeAttribute('required');
-        endInput.removeAttribute('required');
+        endDateInput.removeAttribute('required');
         note.textContent = 'Not sure on exact numbers or end time? Give your best guess, or leave it blank.';
       } else {
-        endInput.setAttribute('required', 'required');
+        endDateInput.setAttribute('required', 'required');
         note.textContent = 'Brand submissions with an exact quantity and time window get reviewed and listed fastest.';
       }
     };
@@ -216,8 +343,10 @@
     btn.disabled = true;
     btn.textContent = 'Submitting...';
 
-    const startVal = document.getElementById('startTime').value;
-    const endVal = document.getElementById('endTime').value;
+    const startDateVal = document.getElementById('startDate').value;
+    const startTimeVal = document.getElementById('startTimeOfDay').value;
+    const endDateVal = document.getElementById('endDate').value;
+    const endTimeVal = document.getElementById('endTimeOfDay').value;
 
     const payload = {
       brand: document.getElementById('brand').value,
@@ -227,8 +356,8 @@
       lat: picked.lat,
       lng: picked.lng,
       what: document.getElementById('what').value,
-      start_time: startVal ? new Date(startVal).toISOString() : null,
-      end_time: endVal ? new Date(endVal).toISOString() : null,
+      start_time: combineDateTime(startDateVal, startTimeVal),
+      end_time: combineDateTime(endDateVal, endTimeVal),
       total_count: document.getElementById('totalCount').value || null,
       claimed_count: 0,
       submitted_by: mode,
@@ -250,6 +379,7 @@
       document.getElementById('submitForm').reset();
       if (marker) { marker.remove(); marker = null; picked = null; }
       document.getElementById('coordsLabel').textContent = 'No location set yet';
+      closeSuggestions();
     }
   });
 </script>

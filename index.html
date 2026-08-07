@@ -6,8 +6,8 @@
 <title>Freebies Near Me — Toronto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <style>
   :root{
     --paper:#FEFCF6;
@@ -156,8 +156,8 @@
   }
 
   /* ===== Map ===== */
-  #map{height:660px;width:100%;border:1px solid var(--line);border-radius:12px;background:var(--paper-alt);}
-  .leaflet-popup-content-wrapper{border-radius:10px;border:1px solid var(--line);font-family:'Inter',sans-serif;}
+  #map{height:660px;width:100%;border:1px solid var(--line);border-radius:12px;background:var(--paper-alt);overflow:hidden;}
+  .maplibregl-popup-content{border-radius:10px;border:1px solid var(--line);font-family:'Inter',sans-serif;padding:12px 14px;}
   .popup-cat{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;}
   .popup-brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;margin:3px 0 4px;}
   .popup-btn{
@@ -264,18 +264,27 @@ let activeCat = 'all';
 let activeNeigh = 'All neighbourhoods';
 let selectedId = null;
 
-const map = L.map('map', {scrollWheelZoom:true}).setView([43.6532,-79.3832], 12.2);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution:'&copy; OpenStreetMap contributors', maxZoom:19
-}).addTo(map);
+const map = new maplibregl.Map({
+  style: 'https://tiles.openfreemap.org/styles/liberty',
+  center: [-79.3832, 43.6532],
+  zoom: 12.2,
+  container: 'map',
+});
+map.addControl(new maplibregl.NavigationControl(), 'top-left');
+requestAnimationFrame(()=>map.resize());
+window.addEventListener('load', ()=>map.resize());
+map.on('error', e => console.error('maplibre error:', e && e.error && e.error.message, e));
 
 const markers = {};
 function iconFor(cat){ return {food:'\u2615', beauty:'\u2728', fashion:'\uD83D\uDC5C', tech:'\uD83D\uDD0C', wellness:'\uD83C\uDF3F'}[cat] || '\u2605'; }
 
-function pinIcon(ev){
+function pinElement(ev){
   const color = ev.sponsored ? '#F0A430' : catColor[ev.cat];
-  const html = `<div class="pin" style="background:${color}"><span>${iconFor(ev.cat)}</span></div>`;
-  return L.divIcon({html, className:'', iconSize:[26,26], iconAnchor:[13,24], popupAnchor:[4,-22]});
+  const el = document.createElement('div');
+  el.className = 'pin' + (ev.sponsored ? ' sponsored' : '');
+  el.style.background = color;
+  el.innerHTML = `<span>${iconFor(ev.cat)}</span>`;
+  return el;
 }
 
 function buildPopup(ev){
@@ -286,13 +295,17 @@ function buildPopup(ev){
   <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${ev.lat},${ev.lng}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
+let activePopup = null;
+
 function addMarkersToMap(){
-  Object.values(markers).forEach(m => map.removeLayer(m));
+  Object.values(markers).forEach(m => m.remove());
   Object.keys(markers).forEach(k => delete markers[k]);
+  if (activePopup){ activePopup.remove(); activePopup = null; }
   events.forEach(ev=>{
-    const m = L.marker([ev.lat, ev.lng], {icon:pinIcon(ev)}).addTo(map);
-    m.bindPopup(buildPopup(ev));
-    m.on('click', ()=>selectCard(ev.id, false));
+    const m = new maplibregl.Marker({element: pinElement(ev), anchor:'bottom'})
+      .setLngLat([ev.lng, ev.lat])
+      .addTo(map);
+    m.getElement().addEventListener('click', ()=>selectCard(ev.id, false));
     markers[ev.id] = m;
   });
 }
@@ -411,8 +424,10 @@ function selectCard(id, panMap){
   selectedId = id;
   renderList();
   const ev = events.find(e=>e.id===id);
-  if (panMap && ev) map.flyTo([ev.lat, ev.lng], 14.5, {duration:0.6});
-  if (markers[id]) markers[id].openPopup();
+  if (!ev) return;
+  if (panMap) map.flyTo({center:[ev.lng, ev.lat], zoom:14.5, duration:600});
+  if (activePopup) activePopup.remove();
+  activePopup = new maplibregl.Popup({offset:22}).setLngLat([ev.lng, ev.lat]).setHTML(buildPopup(ev)).addTo(map);
 }
 
 function statusFromTimes(start, end){
