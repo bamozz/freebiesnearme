@@ -7,6 +7,19 @@
 <title>Free Giveaways and Pop Up Events in Toronto | Freebies Near Me</title>
 <meta name="description" content="Find free giveaways, samples, and pop up events happening in Toronto right now. Browse by neighbourhood, brand, or category to see what is live today.">
 <link rel="icon" type="image/svg+xml" href="/toronto/assets/favicon.svg">
+<link rel="canonical" href="https://freebiesnearme.app/toronto">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Freebies Near Me">
+<meta property="og:url" content="https://freebiesnearme.app/toronto">
+<meta property="og:title" content="Free Giveaways and Pop Up Events in Toronto">
+<meta property="og:description" content="Find free giveaways, samples, and pop up events happening in Toronto right now. Browse by neighbourhood, brand, or category to see what is live today.">
+<meta property="og:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Free Giveaways and Pop Up Events in Toronto">
+<meta name="twitter:description" content="Find free giveaways, samples, and pop up events happening in Toronto right now. Browse by neighbourhood, brand, or category to see what is live today.">
+<meta name="twitter:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
@@ -196,14 +209,9 @@
   .my-reports{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px;}
   .my-reports-label{font-size:11px;font-weight:700;color:var(--ink);}
   .report-picker{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
-  .quantity-prompt{display:flex;align-items:center;gap:8px;margin-top:8px;}
   .quantity-input{
-    flex:1;font-size:12.5px;padding:6px 10px;border-radius:10px;
+    font-size:12.5px;padding:6px 10px;border-radius:10px;
     border:1px solid var(--line);background:#fff;color:var(--ink);
-  }
-  .quantity-submit{
-    font-size:11px;font-weight:700;padding:6px 12px;border-radius:12px;
-    background:var(--ink);color:#fff;cursor:pointer;white-space:nowrap;
   }
   .report-chip{
     font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;
@@ -211,6 +219,38 @@
   }
   .report-chip:hover{border-color:var(--coral);color:var(--coral);}
   .report-chip.active{background:var(--coral);border-color:var(--coral);color:#fff;}
+  .report-details{
+    margin-top:8px;padding:12px;border:1px solid var(--line);border-radius:10px;
+    background:#fff;display:flex;flex-direction:column;gap:10px;
+  }
+  .report-details-row{display:flex;flex-direction:column;gap:5px;}
+  .report-details-row label{font-size:11px;font-weight:700;color:var(--ink);}
+  .report-details-row input[type="text"],
+  .report-details-row input[type="number"]{
+    font-size:12.5px;padding:7px 10px;border-radius:8px;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+  }
+  .report-details-row input[type="file"]{font-size:12px;}
+  .photo-preview{display:flex;align-items:center;gap:10px;}
+  .photo-preview img{width:52px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--line);}
+  .photo-remove{font-size:11px;color:var(--coral);cursor:pointer;text-decoration:underline;font-weight:600;}
+  .report-details-actions{display:flex;align-items:center;gap:14px;}
+  .report-details-submit{
+    font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:10px;
+    background:var(--ink);color:#fff;cursor:pointer;white-space:nowrap;
+  }
+  .report-details-cancel{font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;}
+
+  @media (max-width:760px){
+    .rating-row{gap:3px;}
+    .rating-row .star{font-size:23px;padding:7px 3px;margin:-7px -3px;}
+    .undo-link{padding:8px 4px;margin:-8px -4px;display:inline-block;}
+    .report-toggle{font-size:13px;padding:9px 4px;margin:-9px -4px;display:inline-block;}
+    .report-chip{font-size:13px;padding:9px 14px;}
+    .report-details-submit{padding:11px 18px;font-size:14px;}
+    .report-details-cancel{padding:9px 4px;margin:-9px -4px;display:inline-block;}
+    .photo-remove{padding:8px 4px;margin:-8px -4px;display:inline-block;}
+  }
   .card-meta{
     display:flex;justify-content:space-between;align-items:center;
     border-top:1.5px dashed #D6D1BF;padding-top:8px;margin-top:2px;
@@ -384,7 +424,8 @@ const REPORT_TYPES = [
 let updateStats = {};
 let reportedByMe = JSON.parse(localStorage.getItem('reportedListings') || '{}');
 let openReportPickerId = null;
-let ranOutQuantityPromptId = null;
+let pendingReport = null;
+let pendingPhoto = {};
 
 let toastTimer = null;
 function showToast(message, isError){
@@ -514,12 +555,12 @@ function renderStars(ev){
 function renderReportSection(ev){
   const wait = waitReport(ev);
   const isOpen = openReportPickerId === ev.id;
-  const showingQuantity = ranOutQuantityPromptId === ev.id;
+  const pendingType = (pendingReport && pendingReport.id === ev.id) ? pendingReport.type : null;
   const myTypes = REPORT_TYPES.filter(t => reportedByMe[ev.id + ':' + t.id]);
   let html = `<div class="report-section" data-id="${ev.id}">`;
 
   if (myTypes.length){
-    html += '<div class="my-reports"><span class="my-reports-label">You reported:</span>';
+    html += '<div class="my-reports"><span class="my-reports-label">You shared:</span>';
     myTypes.forEach(t => {
       const entry = reportedByMe[ev.id + ':' + t.id];
       const qtyText = (t.id === 'ran_out' && entry.quantity !== null && entry.quantity !== undefined) ? ` (${entry.quantity} left)` : '';
@@ -528,14 +569,23 @@ function renderReportSection(ev){
     html += '</div>';
   }
 
-  html += `<span class="report-toggle">${isOpen ? 'Cancel' : 'Report an update'}</span>`;
+  html += `<span class="report-toggle">${isOpen ? 'Cancel' : 'Share an update'}</span>`;
   if (wait) html += `<span class="long-line-note">&#8987; ${wait.label} reported (${wait.count})</span><div class="update-disclaimer">User-submitted, not verified by our team</div>`;
   if (isOpen){
-    if (showingQuantity){
-      html += `<div class="quantity-prompt">
-        <input type="number" min="0" class="quantity-input" placeholder="How many left? (optional)">
-        <span class="quantity-submit">Submit</span>
-      </div>`;
+    if (pendingType){
+      const photo = pendingPhoto[ev.id];
+      html += '<div class="report-details">';
+      if (pendingType === 'ran_out'){
+        html += `<div class="report-details-row"><label>How many left? (optional)</label><input type="number" min="0" class="quantity-input"></div>`;
+      }
+      html += `<div class="report-details-row"><label>Add a photo (optional)</label>`;
+      html += photo
+        ? `<div class="photo-preview"><img src="${photo.previewUrl}"><span class="photo-remove" data-action="remove-photo">Remove</span></div>`
+        : `<input type="file" accept="image/*" class="photo-input">`;
+      html += `</div>`;
+      html += `<div class="report-details-row"><label>Link your Instagram story (optional)</label><input type="text" class="insta-input" placeholder="https://instagram.com/stories/..."></div>`;
+      html += `<div class="report-details-actions"><span class="report-details-submit" data-action="submit-report">Submit</span><span class="report-details-cancel" data-action="cancel-report">Back</span></div>`;
+      html += '</div>';
     } else {
       const remaining = REPORT_TYPES.filter(t => !reportedByMe[ev.id + ':' + t.id]);
       if (remaining.length){
@@ -611,14 +661,56 @@ async function loadUpdates(){
   });
 }
 
-async function submitReport(id, type, quantity){
+function compressImage(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Could not read file'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Could not read image'));
+      img.onload = () => {
+        const maxDim = 1280;
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim){
+          if (width > height){ height = Math.round(height * maxDim / width); width = maxDim; }
+          else { width = Math.round(width * maxDim / height); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Compression failed')), 'image/jpeg', 0.72);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function submitReport(id, type, options){
+  options = options || {};
   const key = id + ':' + type;
   if (reportedByMe[key]) return;
+
+  let imageUrl = null;
+  if (options.photoBlob){
+    const path = `${id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+    const { error: uploadError } = await sb.storage.from('event-update-photos').upload(path, options.photoBlob, {contentType: 'image/jpeg'});
+    if (uploadError){
+      showToast("Couldn't upload your photo. Try again in a moment.", true);
+      return;
+    }
+    imageUrl = sb.storage.from('event-update-photos').getPublicUrl(path).data.publicUrl;
+  }
+
   const payload = {listing_id: id, type};
-  if (type === 'ran_out' && quantity !== null && quantity !== undefined) payload.quantity = quantity;
+  if (type === 'ran_out' && options.quantity !== null && options.quantity !== undefined) payload.quantity = options.quantity;
+  if (imageUrl) payload.image_url = imageUrl;
+  if (options.instaUrl) payload.insta_url = options.instaUrl;
+
   const { data, error } = await sb.from('event_updates').insert(payload).select('id').single();
   if (error){
-    showToast("Couldn't submit your report. Try again in a moment.", true);
+    showToast("Couldn't submit your update. Try again in a moment.", true);
     return;
   }
   reportedByMe[key] = {rowId: data.id, quantity: payload.quantity ?? null};
@@ -627,9 +719,10 @@ async function submitReport(id, type, quantity){
   s[type] = (s[type] || 0) + 1;
   updateStats[id] = s;
   openReportPickerId = null;
-  ranOutQuantityPromptId = null;
+  pendingReport = null;
+  if (pendingPhoto[id]){ URL.revokeObjectURL(pendingPhoto[id].previewUrl); delete pendingPhoto[id]; }
   renderList();
-  showToast('Thanks for the update!');
+  showToast('Thanks for sharing your update!');
 }
 
 async function undoReport(id, type){
@@ -751,7 +844,8 @@ function renderList(){
     reportToggle.onclick = (e) => {
       e.stopPropagation();
       openReportPickerId = openReportPickerId === ev.id ? null : ev.id;
-      ranOutQuantityPromptId = null;
+      pendingReport = null;
+      if (pendingPhoto[ev.id]){ URL.revokeObjectURL(pendingPhoto[ev.id].previewUrl); delete pendingPhoto[ev.id]; }
       renderList();
     };
     card.querySelectorAll('.report-chip').forEach(chipEl => {
@@ -759,23 +853,66 @@ function renderList(){
         e.stopPropagation();
         if (chipEl.dataset.action === 'undo-report'){
           undoReport(ev.id, chipEl.dataset.type);
-        } else if (chipEl.dataset.type === 'ran_out'){
-          ranOutQuantityPromptId = ev.id;
-          renderList();
         } else {
-          submitReport(ev.id, chipEl.dataset.type);
+          pendingReport = {id: ev.id, type: chipEl.dataset.type};
+          renderList();
         }
       };
     });
     const quantityInput = card.querySelector('.quantity-input');
     if (quantityInput) quantityInput.onclick = (e) => e.stopPropagation();
-    const quantitySubmit = card.querySelector('.quantity-submit');
-    if (quantitySubmit){
-      quantitySubmit.onclick = (e) => {
+    const instaInput = card.querySelector('.insta-input');
+    if (instaInput) instaInput.onclick = (e) => e.stopPropagation();
+    const photoInput = card.querySelector('.photo-input');
+    if (photoInput){
+      photoInput.onclick = (e) => e.stopPropagation();
+      photoInput.onchange = async (e) => {
         e.stopPropagation();
-        const val = quantityInput.value.trim();
-        const quantity = val === '' ? null : parseInt(val, 10);
-        submitReport(ev.id, 'ran_out', quantity);
+        const file = photoInput.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')){
+          showToast('Please choose an image file.', true);
+          return;
+        }
+        try {
+          const blob = await compressImage(file);
+          pendingPhoto[ev.id] = {blob, previewUrl: URL.createObjectURL(blob)};
+          renderList();
+        } catch (err){
+          showToast("Couldn't process that photo. Try a different one.", true);
+        }
+      };
+    }
+    const photoRemove = card.querySelector('[data-action="remove-photo"]');
+    if (photoRemove){
+      photoRemove.onclick = (e) => {
+        e.stopPropagation();
+        if (pendingPhoto[ev.id]){ URL.revokeObjectURL(pendingPhoto[ev.id].previewUrl); delete pendingPhoto[ev.id]; }
+        renderList();
+      };
+    }
+    const detailsCancel = card.querySelector('[data-action="cancel-report"]');
+    if (detailsCancel){
+      detailsCancel.onclick = (e) => {
+        e.stopPropagation();
+        pendingReport = null;
+        if (pendingPhoto[ev.id]){ URL.revokeObjectURL(pendingPhoto[ev.id].previewUrl); delete pendingPhoto[ev.id]; }
+        renderList();
+      };
+    }
+    const detailsSubmit = card.querySelector('[data-action="submit-report"]');
+    if (detailsSubmit){
+      detailsSubmit.onclick = (e) => {
+        e.stopPropagation();
+        const type = pendingReport.type;
+        let quantity = null;
+        if (type === 'ran_out' && quantityInput){
+          const val = quantityInput.value.trim();
+          quantity = val === '' ? null : parseInt(val, 10);
+        }
+        const instaUrl = instaInput && instaInput.value.trim() ? instaInput.value.trim() : null;
+        const photo = pendingPhoto[ev.id];
+        submitReport(ev.id, type, {quantity, instaUrl, photoBlob: photo ? photo.blob : null});
       };
     }
 
