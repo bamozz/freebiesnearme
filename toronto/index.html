@@ -226,6 +226,7 @@
   }
   .report-chip:hover{border-color:var(--coral);color:var(--coral);}
   .report-chip.active{background:var(--coral);border-color:var(--coral);color:#fff;}
+  .chip-hint{font-weight:500;opacity:0.75;}
   .report-details{
     margin-top:8px;padding:12px;border:1px solid var(--line);border-radius:10px;
     background:#fff;display:flex;flex-direction:column;gap:10px;
@@ -613,7 +614,8 @@ function renderReportSection(ev){
       if (remaining.length){
         html += '<div class="report-picker">';
         remaining.forEach(t => {
-          html += `<span class="report-chip" data-type="${t.id}">${t.label}</span>`;
+          const hint = t.id === 'still_active' ? ' <span class="chip-hint">(you can add a photo)</span>' : '';
+          html += `<span class="report-chip" data-type="${t.id}">${t.label}${hint}</span>`;
         });
         html += '</div>';
       }
