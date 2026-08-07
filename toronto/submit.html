@@ -46,7 +46,7 @@
 
   .mode-toggle{display:flex;gap:10px;margin-bottom:26px;}
   .mode-btn{
-    flex:1;text-align:center;padding:14px;border-radius:10px;border:1.5px solid var(--line);
+    flex:1;text-align:left;padding:14px;border-radius:10px;border:1.5px solid var(--line);
     cursor:pointer;font-weight:700;font-size:14px;background:#fff;
   }
   .mode-btn.active{border-color:var(--teal);background:var(--teal-dim);color:var(--teal);}
@@ -187,7 +187,7 @@
 <footer>
   <a class="logo" href="index.html">Freebies Near Me</a>
   <a class="feedback-link" href="feedback.html">Feedback</a>
-  <p>Listings shown are submitted and reviewed by the Freebies Near Me team.</p>
+  <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
 </footer>
 
 <script>
@@ -197,16 +197,11 @@
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const LOCATIONS = [
-    'The Annex','Bloorcourt','Bloordale','Chinatown','Church-Wellesley Village',
-    'Corktown','Distillery District','Don Mills','Dundas West','CF Eaton Centre',
-    'Entertainment District','Etobicoke','Evergreen Brick Works','Exhibition Place',
-    'Financial District','Geary Avenue','Harbord Village','Harbourfront Centre',
-    'High Park','Kensington Market','King West','Leslieville','Liberty Village',
-    'Little Italy','Little Portugal','Nathan Phillips Square','North York','Old Town',
-    'Ontario Place','Ossington','Queen West','Regent Park','Riverdale','Riverside',
-    'Sankofa Square','Scarborough','CF Sherway Gardens','St. Lawrence Market',
-    'Toronto Islands','Trinity Bellwoods Park','Union Station','The Well','Wellington',
-    'Yonge and Eglinton','Yorkdale Mall','Yorkville',
+    'The Annex','Chinatown','Church-Wellesley Village','Corktown','Distillery District',
+    'CF Eaton Centre','Entertainment District','Financial District','Harbord Village',
+    'Harbourfront Centre','Kensington Market','King West','Nathan Phillips Square',
+    'Old Town','Queen West','Regent Park','Sankofa Square','St. Lawrence Market',
+    'Toronto Islands','Union Station','The Well','Wellington','Yonge and Eglinton','Yorkville',
   ];
   const locationSelect = document.getElementById('location');
   LOCATIONS.forEach(n => {

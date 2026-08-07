@@ -36,9 +36,9 @@
   }
   .nav-inner{
     max-width:1220px;margin:0 auto;padding:16px 28px;
-    display:flex;align-items:center;justify-content:space-between;
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;row-gap:10px;
   }
-  .logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);white-space:nowrap;}
   .nav-links{display:flex;gap:26px;font-size:14px;font-weight:600;color:var(--muted);}
   .nav-links a{text-decoration:none;color:inherit;}
   .nav-links .on{color:var(--ink);}
@@ -48,7 +48,27 @@
     padding:9px 16px;border-radius:20px;cursor:pointer;white-space:nowrap;
     text-decoration:none;
   }
-  @media (max-width:760px){ .nav-links{display:none;} }
+  .bottom-tabbar{display:none;}
+  @media (max-width:760px){
+    .logo{font-size:17px;}
+    .nav-links{display:none;}
+    html,body{height:100%;}
+    body{display:flex;flex-direction:column;}
+    .page-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+    .bottom-tabbar{
+      display:flex;flex-shrink:0;z-index:600;
+      background:rgba(255,255,255,0.96);backdrop-filter:blur(6px);
+      border-top:1px solid var(--line);
+      padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+    }
+    .tab-item{
+      flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+      font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;
+    }
+    .tab-item.on{color:var(--ink);}
+    .tab-icon{font-size:18px;line-height:1;display:flex;}
+    .tab-icon svg{width:1em;height:1em;}
+  }
 
   /* ===== Hero ===== */
   .hero{
@@ -64,12 +84,21 @@
     padding:14px 18px;min-width:210px;position:relative;
   }
   .hero-stat::before{
-    content:"";position:absolute;left:-7px;top:50%;transform:translateY(-50%);
+    content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);
     width:11px;height:11px;background:var(--paper);border:1px solid var(--line);border-radius:50%;
     clip-path:inset(0 0 0 50%);
   }
   .hero-stat .num{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--teal);}
   .hero-stat .lbl{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  /* ===== Search ===== */
+  .search-wrap{max-width:1220px;margin:18px auto 0;padding:0 28px;}
+  #searchInput{
+    width:100%;font-family:'Inter',sans-serif;font-size:14.5px;
+    padding:12px 16px;border-radius:10px;border:1px solid var(--line);
+    background:#fff;color:var(--ink);
+  }
+  #searchInput:focus{outline:none;border-color:var(--teal);}
 
   /* ===== Filter bar ===== */
   .filter-bar{
@@ -122,12 +151,10 @@
     content:"";position:absolute;top:50%;transform:translateY(-50%);
     width:13px;height:13px;background:var(--paper);border:1px solid var(--line);border-radius:50%;
   }
-  .card::before{left:-9.5px;clip-path:inset(0 0 0 50%);}
-  .card::after{right:-6.5px;clip-path:inset(0 50% 0 0);}
+  .card::before{left:-10.5px;clip-path:inset(0 0 0 50%);}
+  .card::after{right:-8.5px;clip-path:inset(0 50% 0 0);}
   .card:hover{box-shadow:0 3px 14px rgba(21,27,33,0.07);}
   .card.selected{border-color:var(--teal);box-shadow:0 0 0 2px var(--teal-dim);}
-  .card.status-live{border-left-color:var(--teal);}
-  .card.status-soon{border-left-color:var(--amber);}
   .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
   .tag-row{display:flex;gap:6px;flex-wrap:wrap;}
   .tag{
@@ -152,17 +179,21 @@
   .rating-row.locked .star.filled:hover{color:var(--amber);}
   .rating-label{font-size:11px;font-weight:700;color:var(--ink);margin-right:2px;}
   .rating-count{font-size:11px;color:var(--muted);}
+  .undo-link{font-size:11px;color:var(--coral);cursor:pointer;text-decoration:underline;font-weight:600;}
   .badge-group{display:flex;align-items:center;gap:6px;}
   .confirm-note{font-size:10.5px;font-weight:700;color:var(--teal);}
   .report-section{margin-top:8px;}
   .report-toggle{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;}
   .long-line-note{font-size:11px;color:#9C6B14;font-weight:600;margin-left:10px;}
+  .my-reports{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px;}
+  .my-reports-label{font-size:11px;font-weight:700;color:var(--ink);}
   .report-picker{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
   .report-chip{
     font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;
     border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--muted);
   }
   .report-chip:hover{border-color:var(--coral);color:var(--coral);}
+  .report-chip.active{background:var(--coral);border-color:var(--coral);color:#fff;}
   .card-meta{
     display:flex;justify-content:space-between;align-items:center;
     border-top:1.5px dashed #D6D1BF;padding-top:8px;margin-top:2px;
@@ -191,7 +222,7 @@
   .pin{
     width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
     display:flex;align-items:center;justify-content:center;position:relative;
-    border:2px solid #fff;box-shadow:0 1px 5px rgba(21,27,33,0.35);
+    border:2px solid #fff;box-shadow:0 1px 5px rgba(21,27,33,0.35);cursor:pointer;
   }
   .pin::before{
     content:"";position:absolute;top:4px;left:4px;width:4px;height:4px;
@@ -219,9 +250,21 @@
   footer .feedback-link{font-size:13px;font-weight:400;color:var(--muted);text-decoration:none;}
   footer .feedback-link:hover{color:var(--ink);}
   footer p{font-size:12px;color:var(--muted);margin:0;}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;font-size:13px;font-weight:600;
+    padding:11px 18px;border-radius:24px;box-shadow:0 6px 20px rgba(21,27,33,0.25);
+    z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;
+    max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.err{background:var(--coral);}
 </style>
 </head>
 <body>
+
+<div class="page-scroll">
 
 <nav>
   <div class="nav-inner">
@@ -244,9 +287,13 @@
   </div>
 </div>
 
+<div class="search-wrap">
+  <input type="text" id="searchInput" placeholder="Search by brand or location...">
+</div>
+
 <div class="filter-bar" id="statusFilters"></div>
 <div class="chip-row scroll" id="locationFilters"></div>
-<div class="chip-row" id="catFilters"></div>
+<div class="chip-row scroll" id="catFilters"></div>
 
 <div class="layout">
   <div class="sidebar">
@@ -258,8 +305,15 @@
 <footer>
   <a class="logo" href="index.html">Freebies Near Me</a>
   <a class="feedback-link" href="feedback.html">Feedback</a>
-  <p>Listings shown are submitted and reviewed by the Freebies Near Me team.</p>
+  <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
 </footer>
+
+</div><!-- /page-scroll -->
+
+<nav class="bottom-tabbar">
+  <a href="index.html" class="tab-item on"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m8.154 15.846l5.808-1.884l1.884-5.808l-5.807 1.885zm3.842-2.73q-.467 0-.79-.327q-.321-.327-.321-.793q0-.467.326-.79q.327-.321.793-.321q.467 0 .79.326q.322.327.322.793q0 .467-.327.79q-.327.322-.793.322M12.003 21q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.344 0 5.672-2.328T20 12t-2.328-5.672T12 4T6.328 6.328T4 12t2.328 5.672T12 20m0-8"/></svg></span>Explore</a>
+  <a href="map.html" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m15 19.923l-6-2.1l-3.958 1.53q-.384.143-.713-.083T4 18.634V6.404q0-.268.13-.489t.378-.307L9 4.077l6 2.1l3.958-1.53q.384-.143.713.054t.329.588v12.384q0 .287-.159.498q-.158.212-.426.298zm-.5-1.22v-11.7l-5-1.745v11.7zm1 0L19 17.55V5.7l-3.5 1.304zM5 18.3l3.5-1.342v-11.7L5 6.45zM15.5 7.004v11.7zm-7-1.746v11.7z"/></svg></span>Map</a>
+</nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -280,16 +334,11 @@ const catColor = Object.fromEntries(categories.map(c=>[c.id,c.color]));
 const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
 
 const LOCATIONS = [
-  'The Annex','Bloorcourt','Bloordale','Chinatown','Church-Wellesley Village',
-  'Corktown','Distillery District','Don Mills','Dundas West','CF Eaton Centre',
-  'Entertainment District','Etobicoke','Evergreen Brick Works','Exhibition Place',
-  'Financial District','Geary Avenue','Harbord Village','Harbourfront Centre',
-  'High Park','Kensington Market','King West','Leslieville','Liberty Village',
-  'Little Italy','Little Portugal','Nathan Phillips Square','North York','Old Town',
-  'Ontario Place','Ossington','Queen West','Regent Park','Riverdale','Riverside',
-  'Sankofa Square','Scarborough','CF Sherway Gardens','St. Lawrence Market',
-  'Toronto Islands','Trinity Bellwoods Park','Union Station','The Well','Wellington',
-  'Yonge and Eglinton','Yorkdale Mall','Yorkville',
+  'The Annex','Chinatown','Church-Wellesley Village','Corktown','Distillery District',
+  'CF Eaton Centre','Entertainment District','Financial District','Harbord Village',
+  'Harbourfront Centre','Kensington Market','King West','Nathan Phillips Square',
+  'Old Town','Queen West','Regent Park','Sankofa Square','St. Lawrence Market',
+  'Toronto Islands','Union Station','The Well','Wellington','Yonge and Eglinton','Yorkville',
 ];
 
 let events = [];
@@ -297,9 +346,10 @@ const locationOptions = ['All locations', ...LOCATIONS];
 let activeStatus = 'all';
 let activeCat = 'all';
 let activeLocation = 'All locations';
+let searchQuery = '';
 let selectedId = null;
 let ratingStats = {};
-let ratedByMe = new Set(JSON.parse(localStorage.getItem('ratedListings') || '[]'));
+let ratedByMe = JSON.parse(localStorage.getItem('ratedListings') || '{}');
 
 const REPORT_TYPES = [
   {id:'ran_out', label:'Ran out'},
@@ -309,8 +359,23 @@ const REPORT_TYPES = [
   {id:'still_active', label:'Still going'},
 ];
 let updateStats = {};
-let reportedByMe = new Set(JSON.parse(localStorage.getItem('reportedListings') || '[]'));
+let reportedByMe = JSON.parse(localStorage.getItem('reportedListings') || '{}');
 let openReportPickerId = null;
+
+let toastTimer = null;
+function showToast(message, isError){
+  let el = document.getElementById('toast');
+  if (!el){
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.className = 'toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = message;
+  el.className = 'toast show' + (isError ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.classList.remove('show'); }, 3000);
+}
 
 const map = new maplibregl.Map({
   style: 'https://tiles.openfreemap.org/styles/liberty',
@@ -395,27 +460,41 @@ function statusBadge(ev){
 function renderStars(ev){
   const stats = ratingStats[ev.id] || {sum:0, count:0};
   const avg = stats.count ? stats.sum / stats.count : 0;
-  const rated = ratedByMe.has(ev.id);
+  const rated = !!ratedByMe[ev.id];
   let starsHtml = '';
   for (let i=1; i<=5; i++){
     starsHtml += `<span class="star${i <= Math.round(avg) ? ' filled' : ''}" data-star="${i}">&#9733;</span>`;
   }
-  const countText = stats.count ? stats.count + (stats.count===1 ? ' person' : ' people') + ' found this worth it' : 'Worth it? Be the first to rate';
-  return `<div class="rating-row${rated ? ' locked' : ''}" data-id="${ev.id}"><span class="rating-label">Worthy?</span>${starsHtml}<span class="rating-count">${countText}</span></div>`;
+  const countText = stats.count ? stats.count + (stats.count===1 ? ' person' : ' people') + ' found this worth it' : 'Be the first to rate';
+  const undoLink = rated ? ' <span class="undo-link" data-action="undo-rating">Undo</span>' : '';
+  return `<div class="rating-row${rated ? ' locked' : ''}" data-id="${ev.id}"><span class="rating-label">Worthy?</span>${starsHtml}<span class="rating-count">${countText}${undoLink}</span></div>`;
 }
 
 function renderReportSection(ev){
   const longLine = (updateStats[ev.id] || {}).long_line || 0;
   const isOpen = openReportPickerId === ev.id;
+  const myTypes = REPORT_TYPES.filter(t => reportedByMe[ev.id + ':' + t.id]);
   let html = `<div class="report-section" data-id="${ev.id}">`;
+
+  if (myTypes.length){
+    html += '<div class="my-reports"><span class="my-reports-label">You reported:</span>';
+    myTypes.forEach(t => {
+      html += `<span class="report-chip active" data-type="${t.id}" data-action="undo-report">${t.label} &times;</span>`;
+    });
+    html += '</div>';
+  }
+
   html += `<span class="report-toggle">${isOpen ? 'Cancel' : 'Report an update'}</span>`;
   if (longLine > 0) html += `<span class="long-line-note">&#8987; Long line reported (${longLine})</span>`;
   if (isOpen){
-    html += '<div class="report-picker">';
-    REPORT_TYPES.forEach(t => {
-      html += `<span class="report-chip" data-type="${t.id}">${t.label}</span>`;
-    });
-    html += '</div>';
+    const remaining = REPORT_TYPES.filter(t => !reportedByMe[ev.id + ':' + t.id]);
+    if (remaining.length){
+      html += '<div class="report-picker">';
+      remaining.forEach(t => {
+        html += `<span class="report-chip" data-type="${t.id}">${t.label}</span>`;
+      });
+      html += '</div>';
+    }
   }
   html += '</div>';
   return html;
@@ -434,16 +513,40 @@ async function loadRatings(){
 }
 
 async function rateListing(id, stars){
-  if (ratedByMe.has(id)) return;
-  const { error } = await sb.from('ratings').insert({listing_id: id, stars});
-  if (error) return;
-  ratedByMe.add(id);
-  localStorage.setItem('ratedListings', JSON.stringify([...ratedByMe]));
+  if (ratedByMe[id]) return;
+  const { data, error } = await sb.from('ratings').insert({listing_id: id, stars}).select('id').single();
+  if (error){
+    showToast("Couldn't submit your rating. Try again in a moment.", true);
+    return;
+  }
+  ratedByMe[id] = {rowId: data.id, stars};
+  localStorage.setItem('ratedListings', JSON.stringify(ratedByMe));
   const s = ratingStats[id] || {sum:0, count:0};
   s.sum += stars;
   s.count += 1;
   ratingStats[id] = s;
   renderList();
+  showToast('Thanks for rating!');
+}
+
+async function unrateListing(id){
+  const entry = ratedByMe[id];
+  if (!entry) return;
+  const { data, error } = await sb.from('ratings').delete().eq('id', entry.rowId).select();
+  if (error || !data || !data.length){
+    showToast("Couldn't undo your rating. Try again in a moment.", true);
+    return;
+  }
+  delete ratedByMe[id];
+  localStorage.setItem('ratedListings', JSON.stringify(ratedByMe));
+  const s = ratingStats[id];
+  if (s){
+    s.sum -= entry.stars;
+    s.count -= 1;
+    if (s.count <= 0) delete ratingStats[id];
+  }
+  renderList();
+  showToast('Rating removed.');
 }
 
 async function loadUpdates(){
@@ -459,16 +562,37 @@ async function loadUpdates(){
 
 async function submitReport(id, type){
   const key = id + ':' + type;
-  if (reportedByMe.has(key)) return;
-  const { error } = await sb.from('event_updates').insert({listing_id: id, type});
-  if (error) return;
-  reportedByMe.add(key);
-  localStorage.setItem('reportedListings', JSON.stringify([...reportedByMe]));
+  if (reportedByMe[key]) return;
+  const { data, error } = await sb.from('event_updates').insert({listing_id: id, type}).select('id').single();
+  if (error){
+    showToast("Couldn't submit your report. Try again in a moment.", true);
+    return;
+  }
+  reportedByMe[key] = data.id;
+  localStorage.setItem('reportedListings', JSON.stringify(reportedByMe));
   const s = updateStats[id] || {};
   s[type] = (s[type] || 0) + 1;
   updateStats[id] = s;
   openReportPickerId = null;
   renderList();
+  showToast('Thanks for the update!');
+}
+
+async function undoReport(id, type){
+  const key = id + ':' + type;
+  const rowId = reportedByMe[key];
+  if (!rowId) return;
+  const { data, error } = await sb.from('event_updates').delete().eq('id', rowId).select();
+  if (error || !data || !data.length){
+    showToast("Couldn't undo your report. Try again in a moment.", true);
+    return;
+  }
+  delete reportedByMe[key];
+  localStorage.setItem('reportedListings', JSON.stringify(reportedByMe));
+  const s = updateStats[id];
+  if (s && s[type]) s[type] = Math.max(0, s[type] - 1);
+  renderList();
+  showToast('Report removed.');
 }
 
 function renderStatusFilters(){
@@ -519,7 +643,8 @@ function renderList(){
   const filtered = events.filter(ev =>
     (activeStatus==='all' || ev.status===activeStatus) &&
     (activeCat==='all' || ev.cat===activeCat) &&
-    (activeLocation==='All locations' || ev.location===activeLocation)
+    (activeLocation==='All locations' || ev.location===activeLocation) &&
+    (!searchQuery || ev.brand.toLowerCase().includes(searchQuery) || ev.location.toLowerCase().includes(searchQuery))
   );
 
   if (filtered.length===0){
@@ -529,7 +654,8 @@ function renderList(){
 
   filtered.forEach((ev, i)=>{
     const card = document.createElement('div');
-    card.className = 'card status-' + ev.status + (ev.sponsored ? ' sponsored' : '') + (selectedId===ev.id ? ' selected' : '');
+    card.className = 'card' + (ev.sponsored ? ' sponsored' : '') + (selectedId===ev.id ? ' selected' : '');
+    if (!ev.sponsored) card.style.borderLeftColor = catColor[ev.cat];
     const a = availInfo(ev);
     card.innerHTML = `
       ${ev.sponsored ? '<div class="sponsored-flag">Sponsored</div>' : ''}
@@ -558,6 +684,12 @@ function renderList(){
           rateListing(ev.id, parseInt(starEl.dataset.star, 10));
         };
       });
+    } else {
+      const undoLink = ratingRow.querySelector('.undo-link');
+      if (undoLink) undoLink.onclick = (e) => {
+        e.stopPropagation();
+        unrateListing(ev.id);
+      };
     }
 
     const reportToggle = card.querySelector('.report-toggle');
@@ -569,7 +701,11 @@ function renderList(){
     card.querySelectorAll('.report-chip').forEach(chipEl => {
       chipEl.onclick = (e) => {
         e.stopPropagation();
-        submitReport(ev.id, chipEl.dataset.type);
+        if (chipEl.dataset.action === 'undo-report'){
+          undoReport(ev.id, chipEl.dataset.type);
+        } else {
+          submitReport(ev.id, chipEl.dataset.type);
+        }
       };
     });
 
@@ -673,8 +809,16 @@ async function loadListings(){
   return true;
 }
 
+async function ensureAnonSession(){
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) return;
+  const { error } = await sb.auth.signInAnonymously();
+  if (error) console.error('Anonymous sign-in failed:', error.message);
+}
+
 async function init(){
   document.getElementById('list').innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">Loading giveaways...</div>';
+  await ensureAnonSession();
   const [listingsOk] = await Promise.all([loadListings(), loadRatings(), loadUpdates()]);
   if (!listingsOk){
     document.getElementById('list').innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">Could not load listings right now.</div>';
@@ -688,6 +832,10 @@ async function init(){
 renderStatusFilters();
 renderLocationFilters();
 renderCatFilters();
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  searchQuery = e.target.value.trim().toLowerCase();
+  renderList();
+});
 init();
 </script>
 </body>
