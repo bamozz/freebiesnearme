@@ -553,10 +553,11 @@ function addMarkersToMap(){
 }
 
 function renderMetaTimes(ev){
+  const place = ev.address ? ev.address + ', ' + ev.location : ev.location;
   if (ev.timeWindows.length > 1){
-    return `<span>${ev.location}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
+    return `<span>${place}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
   }
-  return `<span>${ev.location} &middot; ${ev.timeWindows[0]}</span>`;
+  return `<span>${place} &middot; ${ev.timeWindows[0]}</span>`;
 }
 
 function availInfo(ev){
