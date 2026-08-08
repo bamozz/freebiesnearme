@@ -176,9 +176,25 @@ function statusFromTimes(start, end){
   return 'live';
 }
 
-function hasClockTime(d){ return d.getHours() !== 0 || d.getMinutes() !== 0; }
-function formatDay(d){ return d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}).replace(',', ''); }
-function formatClock(d){ return d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}).toLowerCase().replace(' ',''); }
+// Listing times are always displayed as Toronto local time, regardless of
+// the viewer's own device timezone, since every event happens in Toronto.
+const TORONTO_TZ = 'America/Toronto';
+
+function torontoParts(d){
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: TORONTO_TZ, hourCycle: 'h23',
+    hour: '2-digit', minute: '2-digit',
+  }).formatToParts(d).reduce((acc,p) => { acc[p.type] = p.value; return acc; }, {});
+  return {hour: Number(parts.hour), minute: Number(parts.minute)};
+}
+
+function hasClockTime(d){
+  const {hour, minute} = torontoParts(d);
+  return hour !== 0 || minute !== 0;
+}
+function formatDay(d){ return d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', timeZone: TORONTO_TZ}).replace(',', ''); }
+function formatClock(d){ return d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', timeZone: TORONTO_TZ}).toLowerCase().replace(' ',''); }
+function torontoDateKey(d){ return d.toLocaleDateString('en-CA', {timeZone: TORONTO_TZ}); }
 
 function formatTimeRange(start, end){
   const s = new Date(start);
@@ -187,7 +203,7 @@ function formatTimeRange(start, end){
   if (!end) return sHasTime ? sDay + ', from ' + formatClock(s) : sDay;
   const e = new Date(end);
   const eHasTime = hasClockTime(e);
-  const sameDay = s.toDateString() === e.toDateString();
+  const sameDay = torontoDateKey(s) === torontoDateKey(e);
   if (sameDay){
     if (sHasTime && eHasTime) return sDay + ', ' + formatClock(s) + ' to ' + formatClock(e);
     if (sHasTime) return sDay + ', from ' + formatClock(s);
