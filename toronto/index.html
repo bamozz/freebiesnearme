@@ -550,9 +550,7 @@ function renderMetaTimes(ev){
 }
 
 function availInfo(ev){
-  if (!ev.total){
-    return {cls:'ok', text:'Quantity not specified'};
-  }
+  if (!ev.total) return null;
   const left = ev.total - ev.claimed;
   const pct = left/ev.total;
   const cls = pct <= 0.15 ? 'low' : 'ok';
@@ -918,7 +916,7 @@ function renderList(){
       ${renderStars(ev)}
       <div class="card-meta">
         ${renderMetaTimes(ev)}
-        <span class="avail ${a.cls}">${a.text}</span>
+        ${a ? `<span class="avail ${a.cls}">${a.text}</span>` : ''}
       </div>
       ${renderReportSection(ev)}
     `;
