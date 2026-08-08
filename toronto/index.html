@@ -281,6 +281,13 @@
     font-size:11.5px;color:var(--muted);
   }
   .avail{font-weight:700;}
+  .mobile-directions-link{display:none;}
+  @media (max-width:920px){
+    .mobile-directions-link{
+      display:inline-block;margin-top:8px;font-size:12px;font-weight:700;
+      color:var(--teal);text-decoration:none;
+    }
+  }
   .ad-inquire-link{color:var(--muted);font-weight:700;text-decoration:none;}
   .ad-inquire-link:hover{color:var(--ink);text-decoration:underline;}
   .avail.low{color:var(--coral);}
@@ -526,15 +533,19 @@ function pinElement(ev){
   return wrap;
 }
 
-function buildPopup(ev){
-  const directionsQuery = ev.address
+function directionsUrl(ev){
+  const query = ev.address
     ? encodeURIComponent(ev.address + ', ' + ev.location + ', Toronto, ON')
     : ev.lat + ',' + ev.lng;
+  return `https://www.google.com/maps/search/?api=1&query=${query}`;
+}
+
+function buildPopup(ev){
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${ev.what}</div>
   <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.timeWindows.join(' &middot; ')} &middot; ${ev.location}</div>
-  <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
+  <a class="popup-btn" href="${directionsUrl(ev)}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
 let activePopup = null;
@@ -938,6 +949,7 @@ function renderList(){
         ${renderMetaTimes(ev)}
         ${a ? `<span class="avail ${a.cls}">${a.text}</span>` : ''}
       </div>
+      <a class="mobile-directions-link" href="${directionsUrl(ev)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">&#128205; Get directions</a>
       ${renderReportSection(ev)}
     `;
     card.onclick = ()=>selectCard(ev.id, true);
