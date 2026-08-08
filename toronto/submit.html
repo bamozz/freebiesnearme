@@ -333,9 +333,28 @@
   }
   renderPhotoField();
 
+  function getTimezoneOffsetMs(timeZone, date){
+    const dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone, hourCycle: 'h23',
+      year:'numeric', month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', second:'2-digit',
+    });
+    const parts = dtf.formatToParts(date).reduce((acc,p) => { acc[p.type] = p.value; return acc; }, {});
+    const asUTC = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second);
+    return asUTC - date.getTime();
+  }
+
   function combineDateTime(dateVal, timeVal){
+    // Every event happens in Toronto regardless of what timezone the
+    // submitter's own device is set to, so the date/time inputs are always
+    // interpreted as America/Toronto wall clock time (correctly handling the
+    // EST/EDT switch) rather than the browser's local timezone.
     if (!dateVal) return null;
-    return new Date(dateVal + 'T' + (timeVal || '00:00')).toISOString();
+    const [y, mo, d] = dateVal.split('-').map(Number);
+    const [h, mi] = (timeVal || '00:00').split(':').map(Number);
+    const guess = Date.UTC(y, mo - 1, d, h, mi);
+    const offset = getTimezoneOffsetMs('America/Toronto', new Date(guess));
+    return new Date(guess - offset).toISOString();
   }
 
   let mode = 'brand';
