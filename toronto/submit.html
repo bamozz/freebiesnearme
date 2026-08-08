@@ -648,15 +648,19 @@
       insta_url: instaUrlVal,
     };
 
-    const payloads = validEntries.flatMap(loc => validDatetimes.map(dt => ({
-      ...basePayload,
-      neighbourhood: loc.locationSelect.value || null,
-      address: loc.addressInput.value || null,
-      lat: loc.lat,
-      lng: loc.lng,
-      start_time: combineDateTime(dt.startDateInput.value, dt.startTimeInput.value),
-      end_time: combineDateTime(dt.endDateInput.value, dt.endTimeInput.value),
-    })));
+    const payloads = validEntries.flatMap(loc => {
+      const groupId = validDatetimes.length > 1 ? crypto.randomUUID() : null;
+      return validDatetimes.map(dt => ({
+        ...basePayload,
+        neighbourhood: loc.locationSelect.value || null,
+        address: loc.addressInput.value || null,
+        lat: loc.lat,
+        lng: loc.lng,
+        start_time: combineDateTime(dt.startDateInput.value, dt.startTimeInput.value),
+        end_time: combineDateTime(dt.endDateInput.value, dt.endTimeInput.value),
+        group_id: groupId,
+      }));
+    });
 
     const { error } = await sb.from('listings').insert(payloads);
 

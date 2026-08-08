@@ -163,7 +163,7 @@ function buildPopup(ev){
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${ev.what}</div>
-  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.time} &middot; ${ev.location}</div>
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.timeWindows.join(' &middot; ')} &middot; ${ev.location}</div>
   <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
@@ -199,26 +199,45 @@ function formatTimeRange(start, end){
   return startPart + ' - ' + endPart;
 }
 
-function transformRow(row){
+function groupRows(rows){
+  const groups = {};
+  const order = [];
+  rows.forEach(row => {
+    const key = row.group_id || ('single-' + row.id);
+    if (!groups[key]){ groups[key] = []; order.push(key); }
+    groups[key].push(row);
+  });
+  return order.map(key => groups[key].sort((a,b) => new Date(a.start_time) - new Date(b.start_time)));
+}
+
+function statusFromWindows(rows){
+  const statuses = rows.map(r => statusFromTimes(r.start_time, r.end_time));
+  if (statuses.includes('live')) return 'live';
+  if (statuses.every(s => s === 'ended')) return 'ended';
+  return 'soon';
+}
+
+function transformGroup(rows){
+  const primary = rows[0];
   return {
-    id: row.id,
-    brand: row.brand,
-    cat: row.category,
-    location: row.neighbourhood,
-    address: row.address,
-    lat: row.lat,
-    lng: row.lng,
-    what: row.what,
-    time: formatTimeRange(row.start_time, row.end_time),
-    sponsored: row.sponsored,
-    status: statusFromTimes(row.start_time, row.end_time),
+    id: primary.id,
+    brand: primary.brand,
+    cat: primary.category,
+    location: primary.neighbourhood,
+    address: primary.address,
+    lat: primary.lat,
+    lng: primary.lng,
+    what: primary.what,
+    timeWindows: rows.map(r => formatTimeRange(r.start_time, r.end_time)),
+    sponsored: primary.sponsored,
+    status: statusFromWindows(rows),
   };
 }
 
 async function loadListings(){
   const { data, error } = await sb.from('listings').select('*').eq('moderation_status', 'approved');
   if (error) return;
-  const events = data.map(transformRow);
+  const events = groupRows(data).map(transformGroup);
   document.getElementById('liveCount').textContent = events.filter(e=>e.status==='live').length;
   events.forEach(ev=>{
     const popup = new maplibregl.Popup({offset:22}).setHTML(buildPopup(ev));
