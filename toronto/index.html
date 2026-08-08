@@ -1076,18 +1076,40 @@ function selectCard(id, panMap){
   if (cardEl) cardEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
+// Listing times are always displayed as Toronto local time, regardless of
+// the viewer's own device timezone, since every event happens in Toronto.
+const TORONTO_TZ = 'America/Toronto';
+
+function getTimezoneOffsetMs(timeZone, date){
+  const dtf = new Intl.DateTimeFormat('en-US', {
+    timeZone, hourCycle: 'h23',
+    year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit', second:'2-digit',
+  });
+  const parts = dtf.formatToParts(date).reduce((acc,p) => { acc[p.type] = p.value; return acc; }, {});
+  const asUTC = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second);
+  return asUTC - date.getTime();
+}
+
+// When a listing has no end time, assume it wraps up at 9pm Toronto time on
+// its start date rather than treating it as live indefinitely.
+function assumedEnd(start){
+  const s = new Date(start);
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: TORONTO_TZ, year:'numeric', month:'2-digit', day:'2-digit',
+  }).formatToParts(s).reduce((acc,p) => { acc[p.type] = p.value; return acc; }, {});
+  const guess = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), 21, 0);
+  const offset = getTimezoneOffsetMs(TORONTO_TZ, new Date(guess));
+  return new Date(guess - offset).toISOString();
+}
+
 function statusFromTimes(start, end){
   const now = new Date();
-  if (!end) return now < new Date(start) ? 'soon' : 'live';
-  const s = new Date(start), e = new Date(end);
+  const s = new Date(start), e = new Date(end || assumedEnd(start));
   if (now < s) return 'soon';
   if (now > e) return 'ended';
   return 'live';
 }
-
-// Listing times are always displayed as Toronto local time, regardless of
-// the viewer's own device timezone, since every event happens in Toronto.
-const TORONTO_TZ = 'America/Toronto';
 
 function torontoParts(d){
   const parts = new Intl.DateTimeFormat('en-US', {
@@ -1121,11 +1143,7 @@ function formatTimeRange(start, end){
   const sDay = formatDay(s);
   const sHasTime = hasClockTime(s);
 
-  if (!end){
-    return sHasTime ? sDay + ', from ' + formatClock(s) : sDay;
-  }
-
-  const e = new Date(end);
+  const e = new Date(end || assumedEnd(start));
   const eHasTime = hasClockTime(e);
   const sameDay = torontoDateKey(s) === torontoDateKey(e);
   const dayPart = sameDay ? sDay : sDay + ' - ' + formatDay(e);
