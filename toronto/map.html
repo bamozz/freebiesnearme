@@ -282,7 +282,7 @@ function transformGroup(rows){
 async function loadListings(){
   const { data, error } = await sb.from('listings').select('*').eq('moderation_status', 'approved');
   if (error) return;
-  const events = groupRows(data).map(transformGroup);
+  const events = groupRows(data).map(transformGroup).filter(ev => ev.status !== 'ended');
   document.getElementById('liveCount').textContent = events.filter(e=>e.status==='live').length;
   events.forEach(ev=>{
     const popup = new maplibregl.Popup({offset:22}).setHTML(buildPopup(ev));

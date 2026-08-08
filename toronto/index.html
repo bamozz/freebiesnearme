@@ -901,6 +901,7 @@ function renderList(){
   const wrap = document.getElementById('list');
   wrap.innerHTML = '';
   const filtered = events.filter(ev =>
+    ev.status !== 'ended' &&
     (activeStatus==='all' || ev.status===activeStatus) &&
     (activeCat==='all' || ev.cat===activeCat) &&
     (activeLocation==='All locations' || ev.location===activeLocation) &&
