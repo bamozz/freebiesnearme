@@ -116,6 +116,17 @@
     margin-top:8px;display:inline-block;
   }
 
+  .datetime-entry{
+    border:1px solid var(--line);border-radius:10px;padding:12px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .datetime-entries{display:flex;flex-direction:column;gap:10px;}
+  .remove-datetime-btn{font-size:12px;font-weight:700;color:var(--coral);cursor:pointer;white-space:nowrap;align-self:flex-start;}
+  .add-datetime-btn{
+    font-size:13px;font-weight:700;color:var(--teal);cursor:pointer;
+    margin-top:8px;display:inline-block;
+  }
+
   #pickMap{height:260px;border-radius:10px;border:1px solid var(--line);margin-top:2px;overflow:hidden;}
   .map-hint{font-size:11.5px;color:var(--muted);font-weight:500;margin-top:4px;}
   .coords{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--teal);margin-top:4px;}
@@ -180,20 +191,10 @@
       <span class="map-hint">Selecting an address drops a pin automatically. Click the map to fine-tune whichever address you're currently editing.</span>
     </label>
 
-    <div class="row2">
-      <label>Starts
-        <div class="date-time-row">
-          <input type="date" id="startDate" required>
-          <input type="time" id="startTimeOfDay">
-        </div>
-      </label>
-      <label id="endLabel">Ends
-        <div class="date-time-row">
-          <input type="date" id="endDate" required>
-          <input type="time" id="endTimeOfDay">
-        </div>
-      </label>
-    </div>
+    <label>Date &amp; time<span style="font-weight:500;color:var(--muted);text-transform:none;"> add more than one if hours change by day</span>
+      <div class="datetime-entries" id="datetimeEntries"></div>
+      <span class="add-datetime-btn" id="addDatetimeBtn">+ Add another date &amp; time</span>
+    </label>
 
     <label class="optional" id="totalLabel">How many are available in total
       <input type="number" id="totalCount" min="1" placeholder="e.g. 150">
@@ -517,20 +518,76 @@
 
   activeEntry = createLocationEntry();
 
+  let datetimeEntries = [];
+
+  function updateDatetimeRemoveButtons(){
+    datetimeEntries.forEach(en => {
+      en.removeBtn.style.display = datetimeEntries.length > 1 ? 'inline' : 'none';
+    });
+  }
+
+  function removeDatetimeEntry(entry){
+    if (datetimeEntries.length <= 1) return;
+    entry.el.remove();
+    datetimeEntries = datetimeEntries.filter(en => en !== entry);
+    updateDatetimeRemoveButtons();
+  }
+
+  function createDatetimeEntry(){
+    const wrap = document.createElement('div');
+    wrap.className = 'datetime-entry';
+    wrap.innerHTML = `
+      <div class="row2">
+        <label>Starts
+          <div class="date-time-row">
+            <input type="date" class="start-date" required>
+            <input type="time" class="start-time-of-day">
+          </div>
+        </label>
+        <label>Ends
+          <div class="date-time-row">
+            <input type="date" class="end-date"${mode === 'brand' ? ' required' : ''}>
+            <input type="time" class="end-time-of-day">
+          </div>
+        </label>
+      </div>
+      <span class="remove-datetime-btn">&times; Remove</span>
+    `;
+    document.getElementById('datetimeEntries').appendChild(wrap);
+
+    const entry = {
+      el: wrap,
+      startDateInput: wrap.querySelector('.start-date'),
+      startTimeInput: wrap.querySelector('.start-time-of-day'),
+      endDateInput: wrap.querySelector('.end-date'),
+      endTimeInput: wrap.querySelector('.end-time-of-day'),
+      removeBtn: wrap.querySelector('.remove-datetime-btn'),
+    };
+    entry.removeBtn.onclick = () => removeDatetimeEntry(entry);
+    datetimeEntries.push(entry);
+    updateDatetimeRemoveButtons();
+    return entry;
+  }
+
+  document.getElementById('addDatetimeBtn').onclick = () => {
+    createDatetimeEntry();
+  };
+
+  createDatetimeEntry();
+
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.onclick = () => {
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       mode = btn.dataset.mode;
       const totalInput = document.getElementById('totalCount');
-      const endDateInput = document.getElementById('endDate');
       const note = document.getElementById('modeNote');
       if (mode === 'hunter') {
         totalInput.removeAttribute('required');
-        endDateInput.removeAttribute('required');
+        datetimeEntries.forEach(en => en.endDateInput.removeAttribute('required'));
         note.textContent = 'Not sure on exact numbers or end time? Give your best guess, or leave it blank.';
       } else {
-        endDateInput.setAttribute('required', 'required');
+        datetimeEntries.forEach(en => en.endDateInput.setAttribute('required', 'required'));
         note.textContent = 'Brand submissions with an exact quantity and time window get reviewed and listed fastest.';
       }
     };
@@ -545,6 +602,13 @@
     if (!validEntries.length) {
       resultEl.className = 'result err';
       resultEl.textContent = 'Please select at least one address so we know where this is.';
+      return;
+    }
+
+    const validDatetimes = datetimeEntries.filter(en => en.startDateInput.value);
+    if (!validDatetimes.length) {
+      resultEl.className = 'result err';
+      resultEl.textContent = 'Please add at least one date and time.';
       return;
     }
 
@@ -565,18 +629,12 @@
       imageUrl = sb.storage.from('listing-photos').getPublicUrl(path).data.publicUrl;
     }
 
-    const startDateVal = document.getElementById('startDate').value;
-    const startTimeVal = document.getElementById('startTimeOfDay').value;
-    const endDateVal = document.getElementById('endDate').value;
-    const endTimeVal = document.getElementById('endTimeOfDay').value;
     const instaUrlVal = document.getElementById('instaUrl').value.trim() || null;
 
     const basePayload = {
       brand: document.getElementById('brand').value,
       category: document.getElementById('category').value,
       what: document.getElementById('what').value,
-      start_time: combineDateTime(startDateVal, startTimeVal),
-      end_time: combineDateTime(endDateVal, endTimeVal),
       total_count: document.getElementById('totalCount').value || null,
       claimed_count: 0,
       submitted_by: mode,
@@ -586,13 +644,15 @@
       insta_url: instaUrlVal,
     };
 
-    const payloads = validEntries.map(en => ({
+    const payloads = validEntries.flatMap(loc => validDatetimes.map(dt => ({
       ...basePayload,
-      neighbourhood: en.locationSelect.value || null,
-      address: en.addressInput.value || null,
-      lat: en.lat,
-      lng: en.lng,
-    }));
+      neighbourhood: loc.locationSelect.value || null,
+      address: loc.addressInput.value || null,
+      lat: loc.lat,
+      lng: loc.lng,
+      start_time: combineDateTime(dt.startDateInput.value, dt.startTimeInput.value),
+      end_time: combineDateTime(dt.endDateInput.value, dt.endTimeInput.value),
+    })));
 
     const { error } = await sb.from('listings').insert(payloads);
 
@@ -604,14 +664,17 @@
       resultEl.textContent = 'Something went wrong: ' + error.message;
     } else {
       resultEl.className = 'result ok';
-      resultEl.textContent = validEntries.length > 1
-        ? `Thanks, all ${validEntries.length} locations are in for review.`
+      resultEl.textContent = payloads.length > 1
+        ? `Thanks, all ${payloads.length} listings are in for review.`
         : 'Thanks, this is in for review and will show up on the map once approved.';
       document.getElementById('submitForm').reset();
       locationEntries.forEach(en => { if (en.marker) en.marker.remove(); });
       document.getElementById('locationEntries').innerHTML = '';
       locationEntries = [];
       activeEntry = createLocationEntry();
+      document.getElementById('datetimeEntries').innerHTML = '';
+      datetimeEntries = [];
+      createDatetimeEntry();
       if (pendingPhoto){ URL.revokeObjectURL(pendingPhoto.previewUrl); pendingPhoto = null; }
       renderPhotoField();
     }
