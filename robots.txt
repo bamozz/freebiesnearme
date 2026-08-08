@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://freebiesnearme.app/sitemap.xml
