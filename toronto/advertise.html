@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759" crossorigin="anonymous"></script>
+<title>Advertise with Us | Freebies Near Me</title>
+<meta name="description" content="Get your brand in front of people in Toronto actively looking for free giveaways and pop up events. Sponsored listings and featured placements available.">
+<link rel="icon" type="image/svg+xml" href="/toronto/assets/favicon.svg">
+<link rel="canonical" href="https://freebiesnearme.app/toronto/advertise">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Freebies Near Me">
+<meta property="og:url" content="https://freebiesnearme.app/toronto/advertise">
+<meta property="og:title" content="Advertise with Us">
+<meta property="og:description" content="Get your brand in front of people in Toronto actively looking for free giveaways and pop up events. Sponsored listings and featured placements available.">
+<meta property="og:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Advertise with Us">
+<meta name="twitter:description" content="Get your brand in front of people in Toronto actively looking for free giveaways and pop up events. Sponsored listings and featured placements available.">
+<meta name="twitter:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --paper:#FEFCF6; --paper-alt:#F5F2E8; --ink:#151B21; --muted:#6B7280;
+    --line:#E4E8E5; --teal:#0E9C82; --teal-dim:#E3F5F0;
+    --amber:#F0A430; --amber-dim:#FCEED8; --coral:#EF5B4E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;}
+  .display{font-family:'Space Grotesk',sans-serif;}
+
+  nav{
+    border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(254,252,246,0.92);
+    backdrop-filter:blur(6px);z-index:500;
+  }
+  .nav-inner{
+    max-width:640px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);}
+  .btn-solid{
+    background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;
+    padding:9px 16px;border-radius:20px;cursor:pointer;white-space:nowrap;
+    text-decoration:none;
+  }
+
+  footer{
+    margin-top:34px;border-top:1px solid var(--line);background:#fff;
+  }
+  .footer-inner{
+    max-width:640px;margin:0 auto;padding:24px 24px 40px;
+    display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+  }
+  footer .logo{font-size:16px;}
+  footer .feedback-link{font-size:13px;font-weight:400;color:var(--muted);text-decoration:none;}
+  footer .feedback-link:hover{color:var(--ink);}
+  footer p{font-size:12px;color:var(--muted);margin:0;}
+
+  .wrap{max-width:640px;margin:0 auto;padding:36px 24px 60px;}
+  h1{font-size:clamp(26px,4vw,34px);margin:0 0 6px;}
+  .sub{font-size:14.5px;color:var(--muted);margin:0 0 28px;max-width:480px;}
+
+  .perks{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+  .perk{
+    display:flex;gap:10px;align-items:flex-start;padding:12px 14px;
+    border:1.5px solid var(--line);border-radius:10px;background:#fff;
+  }
+  .perk-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);margin-top:6px;flex-shrink:0;}
+  .perk strong{font-size:13.5px;display:block;margin-bottom:2px;}
+  .perk span{font-size:12.5px;color:var(--muted);}
+
+  form{display:flex;flex-direction:column;gap:16px;}
+  label{font-size:12.5px;font-weight:700;color:var(--ink);display:flex;flex-direction:column;gap:6px;}
+  label.optional::after{content:" (optional)";font-weight:500;color:var(--muted);text-transform:none;}
+  input,textarea,select{
+    font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;border-radius:8px;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:90px;}
+  textarea.field-error, input.field-error{border-color:var(--coral);background:#FDE8E6;}
+  .field-error-msg{font-size:12px;font-weight:600;color:var(--coral);display:none;}
+  .field-error-msg.show{display:block;}
+
+  .submit-btn{
+    margin-top:8px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;
+    padding:13px;border:none;border-radius:10px;cursor:pointer;
+  }
+  .submit-btn:disabled{opacity:0.5;cursor:default;}
+
+  .result{
+    margin-top:18px;padding:14px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none;
+  }
+  .result.ok{background:var(--teal-dim);color:var(--teal);display:block;}
+  .result.err{background:#FDE8E6;color:var(--coral);display:block;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="/toronto">Freebies Near Me</a>
+    <a class="btn-solid" href="/toronto/submit">Submit an event</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1 class="display">Advertise with us</h1>
+  <p class="sub">Get your brand in front of people in Toronto who are actively looking for free things to do, right now.</p>
+
+  <div class="perks">
+    <div class="perk">
+      <span class="perk-dot"></span>
+      <div><strong>Sponsored listing</strong><span>Your event gets an amber highlight, a Sponsored flag, and a standout pin on the map.</span></div>
+    </div>
+    <div class="perk">
+      <span class="perk-dot"></span>
+      <div><strong>Featured ad card</strong><span>A dedicated card placed directly in the explore feed, seen by everyone browsing that day.</span></div>
+    </div>
+  </div>
+
+  <form id="advertiseForm">
+    <label>Brand or business name
+      <input type="text" id="brand" required>
+    </label>
+
+    <label>Your email
+      <input type="email" id="contact" required placeholder="So we can send you rates and next steps">
+    </label>
+
+    <label>Which placement are you interested in?
+      <select id="placement">
+        <option value="Sponsored listing">Sponsored listing</option>
+        <option value="Featured ad card">Featured ad card</option>
+        <option value="Not sure yet">Not sure yet</option>
+      </select>
+    </label>
+
+    <label>Tell us about your brand
+      <textarea id="message" placeholder="What are you looking to promote, and when?"></textarea>
+      <span class="field-error-msg" id="messageError">Tell us a bit about what you're looking to promote.</span>
+    </label>
+
+    <button type="submit" class="submit-btn" id="submitBtn">Send inquiry</button>
+    <div class="result" id="result"></div>
+  </form>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a class="logo" href="/toronto">Freebies Near Me</a>
+    <a class="feedback-link" href="/toronto/feedback">Feedback</a>
+    <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
+  </div>
+</footer>
+
+<script>
+  const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const messageInput = document.getElementById('message');
+  const messageError = document.getElementById('messageError');
+  const submitBtn = document.getElementById('submitBtn');
+
+  messageInput.addEventListener('input', () => {
+    if (messageInput.value.trim()){
+      messageInput.classList.remove('field-error');
+      messageError.classList.remove('show');
+    }
+  });
+
+  document.getElementById('advertiseForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const resultEl = document.getElementById('result');
+    resultEl.className = 'result';
+
+    const message = messageInput.value.trim();
+    if (!message){
+      messageInput.classList.add('field-error');
+      messageError.classList.add('show');
+      messageInput.focus();
+      messageInput.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    messageInput.classList.remove('field-error');
+    messageError.classList.remove('show');
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    const placement = document.getElementById('placement').value;
+    const payload = {
+      type: 'advertise',
+      listing_ref: document.getElementById('brand').value,
+      message: `Placement interest: ${placement}\n\n${message}`,
+      correction: null,
+      contact: document.getElementById('contact').value,
+    };
+
+    const { error } = await sb.from('feedback').insert(payload);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send inquiry';
+
+    if (error) {
+      resultEl.className = 'result err';
+      resultEl.textContent = 'Something went wrong: ' + error.message;
+    } else {
+      resultEl.className = 'result ok';
+      resultEl.textContent = "Thanks, we'll be in touch about rates and next steps.";
+      document.getElementById('advertiseForm').reset();
+    }
+  });
+</script>
+</body>
+</html>

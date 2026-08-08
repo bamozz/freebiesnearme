@@ -281,6 +281,8 @@
     font-size:11.5px;color:var(--muted);
   }
   .avail{font-weight:700;}
+  .ad-inquire-link{color:var(--muted);font-weight:700;text-decoration:none;}
+  .ad-inquire-link:hover{color:var(--ink);text-decoration:underline;}
   .avail.low{color:var(--coral);}
   .avail.ok{color:var(--teal);}
 
@@ -427,7 +429,7 @@ const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
 const LOCATIONS = [
   'The Annex','Chinatown','Church-Wellesley Village','Corktown','Danforth','Distillery District',
   'CF Eaton Centre','Entertainment District','Financial District','Harbord Village',
-  'Harbourfront Centre','Kensington Market','King West','Nathan Phillips Square',
+  'Harbourfront','Kensington Market','King West','Nathan Phillips Square',
   'Old Town','Queen West','Regent Park','Sankofa Square','St. Lawrence Market',
   'Union Station','The Well','Yonge and Eglinton','Yorkville',
 ];
@@ -1024,7 +1026,7 @@ function renderList(){
         <div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>
         <div class="card-what">This space is claimable</div>
         <div class="card-brand">Brands can place a featured listing here to reach hunters browsing by location.</div>
-        <div class="card-meta"><span>freebiesnearme.app &middot; inquire for rates</span></div>
+        <div class="card-meta"><a href="/toronto/advertise" class="ad-inquire-link">Inquire about ad placement &rarr;</a></div>
       `;
       wrap.appendChild(adCard);
     }
