@@ -552,8 +552,16 @@ function addMarkersToMap(){
   });
 }
 
+function normalizePlaceText(s){
+  // "Toronto" inside an address (e.g. "CF Toronto Eaton Centre") shouldn't
+  // stop it from matching the neighbourhood name (e.g. "CF Eaton Centre") -
+  // every address here is already in Toronto, so the word carries no
+  // distinguishing information.
+  return s.toLowerCase().replace(/\btoronto\b/g, '').replace(/\s+/g, ' ').trim();
+}
+
 function renderMetaTimes(ev){
-  const addressHasLocation = ev.address && ev.location && ev.address.toLowerCase().includes(ev.location.toLowerCase());
+  const addressHasLocation = ev.address && ev.location && normalizePlaceText(ev.address).includes(normalizePlaceText(ev.location));
   const place = ev.address
     ? (addressHasLocation ? ev.address : ev.address + ', ' + ev.location)
     : ev.location;
