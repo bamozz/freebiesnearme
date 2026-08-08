@@ -302,10 +302,12 @@
     margin-top:8px;display:inline-block;font-size:11.5px;font-weight:700;
     background:var(--ink);color:#fff;padding:6px 11px;border-radius:14px;text-decoration:none;
   }
+  .pin-wrap{width:26px;height:26px;position:relative;cursor:pointer;}
   .pin{
-    width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
-    display:flex;align-items:center;justify-content:center;position:relative;
-    border:2px solid #fff;box-shadow:0 1px 5px rgba(21,27,33,0.35);cursor:pointer;
+    position:absolute;top:0;left:0;width:26px;height:26px;
+    border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid #fff;box-shadow:0 1px 5px rgba(21,27,33,0.35);
   }
   .pin::before{
     content:"";position:absolute;top:4px;left:4px;width:4px;height:4px;
@@ -509,11 +511,19 @@ map.on('error', e => console.error('maplibre error:', e && e.error && e.error.me
 const markers = {};
 
 function pinElement(ev){
+  // MapLibre positions the element it's given by setting its `transform`
+  // style directly, which would overwrite a rotate() set via CSS on that
+  // same element. The teardrop shape's rotation is applied to an inner
+  // element instead, so MapLibre's own positioning transform on the
+  // outer wrapper is left untouched.
   const color = ev.sponsored ? '#F0A430' : catColor[ev.cat];
-  const el = document.createElement('div');
-  el.className = 'pin' + (ev.sponsored ? ' sponsored' : '');
-  el.style.background = color;
-  return el;
+  const wrap = document.createElement('div');
+  wrap.className = 'pin-wrap';
+  const inner = document.createElement('div');
+  inner.className = 'pin' + (ev.sponsored ? ' sponsored' : '');
+  inner.style.background = color;
+  wrap.appendChild(inner);
+  return wrap;
 }
 
 function buildPopup(ev){
@@ -534,7 +544,7 @@ function addMarkersToMap(){
   Object.keys(markers).forEach(k => delete markers[k]);
   if (activePopup){ activePopup.remove(); activePopup = null; }
   events.forEach(ev=>{
-    const m = new maplibregl.Marker({element: pinElement(ev), anchor:'bottom'})
+    const m = new maplibregl.Marker({element: pinElement(ev), anchor:'bottom', offset: [0, -5.4]})
       .setLngLat([ev.lng, ev.lat])
       .addTo(map);
     m.getElement().addEventListener('click', ()=>selectCard(ev.id, false));
@@ -1084,7 +1094,7 @@ function hasClockTime(d){
 }
 
 function formatDay(d){
-  return d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', timeZone: TORONTO_TZ}).replace(',', '');
+  return d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', timeZone: TORONTO_TZ});
 }
 
 function formatClock(d){
@@ -1095,6 +1105,8 @@ function torontoDateKey(d){
   return d.toLocaleDateString('en-CA', {timeZone: TORONTO_TZ});
 }
 
+// Standard format: "Day, Mon Date[ - Day, Mon Date], startTime - endTime"
+// so every listing (single day or spanning several) reads the same way.
 function formatTimeRange(start, end){
   const s = new Date(start);
   const sDay = formatDay(s);
@@ -1107,17 +1119,12 @@ function formatTimeRange(start, end){
   const e = new Date(end);
   const eHasTime = hasClockTime(e);
   const sameDay = torontoDateKey(s) === torontoDateKey(e);
+  const dayPart = sameDay ? sDay : sDay + ' - ' + formatDay(e);
 
-  if (sameDay){
-    if (sHasTime && eHasTime) return sDay + ', ' + formatClock(s) + ' to ' + formatClock(e);
-    if (sHasTime) return sDay + ', from ' + formatClock(s);
-    return sDay;
-  }
-
-  const eDay = formatDay(e);
-  const startPart = sHasTime ? sDay + ' ' + formatClock(s) : sDay;
-  const endPart = eHasTime ? eDay + ' ' + formatClock(e) : eDay;
-  return startPart + ' - ' + endPart;
+  if (sHasTime && eHasTime) return dayPart + ', ' + formatClock(s) + ' - ' + formatClock(e);
+  if (sHasTime) return dayPart + ', from ' + formatClock(s);
+  if (eHasTime) return dayPart + ', until ' + formatClock(e);
+  return dayPart;
 }
 
 function groupRows(rows){
