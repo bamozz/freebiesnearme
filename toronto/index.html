@@ -553,7 +553,10 @@ function addMarkersToMap(){
 }
 
 function renderMetaTimes(ev){
-  const place = ev.address ? ev.address + ', ' + ev.location : ev.location;
+  const addressHasLocation = ev.address && ev.location && ev.address.toLowerCase().includes(ev.location.toLowerCase());
+  const place = ev.address
+    ? (addressHasLocation ? ev.address : ev.address + ', ' + ev.location)
+    : ev.location;
   return `<span>${place}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
 }
 
