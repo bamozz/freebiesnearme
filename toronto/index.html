@@ -211,9 +211,11 @@
   .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
   .card-what{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;line-height:1.3;}
   .card-brand{font-size:13px;color:var(--muted);font-weight:600;margin:0 0 8px;line-height:1.35;}
-  .card-body-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
-  .card-text{flex:1;min-width:0;}
-  .card-thumb{width:56px;height:56px;border-radius:8px;overflow:hidden;border:1px solid var(--line);flex-shrink:0;cursor:pointer;}
+  .card-text{margin-right:66px;}
+  .card-thumb{
+    position:absolute;top:44px;right:16px;width:56px;height:56px;
+    border-radius:8px;overflow:hidden;border:1px solid var(--line);cursor:pointer;
+  }
   .card-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
   .rating-row{display:flex;align-items:center;gap:6px;margin:0 0 8px;}
   .rating-row .star{font-size:15px;line-height:1;color:var(--line);cursor:pointer;}
@@ -1015,14 +1017,12 @@ function renderList(){
         </div>
         ${statusBadge(ev)}
       </div>
+      ${ev.image_url ? `<div class="card-thumb" data-image="${ev.image_url}"><img src="${ev.image_url}" alt="${ev.brand}" loading="lazy"></div>` : ''}
       ${renderUpdateLine(ev)}
       ${renderUpdatePhotos(ev)}
-      <div class="card-body-row">
-        <div class="card-text">
-          <div class="card-what">${stripFreeWord(ev.what)}</div>
-          <div class="card-brand">${ev.brand}</div>
-        </div>
-        ${ev.image_url ? `<div class="card-thumb" data-image="${ev.image_url}"><img src="${ev.image_url}" alt="${ev.brand}" loading="lazy"></div>` : ''}
+      <div class="card-text">
+        <div class="card-what">${stripFreeWord(ev.what)}</div>
+        <div class="card-brand">${ev.brand}</div>
       </div>
       ${renderStars(ev)}
       <div class="card-meta">
