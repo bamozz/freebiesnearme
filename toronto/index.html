@@ -532,9 +532,6 @@ map.addControl(new maplibregl.NavigationControl(), 'top-left');
 requestAnimationFrame(()=>map.resize());
 window.addEventListener('load', ()=>map.resize());
 map.on('error', e => console.error('maplibre error:', e && e.error && e.error.message, e));
-// Overlapping pins are spread apart based on their on-screen pixel distance,
-// which changes with zoom, so re-run the spread whenever zoom settles.
-map.on('zoomend', ()=>addMarkersToMap());
 
 const markers = {};
 
@@ -579,75 +576,19 @@ function buildPopup(ev){
 
 let activePopup = null;
 
-// Converts a small real-world distance to a lat/lng offset. Kept independent
-// of the map's current zoom/projection on purpose: an earlier version placed
-// spread-out pins by projecting to screen pixels and unprojecting back,
-// which broke badly if the zoom changed between those two calls (a real
-// scroll/pinch gesture fires many rapid zoom events, unlike a single
-// programmatic zoom) - a pixel offset computed at one zoom can translate to
-// a huge real-world distance once unprojected at another, which is how pins
-// ended up kilometers away in the lake. A fixed meters-based offset can
-// never do that, regardless of any zoom-timing edge case.
-function metersToLngLatOffset(meters, atLat){
-  const dLat = meters / 111320;
-  const dLng = meters / (111320 * Math.cos(atLat * Math.PI / 180));
-  return {dLat, dLng};
-}
-
-// Pins keep their real geocoded lat/lng, but when several land within a few
-// pixels of each other at the current zoom, rendering them on top of one
-// another looks like a single pin. This nudges each pin in an overlapping
-// group outward in a small circle so every one stays visible and clickable.
-function spreadOverlappingPins(evs, thresholdPx){
-  const points = evs.map(ev => ({ev, px: map.project([ev.lng, ev.lat])}));
-  const used = new Array(points.length).fill(false);
-  const clusters = [];
-  for (let i = 0; i < points.length; i++){
-    if (used[i]) continue;
-    const cluster = [points[i]];
-    used[i] = true;
-    for (let j = i + 1; j < points.length; j++){
-      if (used[j]) continue;
-      const dx = points[j].px.x - points[i].px.x;
-      const dy = points[j].px.y - points[i].px.y;
-      if (Math.hypot(dx, dy) < thresholdPx){
-        cluster.push(points[j]);
-        used[j] = true;
-      }
-    }
-    clusters.push(cluster);
-  }
-  clusters.forEach(cluster => {
-    if (cluster.length === 1){
-      cluster[0].display = [cluster[0].ev.lng, cluster[0].ev.lat];
-      return;
-    }
-    const centerLat = cluster.reduce((s,p) => s + p.ev.lat, 0) / cluster.length;
-    const radiusMeters = 10 + cluster.length * 3;
-    cluster.forEach((p, idx) => {
-      const angle = (2 * Math.PI * idx) / cluster.length;
-      const {dLat, dLng} = metersToLngLatOffset(radiusMeters, centerLat);
-      p.display = [p.ev.lng + dLng * Math.cos(angle), p.ev.lat + dLat * Math.sin(angle)];
-    });
-  });
-  return points;
-}
-
-// Below this zoom the map is showing a city-wide view where nobody is trying
-// to read a pin's exact position anyway, so overlapping pins are left as-is
-// rather than spread into a ring that wouldn't reflect real geography.
-const SPREAD_MIN_ZOOM = 13.5;
-
+// Pins render at their real geocoded lat/lng always, with no spread-apart
+// logic - a couple of attempts at nudging overlapping pins into a small
+// ring introduced zoom-timing edge cases that occasionally sent pins far
+// from their true position. Toronto Happy Hour's map (a similar Toronto
+// listings map) takes the same approach: overlapping pins just render on
+// top of each other, and zooming in naturally separates them.
 function addMarkersToMap(){
   Object.values(markers).forEach(m => m.remove());
   Object.keys(markers).forEach(k => delete markers[k]);
   if (activePopup){ activePopup.remove(); activePopup = null; }
-  const placed = map.getZoom() >= SPREAD_MIN_ZOOM
-    ? spreadOverlappingPins(events, 26)
-    : events.map(ev => ({ev, display: [ev.lng, ev.lat]}));
-  placed.forEach(({ev, display})=>{
+  events.forEach(ev=>{
     const m = new maplibregl.Marker({element: pinElement(ev), anchor:'bottom', offset: [0, -5.4]})
-      .setLngLat(display)
+      .setLngLat([ev.lng, ev.lat])
       .addTo(map);
     m.getElement().addEventListener('click', ()=>selectCard(ev.id, false));
     markers[ev.id] = m;
