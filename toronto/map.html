@@ -153,16 +153,9 @@
     margin-top:8px;display:inline-block;font-size:11.5px;font-weight:700;
     background:var(--ink);color:#fff;padding:6px 11px;border-radius:14px;text-decoration:none;
   }
-  .pin-wrap{width:26px;height:26px;position:relative;cursor:pointer;}
   .pin{
-    position:absolute;top:0;left:0;width:26px;height:26px;
-    border-radius:50% 50% 50% 0;transform:rotate(-45deg);
-    display:flex;align-items:center;justify-content:center;
-    border:2px solid #fff;box-shadow:0 1px 5px rgba(21,27,33,0.35);
-  }
-  .pin::before{
-    content:"";position:absolute;top:4px;left:4px;width:4px;height:4px;
-    border-radius:50%;background:rgba(255,255,255,0.75);
+    width:16px;height:16px;border-radius:50%;cursor:pointer;
+    border:2px solid #fff;box-shadow:0 1px 4px rgba(21,27,33,0.4);
   }
   .pin.sponsored{background:var(--amber) !important;}
 </style>
@@ -238,24 +231,30 @@ const map = new maplibregl.Map({
 });
 map.addControl(new maplibregl.NavigationControl(), 'top-left');
 map.addControl(new maplibregl.AttributionControl({compact: true}));
+// The compact attribution control auto-expands itself the first time actual
+// attribution text is set (once tiles load), regardless of the compact
+// option - this forces it back closed the first time that happens, so it
+// stays collapsed to just the (i) icon by default. Only observes once,
+// so a user's own later clicks to open it aren't fought.
+const attribObserver = new MutationObserver(() => {
+  const attrib = document.querySelector('.maplibregl-ctrl-attrib');
+  if (attrib && attrib.hasAttribute('open')){
+    attrib.removeAttribute('open');
+    attribObserver.disconnect();
+  }
+});
+const attribEl = document.querySelector('.maplibregl-ctrl-attrib');
+if (attribEl) attribObserver.observe(attribEl, {attributes: true, attributeFilter: ['open']});
 requestAnimationFrame(()=>map.resize());
 window.addEventListener('load', ()=>map.resize());
 window.addEventListener('resize', ()=>map.resize());
 
 function pinElement(ev){
-  // MapLibre positions the element it's given by setting its `transform`
-  // style directly, which would overwrite a rotate() set via CSS on that
-  // same element. The teardrop shape's rotation is applied to an inner
-  // element instead, so MapLibre's own positioning transform on the
-  // outer wrapper is left untouched.
   const color = ev.sponsored ? '#F0A430' : catColor[ev.cat];
-  const wrap = document.createElement('div');
-  wrap.className = 'pin-wrap';
-  const inner = document.createElement('div');
-  inner.className = 'pin' + (ev.sponsored ? ' sponsored' : '');
-  inner.style.background = color;
-  wrap.appendChild(inner);
-  return wrap;
+  const dot = document.createElement('div');
+  dot.className = 'pin' + (ev.sponsored ? ' sponsored' : '');
+  dot.style.background = color;
+  return dot;
 }
 
 // Saying "free" on a site called Freebies Near Me is always redundant, so
@@ -421,7 +420,7 @@ function renderMarkers(){
   );
   filtered.forEach(ev=>{
     const popup = new maplibregl.Popup({offset:22}).setHTML(buildPopup(ev));
-    const marker = new maplibregl.Marker({element: pinElement(ev), anchor:'bottom', offset: [0, -5.4]})
+    const marker = new maplibregl.Marker({element: pinElement(ev), anchor:'center'})
       .setLngLat([ev.lng, ev.lat])
       .setPopup(popup)
       .addTo(map);
