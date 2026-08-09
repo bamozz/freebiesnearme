@@ -731,10 +731,18 @@
 
     const instaUrlVal = document.getElementById('instaUrl').value.trim() || null;
 
+    // Saying "free" is always redundant on a site called Freebies Near Me,
+    // so it's stripped here regardless of who's submitting - hunters in
+    // particular tend to describe things as "free X" out of habit.
+    const stripFreeWord = (text) => {
+      const stripped = (text || '').replace(/\bfree\b/gi, ' ').replace(/\s{2,}/g, ' ').trim();
+      return stripped ? stripped.charAt(0).toUpperCase() + stripped.slice(1) : stripped;
+    };
+
     const basePayload = {
       brand: document.getElementById('brand').value,
       category: document.getElementById('category').value,
-      what: document.getElementById('what').value,
+      what: stripFreeWord(document.getElementById('what').value),
       total_count: document.getElementById('totalCount').value || null,
       claimed_count: 0,
       submitted_by: mode,

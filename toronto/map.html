@@ -249,13 +249,21 @@ function pinElement(ev){
   return wrap;
 }
 
+// Saying "free" on a site called Freebies Near Me is always redundant, so
+// it's stripped from the offer description wherever it's shown rather than
+// relying on every submitter to leave it out themselves.
+function stripFreeWord(text){
+  const stripped = (text || '').replace(/\bfree\b/gi, ' ').replace(/\s{2,}/g, ' ').trim();
+  return stripped ? stripped.charAt(0).toUpperCase() + stripped.slice(1) : stripped;
+}
+
 function buildPopup(ev){
   const directionsQuery = ev.address
     ? encodeURIComponent(ev.address + ', ' + ev.location + ', Toronto, ON')
     : ev.lat + ',' + ev.lng;
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
-  <div style="font-size:12.5px;max-width:190px;">${ev.what}</div>
+  <div style="font-size:12.5px;max-width:190px;">${stripFreeWord(ev.what)}</div>
   <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.timeWindows.join(' &middot; ')} &middot; ${ev.location}</div>
   <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
 }
@@ -388,6 +396,21 @@ function matchesStatusFilter(ev){
   return true;
 }
 
+// Converts a small real-world distance to a lat/lng offset. Kept independent
+// of the map's current zoom/projection on purpose: an earlier version placed
+// spread-out pins by projecting to screen pixels and unprojecting back,
+// which broke badly if the zoom changed between those two calls (a real
+// scroll/pinch gesture fires many rapid zoom events, unlike a single
+// programmatic zoom) - a pixel offset computed at one zoom can translate to
+// a huge real-world distance once unprojected at another, which is how pins
+// ended up kilometers away in the lake. A fixed meters-based offset can
+// never do that, regardless of any zoom-timing edge case.
+function metersToLngLatOffset(meters, atLat){
+  const dLat = meters / 111320;
+  const dLng = meters / (111320 * Math.cos(atLat * Math.PI / 180));
+  return {dLat, dLng};
+}
+
 // Pins keep their real geocoded lat/lng, but when several land within a few
 // pixels of each other at the current zoom (e.g. a handful of downtown
 // listings), rendering them on top of one another looks like a single pin.
@@ -418,13 +441,12 @@ function spreadOverlappingPins(events, thresholdPx){
       cluster[0].display = [cluster[0].ev.lng, cluster[0].ev.lat];
       return;
     }
-    const cx = cluster.reduce((s,p) => s + p.px.x, 0) / cluster.length;
-    const cy = cluster.reduce((s,p) => s + p.px.y, 0) / cluster.length;
-    const radius = 16 + cluster.length * 4;
+    const centerLat = cluster.reduce((s,p) => s + p.ev.lat, 0) / cluster.length;
+    const radiusMeters = 10 + cluster.length * 3;
     cluster.forEach((p, idx) => {
       const angle = (2 * Math.PI * idx) / cluster.length;
-      const lngLat = map.unproject([cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)]);
-      p.display = [lngLat.lng, lngLat.lat];
+      const {dLat, dLng} = metersToLngLatOffset(radiusMeters, centerLat);
+      p.display = [p.ev.lng + dLng * Math.cos(angle), p.ev.lat + dLat * Math.sin(angle)];
     });
   });
   return points;
