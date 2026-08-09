@@ -59,7 +59,7 @@ export default async function handler(req, res) {
   });
   const verifyJson = await verifyRes.json().catch(() => ({ success: false }));
   if (!verifyJson.success) {
-    return res.status(400).json({ error: 'Verification failed. Please try again.' });
+    return res.status(400).json({ error: 'Verification failed. Please try again.', _debug: verifyJson });
   }
 
   const brand = String(body.brand || '').trim();
