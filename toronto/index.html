@@ -211,7 +211,8 @@
   .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
   .card-what{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;line-height:1.3;}
   .card-brand{font-size:13px;color:var(--muted);font-weight:600;margin:0 0 8px;line-height:1.35;}
-  .card-text{margin-right:66px;}
+  .card.has-thumb .card-text,
+  .card.has-thumb .update-line{margin-right:66px;}
   .card-thumb{
     position:absolute;top:44px;right:16px;width:56px;height:56px;
     border-radius:8px;overflow:hidden;border:1px solid var(--line);cursor:pointer;
@@ -1006,7 +1007,7 @@ function renderList(){
 
   filtered.forEach((ev, i)=>{
     const card = document.createElement('div');
-    card.className = 'card' + (ev.sponsored ? ' sponsored' : '') + (selectedId===ev.id ? ' selected' : '');
+    card.className = 'card' + (ev.sponsored ? ' sponsored' : '') + (selectedId===ev.id ? ' selected' : '') + (ev.image_url ? ' has-thumb' : '');
     if (!ev.sponsored) card.style.borderLeftColor = catColor[ev.cat];
     const a = availInfo(ev);
     card.innerHTML = `
