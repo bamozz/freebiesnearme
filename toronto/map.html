@@ -131,8 +131,8 @@
   @media (max-width:760px){
     .map-legend{max-width:120px;font-size:10.5px;padding:8px 10px;bottom:12px;left:12px;}
     .legend-dot{width:8px;height:8px;}
-    .legend-title{cursor:pointer;}
-    .legend-toggle{display:block;}
+    .legend-title{cursor:pointer;padding:6px 0;margin:-6px 0;}
+    .legend-toggle{display:block;font-size:16px;padding:8px;margin:-8px;}
     .map-legend.collapsed .legend-items{display:none;}
     .map-legend.collapsed .legend-toggle{transform:rotate(-90deg);}
   }
@@ -481,11 +481,8 @@ function renderLegend(){
     `<div class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span>Sponsored</div>`;
   wrap.innerHTML = `<div class="legend-title" id="legendToggle">Categories<button class="legend-toggle" aria-label="Toggle legend">&#9662;</button></div>` +
     `<div class="legend-items" id="legendItems">${itemsHtml}</div>`;
-  // Collapsed by default on small screens so the legend doesn't cover pins
-  // or clash with the map's attribution control; always expanded on desktop.
-  if (window.matchMedia('(max-width:760px)').matches){
-    wrap.classList.add('collapsed');
-  }
+  // Expanded by default everywhere, including mobile; the toggle only
+  // collapses it once the user taps it themselves.
   document.getElementById('legendToggle').onclick = () => wrap.classList.toggle('collapsed');
 }
 
