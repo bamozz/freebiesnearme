@@ -464,8 +464,8 @@ const LOCATIONS = [
 let events = [];
 const locationOptions = ['All locations', ...LOCATIONS];
 let activeStatus = 'all';
-let activeCat = 'all';
-let activeLocation = 'All locations';
+let activeCats = [];       // empty = all categories
+let activeLocations = [];  // empty = all locations
 let searchQuery = '';
 let selectedId = null;
 let ratingStats = {};
@@ -906,10 +906,22 @@ function renderLocationFilters(){
   const wrap = document.getElementById('locationFilters');
   wrap.innerHTML = '';
   locationOptions.forEach(n=>{
+    const isAll = n === 'All locations';
+    const isActive = isAll ? activeLocations.length === 0 : activeLocations.includes(n);
     const chip = document.createElement('div');
-    chip.className = 'cat-chip location' + (activeLocation===n ? ' active' : '');
+    chip.className = 'cat-chip location' + (isActive ? ' active' : '');
     chip.textContent = n;
-    chip.onclick = ()=>{ activeLocation = n; renderLocationFilters(); renderList(); };
+    chip.onclick = ()=>{
+      if (isAll){
+        activeLocations = [];
+      } else if (activeLocations.includes(n)){
+        activeLocations = activeLocations.filter(l => l !== n);
+      } else {
+        activeLocations = [...activeLocations, n];
+      }
+      renderLocationFilters();
+      renderList();
+    };
     wrap.appendChild(chip);
   });
 }
@@ -918,11 +930,23 @@ function renderCatFilters(){
   const wrap = document.getElementById('catFilters');
   wrap.innerHTML = '';
   categories.forEach(c=>{
+    const isAll = c.id === 'all';
+    const isActive = isAll ? activeCats.length === 0 : activeCats.includes(c.id);
     const chip = document.createElement('div');
-    chip.className = 'cat-chip' + (activeCat===c.id ? ' active' : '');
-    chip.style.background = activeCat===c.id ? c.color : '#fff';
+    chip.className = 'cat-chip' + (isActive ? ' active' : '');
+    chip.style.background = isActive ? c.color : '#fff';
     chip.textContent = c.label;
-    chip.onclick = ()=>{ activeCat = c.id; renderCatFilters(); renderList(); };
+    chip.onclick = ()=>{
+      if (isAll){
+        activeCats = [];
+      } else if (activeCats.includes(c.id)){
+        activeCats = activeCats.filter(id => id !== c.id);
+      } else {
+        activeCats = [...activeCats, c.id];
+      }
+      renderCatFilters();
+      renderList();
+    };
     wrap.appendChild(chip);
   });
 }
@@ -949,8 +973,8 @@ function renderList(){
   const filtered = events.filter(ev =>
     ev.status !== 'ended' &&
     matchesStatusFilter(ev) &&
-    (activeCat==='all' || ev.cat===activeCat) &&
-    (activeLocation==='All locations' || ev.location===activeLocation) &&
+    (activeCats.length===0 || activeCats.includes(ev.cat)) &&
+    (activeLocations.length===0 || activeLocations.includes(ev.location)) &&
     (!searchQuery || ev.brand.toLowerCase().includes(searchQuery) || ev.location.toLowerCase().includes(searchQuery))
   ).sort((a, b) => {
     if (!!a.sponsored !== !!b.sponsored) return a.sponsored ? -1 : 1;
