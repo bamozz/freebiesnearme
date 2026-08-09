@@ -930,10 +930,15 @@ function renderCatFilters(){
 function matchesStatusFilter(ev){
   if (activeStatus === 'all') return true;
   if (activeStatus === 'live') return ev.status === 'live';
-  if (activeStatus === 'next3' || activeStatus === 'nextweek'){
-    const days = activeStatus === 'next3' ? 3 : 7;
-    const cutoff = Date.now() + days * 24 * 60 * 60 * 1000;
-    return new Date(ev.startTime).getTime() <= cutoff;
+  const start = new Date(ev.startTime).getTime();
+  const day = 24 * 60 * 60 * 1000;
+  if (activeStatus === 'next3'){
+    return start <= Date.now() + 3 * day;
+  }
+  if (activeStatus === 'nextweek'){
+    // Distinct from "Next 3 days" rather than overlapping it: this covers
+    // only days 4-7, so an event isn't double-counted under both filters.
+    return start > Date.now() + 3 * day && start <= Date.now() + 7 * day;
   }
   return true;
 }
