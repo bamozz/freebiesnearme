@@ -879,7 +879,8 @@ function renderStatusFilters(){
   const opts = [
     {id:'all', label:'All'},
     {id:'live', label:'Live now', pulse:true},
-    {id:'soon', label:'Starting soon'},
+    {id:'next3', label:'Next 3 days'},
+    {id:'nextweek', label:'Next week'},
   ];
   const wrap = document.getElementById('statusFilters');
   wrap.innerHTML = '';
@@ -917,12 +918,23 @@ function renderCatFilters(){
   });
 }
 
+function matchesStatusFilter(ev){
+  if (activeStatus === 'all') return true;
+  if (activeStatus === 'live') return ev.status === 'live';
+  if (activeStatus === 'next3' || activeStatus === 'nextweek'){
+    const days = activeStatus === 'next3' ? 3 : 7;
+    const cutoff = Date.now() + days * 24 * 60 * 60 * 1000;
+    return new Date(ev.startTime).getTime() <= cutoff;
+  }
+  return true;
+}
+
 function renderList(){
   const wrap = document.getElementById('list');
   wrap.innerHTML = '';
   const filtered = events.filter(ev =>
     ev.status !== 'ended' &&
-    (activeStatus==='all' || ev.status===activeStatus) &&
+    matchesStatusFilter(ev) &&
     (activeCat==='all' || ev.cat===activeCat) &&
     (activeLocation==='All locations' || ev.location===activeLocation) &&
     (!searchQuery || ev.brand.toLowerCase().includes(searchQuery) || ev.location.toLowerCase().includes(searchQuery))
