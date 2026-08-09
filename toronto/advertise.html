@@ -31,7 +31,7 @@
 <meta name="twitter:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
   :root{
     --paper:#FEFCF6; --paper-alt:#F5F2E8; --ink:#151B21; --muted:#6B7280;
@@ -106,6 +106,7 @@
   }
   .result.ok{background:var(--teal-dim);color:var(--teal);display:block;}
   .result.err{background:#FDE8E6;color:var(--coral);display:block;}
+  .hp-field{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;}
 </style>
 </head>
 <body>
@@ -133,12 +134,18 @@
   </div>
 
   <form id="advertiseForm">
+    <label class="hp-field" for="company" aria-hidden="true">Company
+      <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+    </label>
+
     <label>Brand or business name
       <input type="text" id="brand" required>
+      <span class="field-error-msg" id="brandError">Brand or business name cannot contain a link.</span>
     </label>
 
     <label>Your email
       <input type="email" id="contact" required placeholder="So we can send you rates and next steps">
+      <span class="field-error-msg" id="contactError">Please enter a valid, permanent email address.</span>
     </label>
 
     <label>Which placement are you interested in?
@@ -153,6 +160,8 @@
       <textarea id="message" placeholder="What are you looking to promote, and when?"></textarea>
       <span class="field-error-msg" id="messageError">Tell us a bit about what you're looking to promote.</span>
     </label>
+
+    <div class="cf-turnstile" id="turnstileWidget" data-sitekey="TURNSTILE_SITE_KEY"></div>
 
     <button type="submit" class="submit-btn" id="submitBtn">Send inquiry</button>
     <div class="result" id="result"></div>
@@ -171,19 +180,47 @@
 </footer>
 
 <script>
-  const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // Small curated list of common disposable/temporary email providers,
+  // mirrored server-side in api/submit-advertise.js (the server copy is
+  // the one that's actually enforced; this is just for instant feedback).
+  const DISPOSABLE_EMAIL_DOMAINS = new Set([
+    'mailinator.com', 'guerrillamail.com', 'guerrillamail.info', 'guerrillamail.biz',
+    'guerrillamail.de', 'guerrillamail.net', 'guerrillamail.org', 'guerrillamailblock.com',
+    '10minutemail.com', '10minutemail.net', '20minutemail.com', 'temp-mail.org', 'temp-mail.io',
+    'tempmail.com', 'tempmail.net', 'tempmailo.com', 'tempmail.dev', 'tempail.com', 'tempemail.co',
+    'throwawaymail.com', 'yopmail.com', 'yopmail.net', 'yopmail.fr', 'trashmail.com', 'trashmail.net',
+    'trash-mail.com', 'dispostable.com', 'getnada.com', 'nada.email', 'sharklasers.com', 'grr.la',
+    'maildrop.cc', 'mintemail.com', 'emailondeck.com', 'fakeinbox.com', 'fakemailgenerator.com',
+    'mailnesia.com', 'mailcatch.com', 'mytemp.email', 'moakt.com', 'mohmal.com', 'spamgourmet.com',
+    'spam4.me', 'discard.email', 'discardmail.com', 'tempinbox.com', 'emailfake.com', 'crazymailing.com',
+    'burnermail.io', 'inboxbear.com', 'mail-temp.com', 'mailtemp.info', 'anonaddy.com', 'armyspy.com',
+    'cuvox.de', 'dayrep.com', 'einrot.com', 'fleckens.hu', 'gustr.com', 'jourrapide.com', 'rhyta.com',
+    'superrito.com', 'teleworm.us', 'wegwerfmail.de', 'wegwerfmail.net', 'wegwerfmail.org',
+  ]);
 
+  function countUrls(text){
+    const urlPattern = /(https?:\/\/|www\.)\S+/gi;
+    return ((text || '').match(urlPattern) || []).length;
+  }
+
+  const brandInput = document.getElementById('brand');
+  const brandError = document.getElementById('brandError');
+  const contactInput = document.getElementById('contact');
+  const contactError = document.getElementById('contactError');
   const messageInput = document.getElementById('message');
   const messageError = document.getElementById('messageError');
   const submitBtn = document.getElementById('submitBtn');
 
-  messageInput.addEventListener('input', () => {
-    if (messageInput.value.trim()){
-      messageInput.classList.remove('field-error');
-      messageError.classList.remove('show');
-    }
+  function showFieldError(field, errorEl){
+    field.classList.add('field-error');
+    errorEl.classList.add('show');
+  }
+  function clearFieldError(field, errorEl){
+    field.classList.remove('field-error');
+    errorEl.classList.remove('show');
+  }
+  [[brandInput, brandError], [contactInput, contactError], [messageInput, messageError]].forEach(([field, errorEl]) => {
+    field.addEventListener('input', () => clearFieldError(field, errorEl));
   });
 
   document.getElementById('advertiseForm').addEventListener('submit', async (e) => {
@@ -191,42 +228,91 @@
     const resultEl = document.getElementById('result');
     resultEl.className = 'result';
 
+    const brand = brandInput.value.trim();
+    const contact = contactInput.value.trim();
     const message = messageInput.value.trim();
+
     if (!message){
-      messageInput.classList.add('field-error');
-      messageError.classList.add('show');
+      showFieldError(messageInput, messageError);
       messageInput.focus();
       messageInput.scrollIntoView({behavior:'smooth', block:'center'});
       return;
     }
-    messageInput.classList.remove('field-error');
-    messageError.classList.remove('show');
+    clearFieldError(messageInput, messageError);
+
+    if (countUrls(brand) > 0){
+      brandError.textContent = 'Brand or business name cannot contain a link.';
+      showFieldError(brandInput, brandError);
+      brandInput.focus();
+      return;
+    }
+    clearFieldError(brandInput, brandError);
+
+    if (countUrls(message) > 1){
+      messageError.textContent = 'Please limit your message to one link.';
+      showFieldError(messageInput, messageError);
+      messageInput.focus();
+      return;
+    }
+
+    const emailMatch = contact.match(/^[^\s@]+@([^\s@]+\.[^\s@]+)$/);
+    if (countUrls(contact) > 1 || !emailMatch){
+      contactError.textContent = 'Please enter a valid email address.';
+      showFieldError(contactInput, contactError);
+      contactInput.focus();
+      return;
+    }
+    if (DISPOSABLE_EMAIL_DOMAINS.has(emailMatch[1].toLowerCase())){
+      contactError.textContent = 'Please use a permanent email address.';
+      showFieldError(contactInput, contactError);
+      contactInput.focus();
+      return;
+    }
+    clearFieldError(contactInput, contactError);
+
+    const turnstileToken = typeof turnstile !== 'undefined' ? turnstile.getResponse() : '';
+    if (!turnstileToken){
+      resultEl.className = 'result err';
+      resultEl.textContent = 'Please complete the verification challenge.';
+      return;
+    }
 
     submitBtn.disabled = true;
     submitBtn.textContent = 'Sending...';
 
-    const placement = document.getElementById('placement').value;
     const payload = {
-      type: 'advertise',
-      listing_ref: document.getElementById('brand').value,
-      message: `Placement interest: ${placement}\n\n${message}`,
-      correction: null,
-      contact: document.getElementById('contact').value,
+      company: document.getElementById('company').value,
+      brand,
+      contact,
+      placement: document.getElementById('placement').value,
+      message,
+      turnstileToken,
     };
 
-    const { error } = await sb.from('feedback').insert(payload);
+    let json;
+    try {
+      const res = await fetch('/api/submit-advertise', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+      });
+      json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Something went wrong.');
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send inquiry';
+      resultEl.className = 'result err';
+      resultEl.textContent = err.message;
+      if (typeof turnstile !== 'undefined') turnstile.reset();
+      return;
+    }
 
     submitBtn.disabled = false;
     submitBtn.textContent = 'Send inquiry';
-
-    if (error) {
-      resultEl.className = 'result err';
-      resultEl.textContent = 'Something went wrong: ' + error.message;
-    } else {
-      resultEl.className = 'result ok';
-      resultEl.textContent = "Thanks, we'll be in touch about rates and next steps.";
-      document.getElementById('advertiseForm').reset();
-    }
+    resultEl.className = 'result ok';
+    resultEl.textContent = "Thanks, we'll be in touch about rates and next steps.";
+    document.getElementById('advertiseForm').reset();
+    if (typeof turnstile !== 'undefined') turnstile.reset();
   });
 </script>
 </body>

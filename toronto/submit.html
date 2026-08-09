@@ -34,6 +34,7 @@
 <link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
   :root{
     --paper:#FEFCF6; --paper-alt:#F5F2E8; --ink:#151B21; --muted:#6B7280;
@@ -156,6 +157,10 @@
   }
   .result.ok{background:var(--teal-dim);color:var(--teal);display:block;}
   .result.err{background:#FDE8E6;color:var(--coral);display:block;}
+  .hp-field{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;}
+  .field-error-msg{font-size:12px;font-weight:600;color:var(--coral);display:none;}
+  .field-error-msg.show{display:block;}
+  input.field-error, textarea.field-error{border-color:var(--coral);background:#FDE8E6;}
 </style>
 </head>
 <body>
@@ -172,12 +177,18 @@
   </div>
 
   <form id="submitForm">
+    <label class="hp-field" for="company" aria-hidden="true">Company
+      <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+    </label>
+
     <label>Brand or business or event name
       <input type="text" id="brand" required>
+      <span class="field-error-msg" id="brandError">Brand or business name cannot contain a link.</span>
     </label>
 
     <label>What is being offered
       <textarea id="what" required placeholder="e.g. free cold brew samples"></textarea>
+      <span class="field-error-msg" id="whatError">Please limit the description to one link.</span>
     </label>
 
     <label>Category
@@ -223,6 +234,8 @@
     </label>
 
     <div class="note" id="modeNote">Brand submissions with an exact quantity and time window get reviewed and listed fastest.</div>
+
+    <div class="cf-turnstile" id="turnstileWidget" data-sitekey="TURNSTILE_SITE_KEY"></div>
 
     <button type="submit" class="submit-btn" id="submitBtn">Submit for review</button>
     <div class="result" id="result"></div>
@@ -625,10 +638,33 @@
     };
   });
 
+  function countUrls(text){
+    const urlPattern = /(https?:\/\/|www\.)\S+/gi;
+    return ((text || '').match(urlPattern) || []).length;
+  }
+
+  const brandInput = document.getElementById('brand');
+  const brandError = document.getElementById('brandError');
+  const whatInput = document.getElementById('what');
+  const whatError = document.getElementById('whatError');
+
+  function showFieldError(field, errorEl){
+    field.classList.add('field-error');
+    errorEl.classList.add('show');
+  }
+  function clearFieldError(field, errorEl){
+    field.classList.remove('field-error');
+    errorEl.classList.remove('show');
+  }
+  [[brandInput, brandError], [whatInput, whatError]].forEach(([field, errorEl]) => {
+    field.addEventListener('input', () => clearFieldError(field, errorEl));
+  });
+
   document.getElementById('submitForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const resultEl = document.getElementById('result');
     const btn = document.getElementById('submitBtn');
+    resultEl.className = 'result';
 
     const validEntries = locationEntries.filter(en => en.lat !== null && en.lng !== null);
     if (!validEntries.length) {
@@ -641,6 +677,29 @@
     if (!validDatetimes.length) {
       resultEl.className = 'result err';
       resultEl.textContent = 'Please add at least one date and time.';
+      return;
+    }
+
+    if (countUrls(brandInput.value) > 0){
+      showFieldError(brandInput, brandError);
+      brandInput.focus();
+      brandInput.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    clearFieldError(brandInput, brandError);
+
+    if (countUrls(whatInput.value) > 1){
+      showFieldError(whatInput, whatError);
+      whatInput.focus();
+      whatInput.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    clearFieldError(whatInput, whatError);
+
+    const turnstileToken = typeof turnstile !== 'undefined' ? turnstile.getResponse() : '';
+    if (!turnstileToken){
+      resultEl.className = 'result err';
+      resultEl.textContent = 'Please complete the verification challenge.';
       return;
     }
 
@@ -690,30 +749,45 @@
       }));
     });
 
-    const { error } = await sb.from('listings').insert(payloads);
+    let json;
+    try {
+      const res = await fetch('/api/submit-listing', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          company: document.getElementById('company').value,
+          turnstileToken,
+          payloads,
+        }),
+      });
+      json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Something went wrong.');
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Submit for review';
+      resultEl.className = 'result err';
+      resultEl.textContent = err.message;
+      if (typeof turnstile !== 'undefined') turnstile.reset();
+      return;
+    }
 
     btn.disabled = false;
     btn.textContent = 'Submit for review';
-
-    if (error) {
-      resultEl.className = 'result err';
-      resultEl.textContent = 'Something went wrong: ' + error.message;
-    } else {
-      resultEl.className = 'result ok';
-      resultEl.textContent = payloads.length > 1
-        ? `Thanks, all ${payloads.length} listings are in for review.`
-        : 'Thanks, this is in for review and will show up on the map once approved.';
-      document.getElementById('submitForm').reset();
-      locationEntries.forEach(en => { if (en.marker) en.marker.remove(); });
-      document.getElementById('locationEntries').innerHTML = '';
-      locationEntries = [];
-      activeEntry = createLocationEntry();
-      document.getElementById('datetimeEntries').innerHTML = '';
-      datetimeEntries = [];
-      createDatetimeEntry();
-      if (pendingPhoto){ URL.revokeObjectURL(pendingPhoto.previewUrl); pendingPhoto = null; }
-      renderPhotoField();
-    }
+    resultEl.className = 'result ok';
+    resultEl.textContent = payloads.length > 1
+      ? `Thanks, all ${payloads.length} listings are in for review.`
+      : 'Thanks, this is in for review and will show up on the map once approved.';
+    document.getElementById('submitForm').reset();
+    locationEntries.forEach(en => { if (en.marker) en.marker.remove(); });
+    document.getElementById('locationEntries').innerHTML = '';
+    locationEntries = [];
+    activeEntry = createLocationEntry();
+    document.getElementById('datetimeEntries').innerHTML = '';
+    datetimeEntries = [];
+    createDatetimeEntry();
+    if (pendingPhoto){ URL.revokeObjectURL(pendingPhoto.previewUrl); pendingPhoto = null; }
+    renderPhotoField();
+    if (typeof turnstile !== 'undefined') turnstile.reset();
   });
 </script>
 </body>
