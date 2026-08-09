@@ -275,10 +275,16 @@ function groupRows(rows){
 }
 
 function statusFromWindows(rows){
-  const statuses = rows.map(r => statusFromTimes(r.start_time, r.end_time));
-  if (statuses.includes('live')) return 'live';
-  if (statuses.every(s => s === 'ended')) return 'ended';
-  return 'soon';
+  // Once the earliest window has started, the whole multi-day event reads
+  // as live through to the last window's end, including overnight gaps
+  // between individual windows (e.g. a festival that closes each night and
+  // reopens the next morning shouldn't flip back to "starting soon").
+  const now = new Date();
+  const minStart = new Date(Math.min(...rows.map(r => new Date(r.start_time).getTime())));
+  const maxEnd = new Date(Math.max(...rows.map(r => new Date(r.end_time || assumedEnd(r.start_time)).getTime())));
+  if (now < minStart) return 'soon';
+  if (now > maxEnd) return 'ended';
+  return 'live';
 }
 
 function transformGroup(rows){

@@ -226,7 +226,7 @@
       <input type="number" id="totalCount" min="1" placeholder="e.g. 150">
     </label>
 
-    <label class="optional">Your email
+    <label class="optional" id="contactLabel">Your email
       <input type="email" id="contact" placeholder="In case we need to confirm details">
     </label>
 
@@ -632,13 +632,17 @@
       mode = btn.dataset.mode;
       const totalInput = document.getElementById('totalCount');
       const note = document.getElementById('modeNote');
+      const contactLabel = document.getElementById('contactLabel');
       if (mode === 'hunter') {
         totalInput.removeAttribute('required');
         datetimeEntries.forEach(en => en.endDateInput.removeAttribute('required'));
         note.textContent = 'Not sure on exact numbers or end time? Give your best guess, or leave it blank.';
+        contactLabel.style.display = 'none';
+        document.getElementById('contact').value = '';
       } else {
         datetimeEntries.forEach(en => en.endDateInput.setAttribute('required', 'required'));
         note.textContent = 'Brand submissions with an exact quantity and time window get reviewed and listed fastest.';
+        contactLabel.style.display = '';
       }
     };
   });

@@ -155,10 +155,6 @@
       </label>
     </div>
 
-    <label class="optional">Your email
-      <input type="email" id="contact" placeholder="In case we want to follow up">
-    </label>
-
     <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
     <div class="result" id="result"></div>
   </form>
@@ -241,7 +237,7 @@
       listing_ref: mode === 'issue' ? (document.getElementById('listingRef').value || null) : null,
       message: message,
       correction: mode === 'issue' ? (document.getElementById('correctInfo').value || null) : null,
-      contact: document.getElementById('contact').value || null,
+      contact: null,
     };
 
     const { error } = await sb.from('feedback').insert(payload);
