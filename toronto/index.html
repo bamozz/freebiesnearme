@@ -39,6 +39,15 @@
 <link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <style>
+  /* maplibre-gl.css defines .maplibregl-marker{position:absolute}, but on
+     this page it was computing as position:relative instead - each marker
+     then took up space in normal document flow rather than being an
+     absolutely-positioned overlay, so every marker after the first stacked
+     further down the page than the last, compounding into pins rendering
+     hundreds of pixels away from their true position. Forcing it here
+     guarantees correct behavior regardless of why the external rule wasn't
+     winning the cascade. */
+  .maplibregl-marker{position:absolute !important;}
   :root{
     --paper:#FEFCF6;
     --paper-alt:#F5F2E8;
