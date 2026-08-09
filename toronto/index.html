@@ -532,6 +532,9 @@ map.addControl(new maplibregl.NavigationControl(), 'top-left');
 requestAnimationFrame(()=>map.resize());
 window.addEventListener('load', ()=>map.resize());
 map.on('error', e => console.error('maplibre error:', e && e.error && e.error.message, e));
+// Overlapping pins are spread apart based on their on-screen pixel distance,
+// which changes with zoom, so re-run the spread whenever zoom settles.
+map.on('zoomend', ()=>addMarkersToMap());
 
 const markers = {};
 
@@ -568,13 +571,61 @@ function buildPopup(ev){
 
 let activePopup = null;
 
+// Pins keep their real geocoded lat/lng, but when several land within a few
+// pixels of each other at the current zoom, rendering them on top of one
+// another looks like a single pin. This nudges each pin in an overlapping
+// group outward in a small circle so every one stays visible and clickable.
+function spreadOverlappingPins(evs, thresholdPx){
+  const points = evs.map(ev => ({ev, px: map.project([ev.lng, ev.lat])}));
+  const used = new Array(points.length).fill(false);
+  const clusters = [];
+  for (let i = 0; i < points.length; i++){
+    if (used[i]) continue;
+    const cluster = [points[i]];
+    used[i] = true;
+    for (let j = i + 1; j < points.length; j++){
+      if (used[j]) continue;
+      const dx = points[j].px.x - points[i].px.x;
+      const dy = points[j].px.y - points[i].px.y;
+      if (Math.hypot(dx, dy) < thresholdPx){
+        cluster.push(points[j]);
+        used[j] = true;
+      }
+    }
+    clusters.push(cluster);
+  }
+  clusters.forEach(cluster => {
+    if (cluster.length === 1){
+      cluster[0].display = [cluster[0].ev.lng, cluster[0].ev.lat];
+      return;
+    }
+    const cx = cluster.reduce((s,p) => s + p.px.x, 0) / cluster.length;
+    const cy = cluster.reduce((s,p) => s + p.px.y, 0) / cluster.length;
+    const radius = 16 + cluster.length * 4;
+    cluster.forEach((p, idx) => {
+      const angle = (2 * Math.PI * idx) / cluster.length;
+      const lngLat = map.unproject([cx + radius * Math.cos(angle), cy + radius * Math.sin(angle)]);
+      p.display = [lngLat.lng, lngLat.lat];
+    });
+  });
+  return points;
+}
+
+// Below this zoom the map is showing a city-wide view where nobody is trying
+// to read a pin's exact position anyway, so overlapping pins are left as-is
+// rather than spread into a ring that wouldn't reflect real geography.
+const SPREAD_MIN_ZOOM = 13.5;
+
 function addMarkersToMap(){
   Object.values(markers).forEach(m => m.remove());
   Object.keys(markers).forEach(k => delete markers[k]);
   if (activePopup){ activePopup.remove(); activePopup = null; }
-  events.forEach(ev=>{
+  const placed = map.getZoom() >= SPREAD_MIN_ZOOM
+    ? spreadOverlappingPins(events, 26)
+    : events.map(ev => ({ev, display: [ev.lng, ev.lat]}));
+  placed.forEach(({ev, display})=>{
     const m = new maplibregl.Marker({element: pinElement(ev), anchor:'bottom', offset: [0, -5.4]})
-      .setLngLat([ev.lng, ev.lat])
+      .setLngLat(display)
       .addTo(map);
     m.getElement().addEventListener('click', ()=>selectCard(ev.id, false));
     markers[ev.id] = m;
