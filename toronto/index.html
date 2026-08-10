@@ -536,8 +536,24 @@ const map = new maplibregl.Map({
   minZoom: 11,
   maxBounds: [[-79.75, 43.53], [-79.05, 43.90]],
   container: 'map',
+  attributionControl: false,
 });
 map.addControl(new maplibregl.NavigationControl(), 'top-left');
+map.addControl(new maplibregl.AttributionControl({compact: true}));
+// The compact attribution control auto-expands itself the first time actual
+// attribution text is set (once tiles load), regardless of the compact
+// option - this forces it back closed the first time that happens, so it
+// stays collapsed to just the (i) icon by default. Only observes once,
+// so a user's own later clicks to open it aren't fought.
+const attribObserver = new MutationObserver(() => {
+  const attrib = document.querySelector('.maplibregl-ctrl-attrib');
+  if (attrib && attrib.hasAttribute('open')){
+    attrib.removeAttribute('open');
+    attribObserver.disconnect();
+  }
+});
+const attribEl = document.querySelector('.maplibregl-ctrl-attrib');
+if (attribEl) attribObserver.observe(attribEl, {attributes: true, attributeFilter: ['open']});
 requestAnimationFrame(()=>map.resize());
 window.addEventListener('load', ()=>map.resize());
 map.on('error', e => console.error('maplibre error:', e && e.error && e.error.message, e));
