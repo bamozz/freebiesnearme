@@ -1194,7 +1194,11 @@ function selectCard(id, panMap){
   if (!ev) return;
   if (panMap) map.flyTo({center:[ev.lng, ev.lat], zoom:14.5, duration:600});
   if (activePopup) activePopup.remove();
-  activePopup = new maplibregl.Popup({offset:22}).setLngLat([ev.lng, ev.lat]).setHTML(buildPopup(ev)).addTo(map);
+  // closeOnClick defaults to true, which closes the popup on ANY map click -
+  // including the very click that's currently bubbling up from the marker
+  // element that opened it, since this runs inside that marker's own click
+  // handler. Without this, the popup would flash open and immediately close.
+  activePopup = new maplibregl.Popup({offset:22, closeOnClick:false}).setLngLat([ev.lng, ev.lat]).setHTML(buildPopup(ev)).addTo(map);
   const cardEl = document.querySelector('.card.selected');
   if (cardEl) cardEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
