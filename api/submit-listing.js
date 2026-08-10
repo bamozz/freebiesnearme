@@ -43,6 +43,10 @@ export default async function handler(req, res) {
   });
   const verifyJson = await verifyRes.json().catch(() => ({ success: false }));
   if (!verifyJson.success) {
+    console.error('Turnstile verification failed', {
+      hasSecret: Boolean(process.env.TURNSTILE_SECRET_KEY),
+      errorCodes: verifyJson['error-codes'],
+    });
     return res.status(400).json({ error: 'Verification failed. Please try again.' });
   }
 
