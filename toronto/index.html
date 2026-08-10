@@ -605,7 +605,7 @@ function addMarkersToMap(){
   Object.values(markers).forEach(m => m.remove());
   Object.keys(markers).forEach(k => delete markers[k]);
   if (activePopup){ activePopup.remove(); activePopup = null; }
-  events.forEach(ev=>{
+  events.filter(ev => ev.status !== 'ended').forEach(ev=>{
     const m = new maplibregl.Marker({element: pinElement(ev), anchor:'center'})
       .setLngLat([ev.lng, ev.lat])
       .addTo(map);
