@@ -202,13 +202,15 @@ const categories = [
   {id:'fashion', label:'Fashion', color:'#3E6FA8'},
   {id:'tech', label:'Tech', color:'#0E9C82'},
   {id:'wellness', label:'Wellness', color:'#8467C9'},
+  {id:'classes', label:'Classes & Workshops', color:'#2E8B57'},
+  {id:'shows', label:'Concerts & Screenings', color:'#C2703E'},
   {id:'misc', label:'Misc.', color:'#8B6F47'},
 ];
 const catColor = Object.fromEntries(categories.map(c=>[c.id,c.color]));
 const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
 
 const LOCATIONS = [
-  'The Annex','Chinatown','Church-Wellesley Village','Corktown','Danforth','Distillery District',
+  'The Annex','Bell Manor Park','Chinatown','Christie Pits','Church-Wellesley Village','Corktown','Danforth','Distillery District',
   'CF Eaton Centre','Entertainment District','Financial District','Harbord Village',
   'Harbourfront','Kensington Market','King West','Nathan Phillips Square',
   'Old Town','Queen West','Regent Park','Sankofa Square','Stackt Market','St. Lawrence Market',
@@ -360,15 +362,17 @@ function formatTimeRange(start, end){
 }
 
 function groupRows(rows){
-  // Rows explicitly linked via group_id (same brand, same location, several
-  // time windows) group as before. Rows without one now group by brand name
-  // too, so the same touring brand appearing at several different addresses
-  // and/or dates - which used to render as separate pins/cards - becomes one
-  // event with multiple stops instead.
+  // Rows explicitly linked via group_id group as before (admin-curated,
+  // e.g. an intentional multi-stop touring brand). Rows without one only
+  // auto-group when brand, location, AND offering (what) all match - so
+  // the same brand offering the same thing at the same spot on different
+  // dates becomes one event with multiple time windows, but the same
+  // brand offering something different (even at the same location) stays
+  // split into separate pins/cards.
   const groups = {};
   const order = [];
   rows.forEach(row => {
-    const key = row.group_id || ('brand-' + row.brand);
+    const key = row.group_id || ('brand-' + row.brand + '|loc-' + row.neighbourhood + '|what-' + row.what);
     if (!groups[key]){ groups[key] = []; order.push(key); }
     groups[key].push(row);
   });
