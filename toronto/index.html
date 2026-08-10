@@ -1241,18 +1241,23 @@ function selectCard(id, panMap){
   renderList();
   const ev = events.find(e=>e.id===id);
   if (!ev) return;
-  if (panMap) map.flyTo({center:[ev.lng, ev.lat], zoom:14.5, duration:600});
-  if (activePopup) activePopup.remove();
-  // closeOnClick defaults to true, which closes the popup on ANY map click -
-  // including the very click that's currently bubbling up from the marker
-  // element that opened it, since this runs inside that marker's own click
-  // handler. Without this, the popup would flash open and immediately close.
-  // For a multi-stop brand, buildPopup's default (no stop) would join every
-  // stop's time window under the single primary address, implying they're
-  // all at one place - pass the primary stop explicitly so it only shows
-  // that one stop's own place and time instead.
-  const popupStop = ev.stops.length > 1 ? ev.stops[0] : undefined;
-  activePopup = new maplibregl.Popup({offset:22, closeOnClick:false}).setLngLat([ev.lng, ev.lat]).setHTML(buildPopup(ev, popupStop)).addTo(map);
+  if (activePopup){ activePopup.remove(); activePopup = null; }
+  // The map only ever shows currently-live events - a "soon" listing has no
+  // pin, so selecting its card shouldn't pan the map or pop up a location
+  // for it either, since there'd be nothing there to point at yet.
+  if (ev.status === 'live'){
+    if (panMap) map.flyTo({center:[ev.lng, ev.lat], zoom:14.5, duration:600});
+    // closeOnClick defaults to true, which closes the popup on ANY map click -
+    // including the very click that's currently bubbling up from the marker
+    // element that opened it, since this runs inside that marker's own click
+    // handler. Without this, the popup would flash open and immediately close.
+    // For a multi-stop brand, buildPopup's default (no stop) would join every
+    // stop's time window under the single primary address, implying they're
+    // all at one place - pass the primary stop explicitly so it only shows
+    // that one stop's own place and time instead.
+    const popupStop = ev.stops.length > 1 ? ev.stops[0] : undefined;
+    activePopup = new maplibregl.Popup({offset:22, closeOnClick:false}).setLngLat([ev.lng, ev.lat]).setHTML(buildPopup(ev, popupStop)).addTo(map);
+  }
   const cardEl = document.querySelector('.card.selected');
   if (cardEl) cardEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
