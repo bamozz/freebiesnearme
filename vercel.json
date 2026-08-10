@@ -1,5 +1,5 @@
 {
-  "cleanUrls": true,
+  "cleanUrls": false,
   "redirects": [
     { "source": "/", "destination": "/toronto", "permanent": false },
     { "source": "/toronto/index.html", "destination": "/toronto", "statusCode": 301 },
@@ -7,5 +7,12 @@
     { "source": "/toronto/submit.html", "destination": "/toronto/submit", "statusCode": 301 },
     { "source": "/toronto/feedback.html", "destination": "/toronto/feedback", "statusCode": 301 },
     { "source": "/toronto/advertise.html", "destination": "/toronto/advertise", "statusCode": 301 }
+  ],
+  "rewrites": [
+    { "source": "/toronto", "destination": "/toronto/index.html" },
+    { "source": "/toronto/map", "destination": "/toronto/map.html" },
+    { "source": "/toronto/submit", "destination": "/toronto/submit.html" },
+    { "source": "/toronto/feedback", "destination": "/toronto/feedback.html" },
+    { "source": "/toronto/advertise", "destination": "/toronto/advertise.html" }
   ]
 }
