@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
-      secret: process.env.TURNSTILE_SECRET || '',
+      secret: process.env.TURNSTILE_SECRET_KEY || '',
       response: token,
       ...(remoteip ? { remoteip } : {}),
     }),
