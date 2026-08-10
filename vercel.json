@@ -1,6 +1,11 @@
 {
   "cleanUrls": true,
   "redirects": [
-    { "source": "/", "destination": "/toronto", "permanent": false }
+    { "source": "/", "destination": "/toronto", "permanent": false },
+    { "source": "/toronto/index.html", "destination": "/toronto", "statusCode": 301 },
+    { "source": "/toronto/map.html", "destination": "/toronto/map", "statusCode": 301 },
+    { "source": "/toronto/submit.html", "destination": "/toronto/submit", "statusCode": 301 },
+    { "source": "/toronto/feedback.html", "destination": "/toronto/feedback", "statusCode": 301 },
+    { "source": "/toronto/advertise.html", "destination": "/toronto/advertise", "statusCode": 301 }
   ]
 }
