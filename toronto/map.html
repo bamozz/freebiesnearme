@@ -267,14 +267,23 @@ function stripFreeWord(text){
   return stripped ? stripped.charAt(0).toUpperCase() + stripped.slice(1) : stripped;
 }
 
-function buildPopup(ev){
-  const directionsQuery = ev.address
-    ? encodeURIComponent(ev.address + ', ' + ev.location + ', Toronto, ON')
-    : ev.lat + ',' + ev.lng;
+// stop is optional - when a specific stop is given (clicking that stop's own
+// pin on a multi-location brand), the popup shows just that stop's place and
+// time instead of every stop lumped together, which wouldn't make sense for
+// stops at different addresses.
+function buildPopup(ev, stop){
+  const address = stop ? stop.address : ev.address;
+  const neighbourhood = stop ? stop.neighbourhood : ev.location;
+  const timeText = stop ? stop.timeWindow : ev.timeWindows.join(' &middot; ');
+  const lat = stop ? stop.lat : ev.lat;
+  const lng = stop ? stop.lng : ev.lng;
+  const directionsQuery = address
+    ? encodeURIComponent(address + ', ' + neighbourhood + ', Toronto, ON')
+    : lat + ',' + lng;
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${stripFreeWord(ev.what)}</div>
-  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.timeWindows.join(' &middot; ')} &middot; ${ev.location}</div>
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${timeText} &middot; ${neighbourhood}</div>
   <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
@@ -351,10 +360,15 @@ function formatTimeRange(start, end){
 }
 
 function groupRows(rows){
+  // Rows explicitly linked via group_id (same brand, same location, several
+  // time windows) group as before. Rows without one now group by brand name
+  // too, so the same touring brand appearing at several different addresses
+  // and/or dates - which used to render as separate pins/cards - becomes one
+  // event with multiple stops instead.
   const groups = {};
   const order = [];
   rows.forEach(row => {
-    const key = row.group_id || ('single-' + row.id);
+    const key = row.group_id || ('brand-' + row.brand);
     if (!groups[key]){ groups[key] = []; order.push(key); }
     groups[key].push(row);
   });
@@ -376,14 +390,26 @@ function statusFromWindows(rows){
 
 function transformGroup(rows){
   const primary = rows[0];
+  // One stop per row: covers both the "same location, several time windows"
+  // case (explicit group_id) and the "same brand, different addresses
+  // and/or dates" case (grouped by brand name above) with the same shape.
+  const stops = rows.map(r => ({
+    address: r.address,
+    neighbourhood: r.neighbourhood,
+    lat: r.lat,
+    lng: r.lng,
+    timeWindow: formatTimeRange(r.start_time, r.end_time),
+  }));
   return {
     id: primary.id,
     brand: primary.brand,
     cat: primary.category,
     location: primary.neighbourhood,
+    locations: [...new Set(rows.map(r => r.neighbourhood))],
     address: primary.address,
     lat: primary.lat,
     lng: primary.lng,
+    stops,
     what: primary.what,
     timeWindows: rows.map(r => formatTimeRange(r.start_time, r.end_time)),
     startTime: primary.start_time,
@@ -422,15 +448,26 @@ function renderMarkers(){
   const filtered = events.filter(ev =>
     ev.status === 'live' &&
     (activeCats.length===0 || activeCats.includes(ev.cat)) &&
-    (activeLocations.length===0 || activeLocations.includes(ev.location))
+    (activeLocations.length===0 || ev.locations.some(loc => activeLocations.includes(loc)))
   );
+  // A brand with several stops (different addresses and/or dates) is one
+  // event but gets one pin per stop, since each stop is a real, distinct
+  // place someone can go. When a location filter is active, only stops in
+  // that location get a pin - a brand touring several neighbourhoods
+  // matches the filter as a whole, but a pin in a neighbourhood the user
+  // didn't select would be confusing.
   filtered.forEach(ev=>{
-    const popup = new maplibregl.Popup({offset:22}).setHTML(buildPopup(ev));
-    const marker = new maplibregl.Marker({element: pinElement(ev), anchor:'center'})
-      .setLngLat([ev.lng, ev.lat])
-      .setPopup(popup)
-      .addTo(map);
-    markers.push(marker);
+    const stopsToShow = activeLocations.length === 0
+      ? ev.stops
+      : ev.stops.filter(s => activeLocations.includes(s.neighbourhood));
+    stopsToShow.forEach(stop => {
+      const popup = new maplibregl.Popup({offset:22}).setHTML(buildPopup(ev, ev.stops.length > 1 ? stop : undefined));
+      const marker = new maplibregl.Marker({element: pinElement(ev), anchor:'center'})
+        .setLngLat([stop.lng, stop.lat])
+        .setPopup(popup)
+        .addTo(map);
+      markers.push(marker);
+    });
   });
 }
 

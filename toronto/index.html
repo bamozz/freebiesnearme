@@ -601,12 +601,19 @@ function stripFreeWord(text){
   return stripped ? stripped.charAt(0).toUpperCase() + stripped.slice(1) : stripped;
 }
 
-function buildPopup(ev){
+// stop is optional - when a specific stop is given (clicking that stop's own
+// pin on a multi-location brand), the popup shows just that stop's place and
+// time instead of every stop lumped together, which wouldn't make sense for
+// stops at different addresses.
+function buildPopup(ev, stop){
+  const place = stop ? placeLabel(stop.address, stop.neighbourhood) : ev.location;
+  const timeText = stop ? stop.timeWindow : ev.timeWindows.join(' &middot; ');
+  const dirUrl = stop ? directionsUrl({address: stop.address, location: stop.neighbourhood, lat: stop.lat, lng: stop.lng}) : directionsUrl(ev);
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${stripFreeWord(ev.what)}</div>
-  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.timeWindows.join(' &middot; ')} &middot; ${ev.location}</div>
-  <a class="popup-btn" href="${directionsUrl(ev)}" target="_blank" rel="noopener">Get directions</a>`;
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${timeText} &middot; ${place}</div>
+  <a class="popup-btn" href="${dirUrl}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
 let activePopup = null;
@@ -623,13 +630,29 @@ function addMarkersToMap(){
   if (activePopup){ activePopup.remove(); activePopup = null; }
   // The map is meant to answer "what can I go to right now," so pins only
   // ever show currently-live events - the sidebar list still shows soon/
-  // upcoming listings via its own separate filter.
+  // upcoming listings via its own separate filter. A brand with several
+  // stops (different addresses and/or dates) is one card but gets one pin
+  // per stop, since each stop is a real, distinct place someone can go.
   events.filter(ev => ev.status === 'live').forEach(ev=>{
-    const m = new maplibregl.Marker({element: pinElement(ev), anchor:'center'})
-      .setLngLat([ev.lng, ev.lat])
-      .addTo(map);
-    m.getElement().addEventListener('click', ()=>selectCard(ev.id, false));
-    markers[ev.id] = m;
+    ev.stops.forEach((stop, i) => {
+      const marker = new maplibregl.Marker({element: pinElement(ev), anchor:'center'})
+        .setLngLat([stop.lng, stop.lat])
+        .addTo(map);
+      marker.getElement().addEventListener('click', ()=>{
+        if (ev.stops.length > 1){
+          // Show this specific stop's place/time rather than reusing the
+          // single-location popup selectCard builds, but still sync the
+          // sidebar list selection the same way clicking any pin does.
+          selectedId = ev.id;
+          renderList();
+          if (activePopup) activePopup.remove();
+          activePopup = new maplibregl.Popup({offset:22, closeOnClick:false}).setLngLat([stop.lng, stop.lat]).setHTML(buildPopup(ev, stop)).addTo(map);
+        } else {
+          selectCard(ev.id, false);
+        }
+      });
+      markers[ev.id + '-' + i] = marker;
+    });
   });
 }
 
@@ -641,12 +664,22 @@ function normalizePlaceText(s){
   return s.toLowerCase().replace(/\btoronto\b/g, '').replace(/\s+/g, ' ').trim();
 }
 
+function placeLabel(address, neighbourhood){
+  const addressHasLocation = address && neighbourhood && normalizePlaceText(address).includes(normalizePlaceText(neighbourhood));
+  return address
+    ? (addressHasLocation ? address : address + ', ' + neighbourhood)
+    : neighbourhood;
+}
+
 function renderMetaTimes(ev){
-  const addressHasLocation = ev.address && ev.location && normalizePlaceText(ev.address).includes(normalizePlaceText(ev.location));
-  const place = ev.address
-    ? (addressHasLocation ? ev.address : ev.address + ', ' + ev.location)
-    : ev.location;
-  return `<span>${place}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
+  // Multiple distinct addresses (a touring brand with several stops) get one
+  // line per stop pairing that stop's place with its own time window, since
+  // showing one address followed by every time window across all stops
+  // would misleadingly suggest they're all at the same place.
+  if (ev.stops.length > 1 && ev.locations.length > 1){
+    return ev.stops.map(s => `<span>${placeLabel(s.address, s.neighbourhood)} &middot; ${s.timeWindow}</span>`).join('');
+  }
+  return `<span>${placeLabel(ev.address, ev.location)}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
 }
 
 function availInfo(ev){
@@ -1030,7 +1063,7 @@ function renderList(){
     ev.status !== 'ended' &&
     matchesStatusFilter(ev) &&
     (activeCats.length===0 || activeCats.includes(ev.cat)) &&
-    (activeLocations.length===0 || activeLocations.includes(ev.location)) &&
+    (activeLocations.length===0 || ev.locations.some(loc => activeLocations.includes(loc))) &&
     (!searchQuery || ev.brand.toLowerCase().includes(searchQuery) || ev.location.toLowerCase().includes(searchQuery))
   ).sort((a, b) => {
     if (!!a.sponsored !== !!b.sponsored) return a.sponsored ? -1 : 1;
@@ -1214,7 +1247,12 @@ function selectCard(id, panMap){
   // including the very click that's currently bubbling up from the marker
   // element that opened it, since this runs inside that marker's own click
   // handler. Without this, the popup would flash open and immediately close.
-  activePopup = new maplibregl.Popup({offset:22, closeOnClick:false}).setLngLat([ev.lng, ev.lat]).setHTML(buildPopup(ev)).addTo(map);
+  // For a multi-stop brand, buildPopup's default (no stop) would join every
+  // stop's time window under the single primary address, implying they're
+  // all at one place - pass the primary stop explicitly so it only shows
+  // that one stop's own place and time instead.
+  const popupStop = ev.stops.length > 1 ? ev.stops[0] : undefined;
+  activePopup = new maplibregl.Popup({offset:22, closeOnClick:false}).setLngLat([ev.lng, ev.lat]).setHTML(buildPopup(ev, popupStop)).addTo(map);
   const cardEl = document.querySelector('.card.selected');
   if (cardEl) cardEl.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
@@ -1303,10 +1341,15 @@ function formatTimeRange(start, end){
 }
 
 function groupRows(rows){
+  // Rows explicitly linked via group_id (same brand, same location, several
+  // time windows) group as before. Rows without one now group by brand name
+  // too, so the same touring brand appearing at several different addresses
+  // and/or dates - which used to render as separate cards - becomes one
+  // card with multiple stops instead.
   const groups = {};
   const order = [];
   rows.forEach(row => {
-    const key = row.group_id || ('single-' + row.id);
+    const key = row.group_id || ('brand-' + row.brand);
     if (!groups[key]){ groups[key] = []; order.push(key); }
     groups[key].push(row);
   });
@@ -1328,14 +1371,26 @@ function statusFromWindows(rows){
 
 function transformGroup(rows){
   const primary = rows[0];
+  // One stop per row: covers both the "same location, several time windows"
+  // case (explicit group_id) and the "same brand, different addresses
+  // and/or dates" case (grouped by brand name above) with the same shape.
+  const stops = rows.map(r => ({
+    address: r.address,
+    neighbourhood: r.neighbourhood,
+    lat: r.lat,
+    lng: r.lng,
+    timeWindow: formatTimeRange(r.start_time, r.end_time),
+  }));
   return {
     id: primary.id,
     brand: primary.brand,
     cat: primary.category,
     location: primary.neighbourhood,
+    locations: [...new Set(rows.map(r => r.neighbourhood))],
     address: primary.address,
     lat: primary.lat,
     lng: primary.lng,
+    stops,
     what: primary.what,
     timeWindows: rows.map(r => formatTimeRange(r.start_time, r.end_time)),
     time: formatTimeRange(primary.start_time, primary.end_time),
