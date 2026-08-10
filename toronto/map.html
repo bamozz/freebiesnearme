@@ -415,8 +415,12 @@ function matchesStatusFilter(ev){
 function renderMarkers(){
   markers.forEach(m => m.remove());
   markers = [];
+  // Pins only ever show currently-live events, regardless of which status
+  // chip is active - the status chips still drive next3/nextweek filtering
+  // for anything that reads matchesStatusFilter elsewhere, but the map
+  // itself is meant to answer "what can I go to right now."
   const filtered = events.filter(ev =>
-    matchesStatusFilter(ev) &&
+    ev.status === 'live' &&
     (activeCats.length===0 || activeCats.includes(ev.cat)) &&
     (activeLocations.length===0 || activeLocations.includes(ev.location))
   );

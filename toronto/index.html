@@ -605,7 +605,10 @@ function addMarkersToMap(){
   Object.values(markers).forEach(m => m.remove());
   Object.keys(markers).forEach(k => delete markers[k]);
   if (activePopup){ activePopup.remove(); activePopup = null; }
-  events.filter(ev => ev.status !== 'ended').forEach(ev=>{
+  // The map is meant to answer "what can I go to right now," so pins only
+  // ever show currently-live events - the sidebar list still shows soon/
+  // upcoming listings via its own separate filter.
+  events.filter(ev => ev.status === 'live').forEach(ev=>{
     const m = new maplibregl.Marker({element: pinElement(ev), anchor:'center'})
       .setLngLat([ev.lng, ev.lat])
       .addTo(map);
