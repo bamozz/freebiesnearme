@@ -8,6 +8,14 @@ import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types
 // It resolves [hub] against pseo_category_stats first, then
 // pseo_neighbourhood_stats, and 404s if it matches neither.
 
+// This page is backed by a live, frequently-changing Supabase table, not
+// content Next.js should cache - without this, the App Router's default
+// fetch caching (which patches the global fetch() used internally by
+// @supabase/supabase-js) permanently caches whatever the first request to
+// each unique [city]/[hub] combination happened to return, including a
+// false 404 if that first hit landed before the data existed.
+export const dynamic = 'force-dynamic';
+
 type Props = { params: Promise<{ city: string; hub: string }> };
 
 async function getHub(city: string, hub: string) {
