@@ -13,23 +13,31 @@ type Props = { params: Promise<{ city: string; hub: string }> };
 async function getHub(city: string, hub: string) {
   const supabase = createServerClient();
 
-  const { data: categoryStats } = await supabase
+  const { data: categoryStats, error: categoryError } = await supabase
     .from('pseo_category_stats')
     .select('*')
     .eq('city_slug', city)
     .eq('category_slug', hub)
     .maybeSingle<PseoCategoryStats>();
 
+  if (categoryError) {
+    console.error('pseo_category_stats query failed', { city, hub, categoryError });
+  }
+
   if (categoryStats) {
     return { type: 'category' as const, stats: categoryStats };
   }
 
-  const { data: neighbourhoodStats } = await supabase
+  const { data: neighbourhoodStats, error: neighbourhoodError } = await supabase
     .from('pseo_neighbourhood_stats')
     .select('*')
     .eq('city_slug', city)
     .eq('neighbourhood_slug', hub)
     .maybeSingle<PseoNeighbourhoodStats>();
+
+  if (neighbourhoodError) {
+    console.error('pseo_neighbourhood_stats query failed', { city, hub, neighbourhoodError });
+  }
 
   if (neighbourhoodStats) {
     return { type: 'neighbourhood' as const, stats: neighbourhoodStats };
