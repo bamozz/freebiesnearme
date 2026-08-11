@@ -104,6 +104,8 @@ export default async function handler(req, res) {
   });
 
   if (!insertRes.ok) {
+    const insertErrText = await insertRes.text().catch(() => '');
+    console.error('Supabase insert failed', { status: insertRes.status, body: insertErrText });
     return res.status(500).json({ error: 'Something went wrong submitting your listing. Please try again.' });
   }
 
