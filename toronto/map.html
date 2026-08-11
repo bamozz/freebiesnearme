@@ -433,6 +433,9 @@ function matchesStatusFilter(ev){
   if (activeStatus === 'nextweek'){
     return start > Date.now() + 3 * day && start <= Date.now() + 7 * day;
   }
+  if (activeStatus === 'nextmonth'){
+    return start > Date.now() + 7 * day;
+  }
   return true;
 }
 
@@ -481,6 +484,7 @@ function renderStatusFilters(){
     {id:'live', label:'Live now', pulse:true},
     {id:'next3', label:'Next 3 days'},
     {id:'nextweek', label:'Next week'},
+    {id:'nextmonth', label:'Next month+'},
   ];
   const wrap = document.getElementById('statusFilters');
   wrap.innerHTML = '';

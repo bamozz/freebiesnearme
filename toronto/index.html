@@ -734,7 +734,7 @@ function statusBadge(ev){
   if (ev.status==='live') return '<span class="status-badge live"><span class="dot"></span>Live now</span>';
   if (ev.status==='soon'){
     const daysUntil = (new Date(ev.startTime).getTime() - Date.now()) / 86400000;
-    const label = daysUntil <= 3 ? 'Next 3 days' : daysUntil <= 7 ? 'Next week' : 'Starting soon';
+    const label = daysUntil <= 3 ? 'Next 3 days' : daysUntil <= 7 ? 'Next week' : 'Next month+';
     return `<span class="status-badge soon"><span class="dot"></span>${label}</span>`;
   }
   return '<span class="status-badge ended">Wrapped up</span>';
@@ -997,6 +997,7 @@ function renderStatusFilters(){
     {id:'live', label:'Live now', pulse:true},
     {id:'next3', label:'Next 3 days'},
     {id:'nextweek', label:'Next week'},
+    {id:'nextmonth', label:'Next month+'},
   ];
   const wrap = document.getElementById('statusFilters');
   wrap.innerHTML = '';
@@ -1070,6 +1071,10 @@ function matchesStatusFilter(ev){
     // Distinct from "Next 3 days" rather than overlapping it: this covers
     // only days 4-7, so an event isn't double-counted under both filters.
     return start > Date.now() + 3 * day && start <= Date.now() + 7 * day;
+  }
+  if (activeStatus === 'nextmonth'){
+    // Everything beyond next week - distinct from the other two, not overlapping.
+    return start > Date.now() + 7 * day;
   }
   return true;
 }
