@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase';
+import { buildHubItemList } from '@/lib/jsonld';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
 // Starter dynamic route for both category hubs (/toronto/free-coffee) and
@@ -87,20 +88,27 @@ export default async function HubPage({ params }: Props) {
     .order('start_time', { ascending: true })
     .returns<Listing[]>();
 
+  const hubLabel = hub.replace(/-/g, ' ');
+  const jsonLd = buildHubItemList(listings ?? [], hubLabel);
+
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-2xl font-bold">
-        {resolved.stats.active_listing_count} free listings in {hub.replace(/-/g, ' ')}
-      </h1>
-      <ul className="mt-6 flex flex-col gap-4">
-        {(listings ?? []).map((listing) => (
-          <li key={listing.id} className="border rounded-lg p-4">
-            <div className="font-semibold">{listing.brand}</div>
-            <div className="text-sm text-gray-600">{listing.what}</div>
-            <div className="text-sm text-gray-500">{listing.neighbourhood}</div>
-          </li>
-        ))}
-      </ul>
-    </main>
+    <>
+      {/* eslint-disable-next-line react/no-danger */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+      <main className="mx-auto max-w-3xl px-6 py-10">
+        <h1 className="text-2xl font-bold">
+          {resolved.stats.active_listing_count} free listings in {hubLabel}
+        </h1>
+        <ul className="mt-6 flex flex-col gap-4">
+          {(listings ?? []).map((listing) => (
+            <li key={listing.id} className="border rounded-lg p-4">
+              <div className="font-semibold">{listing.brand}</div>
+              <div className="text-sm text-gray-600">{listing.what}</div>
+              <div className="text-sm text-gray-500">{listing.neighbourhood}</div>
+            </li>
+          ))}
+        </ul>
+      </main>
+    </>
   );
 }
