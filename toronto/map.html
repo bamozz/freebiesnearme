@@ -211,7 +211,7 @@ const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
 
 const LOCATIONS = [
   'The Annex','Bell Manor Park','Chinatown','Christie Pits','Church-Wellesley Village','Corktown','Danforth','Distillery District',
-  'CF Eaton Centre','Entertainment District','Financial District','Harbord Village',
+  'CF Eaton Centre','Entertainment District','Evergreen Brick Works','Financial District','Harbord Village',
   'Harbourfront','Kensington Market','King West','Nathan Phillips Square',
   'Old Town','Queen West','Regent Park','Sankofa Square','Stackt Market','St. Lawrence Market',
   'Union Station','The Well','Yonge and Eglinton','Yorkville',
@@ -263,9 +263,11 @@ function pinElement(ev){
 
 // Saying "free" on a site called Freebies Near Me is always redundant, so
 // it's stripped from the offer description wherever it's shown rather than
-// relying on every submitter to leave it out themselves.
+// relying on every submitter to leave it out themselves. Exception: "Free
+// Flicks" is a proper name (the actual title of the screening series), not
+// filler, so it's left alone via a negative lookahead.
 function stripFreeWord(text){
-  const stripped = (text || '').replace(/\bfree\b/gi, ' ').replace(/\s{2,}/g, ' ').trim();
+  const stripped = (text || '').replace(/\bfree\b(?!\s+flicks\b)/gi, ' ').replace(/\s{2,}/g, ' ').trim();
   return stripped ? stripped.charAt(0).toUpperCase() + stripped.slice(1) : stripped;
 }
 
