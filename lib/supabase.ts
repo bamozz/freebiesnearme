@@ -13,3 +13,19 @@ export function createServerClient() {
   }
   return createClient(url, anonKey);
 }
+
+// Bypasses RLS entirely - only for trusted server-side mutations (cron jobs,
+// moderation actions), never anything reachable from client input. Mirrors
+// the service role client api/submit-listing.js already uses for its own
+// writes, since the listings RLS policy blocks anon-key writes/updates
+// (confirmed directly this session - an anon-key UPDATE returns 200 with
+// zero rows affected, not an error, so using createServerClient() here
+// would silently do nothing rather than fail loudly).
+export function createServiceRoleClient() {
+  const url = process.env.SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceRoleKey) {
+    throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY env vars');
+  }
+  return createClient(url, serviceRoleKey);
+}

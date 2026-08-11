@@ -15,5 +15,8 @@
     { "source": "/toronto/submit", "destination": "/toronto/submit.html" },
     { "source": "/toronto/feedback", "destination": "/toronto/feedback.html" },
     { "source": "/toronto/advertise", "destination": "/toronto/advertise.html" }
+  ],
+  "crons": [
+    { "path": "/api/cron/deactivate-expired", "schedule": "0 * * * *" }
   ]
 }
