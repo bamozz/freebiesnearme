@@ -157,12 +157,12 @@
     max-width:1220px;margin:10px auto 0;padding:0 28px;
     display:flex;flex-wrap:wrap;gap:8px;
   }
-  .chip-row.scroll{
+  .chip-row.scroll,.filter-bar.scroll{
     flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;
     scrollbar-width:none;-ms-overflow-style:none;
   }
-  .chip-row.scroll::-webkit-scrollbar{display:none;}
-  .chip-row.scroll .cat-chip{flex:0 0 auto;}
+  .chip-row.scroll::-webkit-scrollbar,.filter-bar.scroll::-webkit-scrollbar{display:none;}
+  .chip-row.scroll .cat-chip,.filter-bar.scroll .status-chip{flex:0 0 auto;}
   .cat-chip{
     font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:14px;
     border:1px solid var(--line);cursor:pointer;color:var(--muted);background:#fff;
@@ -428,7 +428,7 @@
   <input type="text" id="searchInput" placeholder="Search by brand or location...">
 </div>
 
-<div class="filter-bar" id="statusFilters"></div>
+<div class="filter-bar scroll" id="statusFilters"></div>
 <div class="chip-row scroll" id="locationFilters"></div>
 <div class="chip-row scroll" id="catFilters"></div>
 
@@ -488,10 +488,10 @@ const catColor = Object.fromEntries(categories.map(c=>[c.id,c.color]));
 const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
 
 const LOCATIONS = [
-  'The Annex','Bell Manor Park','Chinatown','Christie Pits','Church-Wellesley Village','Corktown','Danforth','Distillery District',
+  'The Annex','Bell Manor Park','Biidaasige Park','Cherry Beach','Chinatown','Christie Pits','Church-Wellesley Village','Corktown','Danforth','Distillery District',
   'CF Eaton Centre','Entertainment District','Evergreen Brick Works','Financial District','Harbord Village',
   'Harbourfront','The Junction','Kensington Market','King West','Nathan Phillips Square',
-  'Old Town','Queen West','Regent Park','Sankofa Square','Sorauren Park','Stackt Market','St. Lawrence Market',
+  'Old Science Centre','Old Town','Queen West','Regent Park','Sankofa Square','Sorauren Park','Stackt Market','St. Lawrence Market',
   'Trillium Park','Union Station','The Well','Yonge and Eglinton','Yorkville',
 ];
 
