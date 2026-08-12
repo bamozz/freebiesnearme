@@ -89,6 +89,7 @@ export default async function handler(req, res) {
     sponsored: false,
     image_url: p.image_url || null,
     insta_url: p.insta_url || null,
+    signup_url: p.signup_url || null,
     group_id: p.group_id || null,
   }));
 

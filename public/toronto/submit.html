@@ -243,6 +243,10 @@
       <input type="text" id="instaUrl" placeholder="https://instagram.com/stories/...">
     </label>
 
+    <label class="optional">Registration link<span style="font-weight:500;color:var(--muted);text-transform:none;"> if people need to sign up ahead of time</span>
+      <input type="text" id="signupUrl" placeholder="https://...">
+    </label>
+
     <div class="note" id="modeNote">Brand submissions with an exact quantity and time window get reviewed and listed fastest.</div>
 
     <div class="cf-turnstile" id="turnstileWidget" data-sitekey="0x4AAAAAAEKzPyqeHOiqJiic" data-action="turnstile-spin-v2"></div>
@@ -736,6 +740,7 @@
     }
 
     const instaUrlVal = document.getElementById('instaUrl').value.trim() || null;
+    const signupUrlVal = document.getElementById('signupUrl').value.trim() || null;
 
     // Saying "free" is always redundant on a site called Freebies Near Me,
     // so it's stripped here regardless of who's submitting - hunters in
@@ -756,6 +761,7 @@
       moderation_status: 'pending',
       image_url: imageUrl,
       insta_url: instaUrlVal,
+      signup_url: signupUrlVal,
     };
 
     const payloads = validEntries.flatMap(loc => {
