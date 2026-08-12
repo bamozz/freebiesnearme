@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759" crossorigin="anonymous"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SRH6EG57P0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SRH6EG57P0');
+</script>
+<!-- Vercel Web Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<!-- Vercel Speed Insights -->
+<script defer src="/_vercel/speed-insights/script.js"></script>
+<title>Changelog | Freebies Near Me</title>
+<meta name="description" content="What's new on Freebies Near Me: recent fixes and improvements to the Toronto free giveaways and pop up events map.">
+<link rel="icon" type="image/svg+xml" href="/toronto/assets/favicon.svg">
+<link rel="canonical" href="https://freebiesnearme.app/toronto/changelog">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Freebies Near Me">
+<meta property="og:url" content="https://freebiesnearme.app/toronto/changelog">
+<meta property="og:title" content="Changelog | Freebies Near Me">
+<meta property="og:description" content="What's new on Freebies Near Me: recent fixes and improvements to the Toronto free giveaways and pop up events map.">
+<meta property="og:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Changelog | Freebies Near Me">
+<meta name="twitter:description" content="What's new on Freebies Near Me: recent fixes and improvements to the Toronto free giveaways and pop up events map.">
+<meta name="twitter:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FEFCF6; --paper-alt:#F5F2E8; --ink:#151B21; --muted:#6B7280;
+    --line:#E4E8E5; --teal:#0E9C82; --teal-dim:#E3F5F0;
+    --amber:#F0A430; --amber-dim:#FCEED8; --coral:#EF5B4E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;}
+  .display{font-family:'Space Grotesk',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  nav{
+    border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(254,252,246,0.92);
+    backdrop-filter:blur(6px);z-index:500;
+  }
+  .nav-inner{
+    max-width:720px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);}
+  .btn-solid{
+    background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;
+    padding:9px 16px;border-radius:20px;cursor:pointer;white-space:nowrap;
+    text-decoration:none;
+  }
+
+  footer{margin-top:34px;border-top:1px solid var(--line);background:#fff;}
+  .footer-inner{
+    max-width:720px;margin:0 auto;padding:24px 24px 40px;
+    display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+  }
+  footer .logo{font-size:16px;}
+  .footer-links{display:flex;gap:16px;}
+  footer .feedback-link{font-size:13px;font-weight:400;color:var(--muted);text-decoration:none;}
+  footer .feedback-link:hover{color:var(--ink);}
+  footer p{font-size:12px;color:var(--muted);margin:0;}
+
+  .wrap{max-width:720px;margin:0 auto;padding:36px 24px 60px;}
+  h1{font-size:clamp(26px,4vw,34px);margin:0 0 6px;}
+  .sub{font-size:14.5px;color:var(--muted);margin:0 0 36px;max-width:480px;}
+
+  .entry{
+    padding:26px 0;border-top:1px solid var(--line);
+  }
+  .entry:first-of-type{border-top:none;padding-top:0;}
+  .entry-date{
+    font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;
+    letter-spacing:0.04em;margin-bottom:6px;
+  }
+  .entry-title{
+    font-size:20px;font-weight:700;margin:0 0 10px;display:flex;align-items:center;gap:9px;
+  }
+  .entry-blurb{font-size:14.5px;color:var(--ink);line-height:1.55;margin:0 0 16px;max-width:560px;}
+
+  .section{margin-top:16px;}
+  .section-head{
+    display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;
+    text-transform:uppercase;letter-spacing:0.03em;margin-bottom:8px;
+  }
+  .section-head.new{color:var(--teal);}
+  .section-head.improved{color:#3E6FA8;}
+  .section-head.fixed{color:var(--coral);}
+  .item-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
+  .item-list li{
+    display:flex;gap:8px;font-size:14px;line-height:1.5;color:var(--ink);
+  }
+  .item-list li::before{content:"—";color:var(--muted);flex-shrink:0;}
+  .item-list b{font-weight:700;}
+  .item-list span{color:var(--muted);}
+
+  .empty{font-size:14px;color:var(--muted);padding:20px 0;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="/toronto">Freebies Near Me</a>
+    <a class="btn-solid" href="/toronto">Back to map</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1 class="display">Changelog</h1>
+  <p class="sub">What's new, fixed, and improved on Freebies Near Me.</p>
+
+  <div id="entries"></div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <a class="logo" href="/toronto">Freebies Near Me</a>
+    <div class="footer-links">
+      <a class="feedback-link" href="/toronto/advertise">Advertise</a>
+      <a class="feedback-link" href="/toronto/feedback">Feedback</a>
+      <a class="feedback-link" href="/toronto/changelog">Changelog</a>
+    </div>
+    <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
+  </div>
+</footer>
+
+<script>
+  // Newest first. Add a new object to the top of this array whenever you
+  // ship something worth telling people about - no build step needed.
+  const CHANGELOG = [
+    {
+      date: 'August 12, 2026',
+      emoji: '\u{1F5D3}\u{FE0F}',
+      title: 'Smarter time filters',
+      blurb: "Cleaned up how upcoming events are grouped so a listing can't show up under two filters at once, and added a new bucket for things further out.",
+      sections: [
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Filters', text: 'Added a "Next 30 days" bucket between Next week and Next month+.' },
+          { label: 'Event cards', text: 'Added a direct Register link to listings that have a signup URL.' },
+        ]},
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Next 3 days', text: 'No longer incorrectly includes events that are already live.' },
+          { label: 'Listings', text: "Cards with no end time now just show the start time instead of a confusing range." },
+        ]},
+      ],
+    },
+    {
+      date: 'August 11, 2026',
+      emoji: '\u{1F9F9}',
+      title: 'Cleaner listings behind the scenes',
+      blurb: 'Mostly under-the-hood work, but a couple of things you’ll notice.',
+      sections: [
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Neighbourhood pages', text: 'Start and end times now display converted to Toronto time.' },
+          { label: 'Listings', text: 'Expired events are automatically deactivated every hour, so stale stuff clears out faster.' },
+        ]},
+      ],
+    },
+    {
+      date: 'August 10, 2026',
+      emoji: '\u{1F4CD}',
+      title: 'New filters and neighbourhoods',
+      blurb: 'Expanded coverage and added a filter for things happening further out.',
+      sections: [
+        { heading: 'New', tone: 'new', emoji: '\u{1F195}', items: [
+          { label: 'Category', text: 'Added a "Tour" category.' },
+          { label: 'Neighbourhoods', text: 'Added Junction, Sorauren Park, Trillium Park, and Evergreen Brick Works.' },
+          { label: 'Filters', text: 'Added a "Next month+" status filter and badge tag.' },
+        ]},
+      ],
+    },
+  ];
+
+  function renderEntry(entry){
+    const sectionsHtml = entry.sections.map(section => `
+      <div class="section">
+        <div class="section-head ${section.tone}">${section.emoji} ${section.heading}</div>
+        <ul class="item-list">
+          ${section.items.map(item => `<li><span><b>${item.label}:</b> ${item.text}</span></li>`).join('')}
+        </ul>
+      </div>
+    `).join('');
+
+    return `
+      <div class="entry">
+        <div class="entry-date mono">${entry.date}</div>
+        <h2 class="entry-title display">${entry.emoji} ${entry.title}</h2>
+        <p class="entry-blurb">${entry.blurb}</p>
+        ${sectionsHtml}
+      </div>
+    `;
+  }
+
+  const wrap = document.getElementById('entries');
+  if (CHANGELOG.length === 0){
+    wrap.innerHTML = '<div class="empty">Nothing to report yet - check back soon.</div>';
+  } else {
+    wrap.innerHTML = CHANGELOG.map(renderEntry).join('');
+  }
+</script>
+</body>
+</html>
