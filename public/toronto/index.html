@@ -318,6 +318,10 @@
     font-size:11.5px;color:var(--muted);
   }
   .avail{font-weight:700;}
+  .signup-link{
+    display:inline-block;margin-top:6px;font-size:12px;font-weight:700;
+    color:var(--teal);text-decoration:none;
+  }
   .mobile-directions-link{display:none;}
   @media (max-width:920px){
     .mobile-directions-link{
@@ -1127,6 +1131,7 @@ function renderList(){
       <div class="card-meta">
         ${renderMetaTimes(ev)}
         ${a ? `<span class="avail ${a.cls}">${a.text}</span>` : ''}
+        ${ev.signup_url ? `<a href="${ev.signup_url}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">Sign up &rarr;</a>` : ''}
       </div>
       <a class="mobile-directions-link" href="${directionsUrl(ev)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">&#128205; Get directions</a>
       ${renderReportSection(ev)}
@@ -1440,6 +1445,7 @@ function transformGroup(rows){
     status: statusFromWindows(rows),
     image_url: primary.image_url,
     insta_url: primary.insta_url,
+    signup_url: primary.signup_url,
   };
 }
 
