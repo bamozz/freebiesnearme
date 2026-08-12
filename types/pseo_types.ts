@@ -45,6 +45,7 @@ export interface Listing {
   image_url: string | null;
   insta_url: string | null;
   group_id: string | null;
+  signup_url: string | null;
 
   // Added by this migration
   city_slug: string;
