@@ -431,6 +431,10 @@ function transformGroup(rows){
 function matchesStatusFilter(ev){
   if (activeStatus === 'all') return true;
   if (activeStatus === 'live') return ev.status === 'live';
+  // Every "upcoming" bucket below only ever applies to not-yet-started
+  // listings, so a live (or ended) listing can never leak into one of them
+  // regardless of how the day-count math below is written.
+  if (ev.status !== 'soon') return false;
   const start = new Date(ev.startTime).getTime();
   const day = 24 * 60 * 60 * 1000;
   if (activeStatus === 'next3'){
@@ -439,8 +443,11 @@ function matchesStatusFilter(ev){
   if (activeStatus === 'nextweek'){
     return start > Date.now() + 3 * day && start <= Date.now() + 7 * day;
   }
+  if (activeStatus === 'next30'){
+    return start > Date.now() + 7 * day && start <= Date.now() + 30 * day;
+  }
   if (activeStatus === 'nextmonth'){
-    return start > Date.now() + 7 * day;
+    return start > Date.now() + 30 * day;
   }
   return true;
 }
@@ -490,6 +497,7 @@ function renderStatusFilters(){
     {id:'live', label:'Live now', pulse:true},
     {id:'next3', label:'Next 3 days'},
     {id:'nextweek', label:'Next week'},
+    {id:'next30', label:'Next 30 days'},
     {id:'nextmonth', label:'Next month+'},
   ];
   const wrap = document.getElementById('statusFilters');
