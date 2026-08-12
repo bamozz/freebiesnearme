@@ -145,6 +145,23 @@
   const CHANGELOG = [
     {
       date: 'August 12, 2026',
+      emoji: '\u{1F3A8}',
+      title: 'Category and neighbourhood pages get the full treatment',
+      blurb: "Every /toronto/{category} and /toronto/{neighbourhood} page now looks like the rest of the site instead of a bare list, plus a couple of small additions.",
+      sections: [
+        { heading: 'New', tone: 'new', emoji: '\u{1F195}', items: [
+          { label: 'Submit form', text: 'Added an optional Registration link field, so brand and hunter submissions can include a signup link.' },
+        ]},
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Category & neighbourhood pages', text: "Cards now match the homepage's design: category tags, live/soon/wrapped-up badges, sponsored styling, and Register and Get directions links." },
+        ]},
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Changelog', text: 'Fixed a missing routing rule that made this page 404 right after it launched.' },
+        ]},
+      ],
+    },
+    {
+      date: 'August 12, 2026',
       emoji: '\u{1F5D3}\u{FE0F}',
       title: 'Smarter time filters',
       blurb: "Cleaned up how upcoming events are grouped so a listing can't show up under two filters at once, and added a new bucket for things further out.",
