@@ -17,6 +17,6 @@
     { "source": "/toronto/advertise", "destination": "/toronto/advertise.html" }
   ],
   "crons": [
-    { "path": "/api/cron/deactivate-expired", "schedule": "0 * * * *" }
+    { "path": "/api/cron/deactivate-expired", "schedule": "0 8 * * *" }
   ]
 }
