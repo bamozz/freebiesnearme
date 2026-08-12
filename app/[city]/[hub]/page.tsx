@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
+import { formatTimeRange } from '@/lib/datetime';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
 // Starter dynamic route for both category hubs (/toronto/free-coffee) and
@@ -97,6 +98,7 @@ export default async function HubPage({ params }: Props) {
               <div className="font-semibold">{listing.brand}</div>
               <div className="text-sm text-gray-600">{listing.what}</div>
               <div className="text-sm text-gray-500">{listing.neighbourhood}</div>
+              <div className="text-sm text-gray-500">{formatTimeRange(listing.start_time, listing.end_time)}</div>
             </li>
           ))}
         </ul>

@@ -1,57 +1,5 @@
 import type { Listing } from '@/types/pseo_types';
-
-const TORONTO_TZ = 'America/Toronto';
-
-function getTimezoneOffsetMs(timeZone: string, date: Date): number {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone,
-    hourCycle: 'h23',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })
-    .formatToParts(date)
-    .reduce<Record<string, string>>((acc, p) => {
-      if (p.type !== 'literal') acc[p.type] = p.value;
-      return acc;
-    }, {});
-
-  const asUtc = Date.UTC(
-    Number(parts.year),
-    Number(parts.month) - 1,
-    Number(parts.day),
-    Number(parts.hour),
-    Number(parts.minute),
-    Number(parts.second)
-  );
-  return asUtc - date.getTime();
-}
-
-// Mirrors assumedEnd() in index.html/map.html: when a listing has no known
-// end time (hunter submissions can omit it), assume ~9pm local time on the
-// same calendar day as the start - same convention used everywhere else on
-// the site, so this doesn't introduce a second, inconsistent fallback rule.
-function assumedEndIso(startIso: string): string {
-  const start = new Date(startIso);
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: TORONTO_TZ,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
-    .formatToParts(start)
-    .reduce<Record<string, string>>((acc, p) => {
-      if (p.type !== 'literal') acc[p.type] = p.value;
-      return acc;
-    }, {});
-
-  const guessUtc = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), 21, 0);
-  const offset = getTimezoneOffsetMs(TORONTO_TZ, new Date(guessUtc));
-  return new Date(guessUtc - offset).toISOString();
-}
+import { assumedEndIso } from '@/lib/datetime';
 
 export function buildHubItemList(listings: Listing[], hubLabel: string) {
   const itemListElement = listings.map((listing, index) => ({
