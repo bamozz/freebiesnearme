@@ -349,7 +349,10 @@ function formatTimeRange(start, end){
   const s = new Date(start);
   const sDay = formatDay(s);
   const sHasTime = hasClockTime(s);
-  const rawEnd = new Date(end || assumedEnd(start));
+  // No end time at all (distinct from a date-only end below) - show just
+  // the start rather than filling in a fabricated end time.
+  if (!end) return sHasTime ? sDay + ', from ' + formatClock(s) : sDay;
+  const rawEnd = new Date(end);
   const eHasTime = hasClockTime(rawEnd);
   // A date-only end that lands exactly at midnight is a half-open boundary
   // (needed so the listing stays live through the whole last day) and
