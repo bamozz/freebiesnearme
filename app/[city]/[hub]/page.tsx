@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
 import { formatTimeRange } from '@/lib/datetime';
+import { CATEGORY_COLOR, CATEGORY_LABEL } from '@/lib/categories';
+import { stripFreeWord, buildImageAlt, directionsUrl, availInfo, computeListingStatus } from '@/lib/listing-display';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
 // Starter dynamic route for both category hubs (/toronto/free-coffee) and
@@ -17,6 +19,12 @@ import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types
 // each unique [city]/[hub] combination happened to return, including a
 // false 404 if that first hit landed before the data existed.
 export const dynamic = 'force-dynamic';
+
+const STATUS_LABEL: Record<'live' | 'soon' | 'ended', string> = {
+  live: 'Live now',
+  soon: 'Coming up',
+  ended: 'Wrapped up',
+};
 
 type Props = { params: Promise<{ city: string; hub: string }> };
 
@@ -81,28 +89,87 @@ export default async function HubPage({ params }: Props) {
     .order('start_time', { ascending: true })
     .returns<Listing[]>();
 
+  const items = listings ?? [];
   const hubLabel = hub.replace(/-/g, ' ');
-  const jsonLd = buildHubItemList(listings ?? [], hubLabel);
+  const jsonLd = buildHubItemList(items, hubLabel);
 
   return (
     <>
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      <main className="mx-auto max-w-3xl px-6 py-10">
-        <h1 className="text-2xl font-bold">
+      <div className="hub-wrap">
+        <h1 className="hub-title display">
           {resolved.stats.active_listing_count} free listings in {hubLabel}
         </h1>
-        <ul className="mt-6 flex flex-col gap-4">
-          {(listings ?? []).map((listing) => (
-            <li key={listing.id} className="border rounded-lg p-4">
-              <div className="font-semibold">{listing.brand}</div>
-              <div className="text-sm text-gray-600">{listing.what}</div>
-              <div className="text-sm text-gray-500">{listing.neighbourhood}</div>
-              <div className="text-sm text-gray-500">{formatTimeRange(listing.start_time, listing.end_time)}</div>
-            </li>
-          ))}
-        </ul>
-      </main>
+        <p className="hub-sub">Free giveaways, samples, and pop up events in {hubLabel}, Toronto.</p>
+
+        {items.length === 0 ? (
+          <div className="hub-empty">No free listings here right now. Check back soon, or explore the full map.</div>
+        ) : (
+          <ul className="hub-list">
+            {items.map((listing) => {
+              const status = computeListingStatus(listing.start_time, listing.end_time);
+              const avail = availInfo(listing);
+              return (
+                <li
+                  key={listing.id}
+                  className={`card${listing.sponsored ? ' sponsored' : ''}${listing.image_url ? ' has-thumb' : ''}`}
+                  style={listing.sponsored ? undefined : { borderLeftColor: CATEGORY_COLOR[listing.category] }}
+                >
+                  {listing.sponsored && <div className="sponsored-flag">Sponsored</div>}
+                  <div className="card-top">
+                    <div className="tag-row">
+                      <span className="tag cat" style={{ color: CATEGORY_COLOR[listing.category] }}>
+                        {CATEGORY_LABEL[listing.category]}
+                      </span>
+                    </div>
+                    <span className={`status-badge ${status}`}>
+                      <span className="dot" />
+                      {STATUS_LABEL[status]}
+                    </span>
+                  </div>
+                  {listing.image_url && (
+                    <div className="card-thumb">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={listing.image_url} alt={buildImageAlt(listing)} loading="lazy" />
+                    </div>
+                  )}
+                  <div className="card-text">
+                    <div className="card-what">{stripFreeWord(listing.what)}</div>
+                    <div className="card-brand">{listing.brand}</div>
+                  </div>
+                  <div className="card-meta">
+                    <span>
+                      {formatTimeRange(listing.start_time, listing.end_time)} &middot; {listing.neighbourhood}
+                    </span>
+                    <div className="card-meta-row">
+                      {avail && <span className={`avail ${avail.cls}`}>{avail.text}</span>}
+                      {listing.signup_url && (
+                        <a
+                          href={listing.signup_url}
+                          target="_blank"
+                          rel="noopener"
+                          className="signup-link"
+                        >
+                          Register &rarr;
+                        </a>
+                      )}
+                      <a
+                        href={directionsUrl(listing)}
+                        target="_blank"
+                        rel="noopener"
+                        className="directions-link"
+                      >
+                        Get directions
+                      </a>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
     </>
   );
 }
