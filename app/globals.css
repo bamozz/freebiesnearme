@@ -1,19 +1,9 @@
 /* No Tailwind import - this page's content is styled entirely by the
    semantic classes below (ported 1:1 from public/toronto/index.html), not
-   Tailwind utilities (grep confirms zero usage in app/). Tailwind's own
-   preflight/reset layer was the only remaining difference between this
-   page and the static site's plain CSS - removing it fixed pages rendering
-   near-invisible on mobile Chrome (Android's forced-dark heuristic was
-   still triggering here despite color-scheme:light being correctly set,
-   even though the static pages with the identical color-scheme fix and no
-   Tailwind involved render correctly under the same conditions). */
+   Tailwind utilities (grep confirms zero usage in app/). */
 
 /* ===== Brand tokens (ported from public/toronto/index.html's :root) ===== */
 :root{
-  /* Tells Chrome's Android "force dark" heuristic this page is
-     deliberately light-only, so it stops auto-inverting/desaturating
-     colors on it (the paper/card palette below relies on exact values,
-     not browser-guessed ones). */
   color-scheme:light;
   --paper:#FEFCF6;
   --paper-alt:#F5F2E8;
@@ -56,7 +46,7 @@ nav{
   .logo{font-size:17px;}
   .nav-links{display:none;}
   .bottom-tabbar{
-    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:600;
+    display:flex;position:fixed;left:0;right:0;top:auto;bottom:0;z-index:600;
     background:rgba(255,255,255,0.96);backdrop-filter:blur(6px);
     border-top:1px solid var(--line);
     padding:8px 0 calc(8px + env(safe-area-inset-bottom));
