@@ -4,6 +4,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Freebies Near Me',
   description: 'Free giveaways, samples, and pop up events happening in Toronto right now.',
+  other: {
+    'color-scheme': 'light',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

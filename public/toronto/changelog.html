@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759" crossorigin="anonymous"></script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SRH6EG57P0"></script>
@@ -40,6 +41,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
+    color-scheme:light;
     --paper:#FEFCF6; --paper-alt:#F5F2E8; --ink:#151B21; --muted:#6B7280;
     --line:#E4E8E5; --teal:#0E9C82; --teal-dim:#E3F5F0;
     --amber:#F0A430; --amber-dim:#FCEED8; --coral:#EF5B4E;
@@ -143,6 +145,17 @@
   // Newest first. Add a new object to the top of this array whenever you
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
+    {
+      date: 'August 13, 2026',
+      emoji: '\u{1F319}',
+      title: 'Fixed washed-out pages on Android dark mode',
+      blurb: "If your phone had dark mode forced on for web pages, some pages could render nearly invisible - too light to read, with parts of the layout out of place. Every page now explicitly tells the browser it's light-only, so this shouldn't happen anymore.",
+      sections: [
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Android dark mode', text: "Pages no longer get auto-inverted/washed out by Chrome's forced dark mode - every page now declares itself light-only." },
+        ]},
+      ],
+    },
     {
       date: 'August 13, 2026',
       emoji: '\u{1F9ED}',

@@ -2,6 +2,11 @@
 
 /* ===== Brand tokens (ported from public/toronto/index.html's :root) ===== */
 :root{
+  /* Tells Chrome's Android "force dark" heuristic this page is
+     deliberately light-only, so it stops auto-inverting/desaturating
+     colors on it (the paper/card palette below relies on exact values,
+     not browser-guessed ones). */
+  color-scheme:light;
   --paper:#FEFCF6;
   --paper-alt:#F5F2E8;
   --ink:#151B21;
