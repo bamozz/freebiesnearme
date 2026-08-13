@@ -124,11 +124,11 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
 .avail{font-weight:700;}
 .avail.low{color:var(--coral);}
 .avail.ok{color:var(--teal);}
-.signup-link,.directions-link{
+.signup-link,.directions-link,.calendar-link{
   display:inline-block;margin-top:6px;font-size:12px;font-weight:700;
   color:var(--teal);text-decoration:none;
 }
-.signup-link:hover,.directions-link:hover{text-decoration:underline;}
+.signup-link:hover,.directions-link:hover,.calendar-link:hover{text-decoration:underline;}
 
 .card.sponsored{background:linear-gradient(180deg,var(--amber-dim),#fff 60%);border-color:var(--amber);}
 .sponsored-flag{

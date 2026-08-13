@@ -62,3 +62,53 @@ export function statusLabel(status: 'live' | 'soon' | 'ended', startTime: string
   }
   return 'Wrapped up';
 }
+
+function icsEscape(text: string): string {
+  return text.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+}
+
+function toIcsUtc(iso: string): string {
+  return new Date(iso).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+// Ported from buildCalendarUrl() in index.html - builds a data: URI .ics
+// file for a listing so "Add to calendar" works as a plain downloadable
+// link with no server round trip or client JS needed, since this can be
+// computed once server-side. Every major calendar app (Apple, Google,
+// Outlook, Android) opens or imports .ics files directly.
+export function buildCalendarUrl(listing: Listing): string {
+  const start = toIcsUtc(listing.start_time);
+  const end = toIcsUtc(listing.end_time || assumedEndIso(listing.start_time));
+  const stamp = toIcsUtc(new Date().toISOString());
+  const what = stripFreeWord(listing.what);
+  const summary = icsEscape(`${listing.brand} - ${what}`);
+  const description = icsEscape(`${what} - free, hosted by ${listing.brand}, in ${listing.neighbourhood}.`);
+  const location = icsEscape(
+    listing.address ? `${listing.address}, ${listing.neighbourhood}, Toronto, ON` : `${listing.neighbourhood}, Toronto, ON`
+  );
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Freebies Near Me//EN',
+    'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    `UID:${listing.id}@freebiesnearme.app`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:${summary}`,
+    `DESCRIPTION:${description}`,
+    `LOCATION:${location}`,
+    `URL:${directionsUrl(listing)}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+  return `data:text/calendar;charset=utf8,${encodeURIComponent(ics)}`;
+}
+
+export function icsFilename(listing: Listing): string {
+  return `${listing.brand}-${listing.what}`
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') + '.ics';
+}

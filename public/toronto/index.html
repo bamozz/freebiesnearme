@@ -329,7 +329,7 @@
     font-size:11.5px;color:var(--muted);
   }
   .avail{font-weight:700;}
-  .signup-link{
+  .signup-link,.calendar-link{
     display:inline-block;margin-top:6px;font-size:12px;font-weight:700;
     color:var(--teal);text-decoration:none;
   }
@@ -1192,6 +1192,7 @@ function renderList(){
         ${renderMetaTimes(ev)}
         ${a ? `<span class="avail ${a.cls}">${a.text}</span>` : ''}
         ${ev.signup_url ? `<a href="${ev.signup_url}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">Register &rarr;</a>` : ''}
+        <a href="${buildCalendarUrl(ev)}" download="${icsFilename(ev)}" class="calendar-link" onclick="event.stopPropagation()">&#128197; Add to calendar</a>
       </div>
       <a class="mobile-directions-link" href="${directionsUrl(ev)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">&#128205; Get directions</a>
       ${renderReportSection(ev)}
@@ -1382,6 +1383,48 @@ function assumedEnd(start){
   return new Date(guess - offset).toISOString();
 }
 
+// Builds a data: URI .ics file for a single listing's primary time window
+// (matching Get directions/Register, which likewise only act on the
+// primary stop rather than every date in a multi-day group) so "Add to
+// calendar" works as a plain downloadable link with no server round trip -
+// every major calendar app (Apple, Google, Outlook, Android) opens or
+// imports .ics files directly.
+function icsEscape(text){
+  return String(text).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+}
+function toIcsUtc(iso){
+  return new Date(iso).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+function buildCalendarUrl(ev){
+  const start = toIcsUtc(ev.startTime);
+  const end = toIcsUtc(ev.endTime || assumedEnd(ev.startTime));
+  const stamp = toIcsUtc(new Date().toISOString());
+  const summary = icsEscape(`${ev.brand} - ${stripFreeWord(ev.what)}`);
+  const description = icsEscape(`${stripFreeWord(ev.what)} - free, hosted by ${ev.brand}, in ${ev.location}.`);
+  const location = icsEscape(ev.address ? `${ev.address}, ${ev.location}, Toronto, ON` : `${ev.location}, Toronto, ON`);
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Freebies Near Me//EN',
+    'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    `UID:${ev.id}@freebiesnearme.app`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:${summary}`,
+    `DESCRIPTION:${description}`,
+    `LOCATION:${location}`,
+    `URL:${directionsUrl(ev)}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+  return `data:text/calendar;charset=utf8,${encodeURIComponent(ics)}`;
+}
+function icsFilename(ev){
+  return `${ev.brand}-${ev.what}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') + '.ics';
+}
+
 function statusFromTimes(start, end){
   const now = new Date();
   const s = new Date(start), e = new Date(end || assumedEnd(start));
@@ -1499,6 +1542,7 @@ function transformGroup(rows){
     timeWindows: rows.map(r => formatTimeRange(r.start_time, r.end_time)),
     time: formatTimeRange(primary.start_time, primary.end_time),
     startTime: primary.start_time,
+    endTime: primary.end_time,
     claimed: primary.claimed_count || 0,
     total: primary.total_count,
     sponsored: primary.sponsored,

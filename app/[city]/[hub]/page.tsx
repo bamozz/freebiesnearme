@@ -4,7 +4,16 @@ import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
 import { formatTimeRange } from '@/lib/datetime';
 import { CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
-import { stripFreeWord, buildImageAlt, directionsUrl, availInfo, computeListingStatus, statusLabel } from '@/lib/listing-display';
+import {
+  stripFreeWord,
+  buildImageAlt,
+  directionsUrl,
+  availInfo,
+  computeListingStatus,
+  statusLabel,
+  buildCalendarUrl,
+  icsFilename,
+} from '@/lib/listing-display';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
 // Starter dynamic route for both category hubs (/toronto/free-coffee) and
@@ -171,6 +180,13 @@ export default async function HubPage({ params }: Props) {
                       className="directions-link"
                     >
                       &#128205; Get directions
+                    </a>
+                    <a
+                      href={buildCalendarUrl(listing)}
+                      download={icsFilename(listing)}
+                      className="calendar-link"
+                    >
+                      &#128197; Add to calendar
                     </a>
                   </div>
                 </li>
