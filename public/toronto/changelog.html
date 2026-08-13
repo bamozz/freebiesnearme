@@ -159,11 +159,11 @@
     {
       date: 'August 13, 2026',
       emoji: '\u{1F319}',
-      title: 'Fixed washed-out pages on Android dark mode',
-      blurb: "If your phone had dark mode forced on for web pages, some pages could render nearly invisible - too light to read, with parts of the layout out of place. Every page now explicitly tells the browser it's light-only, so this shouldn't happen anymore.",
+      title: 'Fixed washed-out category and neighbourhood pages on mobile',
+      blurb: "On mobile, category and neighbourhood pages could render almost invisible - a styling bug made the bottom navigation bar stretch to cover the entire screen with a translucent white layer, washing out everything underneath it. This is now fixed.",
       sections: [
         { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
-          { label: 'Android dark mode', text: "Pages no longer get auto-inverted/washed out by Chrome's forced dark mode - every page now declares itself light-only." },
+          { label: 'Mobile bottom navigation', text: 'No longer covers the whole page - it stays put as a small bar at the bottom, so content underneath is fully visible again.' },
         ]},
       ],
     },
