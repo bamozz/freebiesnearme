@@ -72,6 +72,25 @@ function currentMonthYear(): string {
   return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: TORONTO_TZ });
 }
 
+// Same freshness signal, full date - for the visible on-page badge rather
+// than the <title> tag. Phrased as the PAGE's own data being current, not
+// as a claim that every listing shown is happening today (the page lists
+// upcoming listings too) - same distinction as currentMonthYear() above.
+function currentFullDate(): string {
+  return new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: TORONTO_TZ });
+}
+
+// "View on map" jump-link, pre-filtered via map.html's URL param support
+// so a hub page visitor lands on a map already showing this hub's
+// listings rather than a blank one they'd have to re-filter themselves.
+function buildMapUrl(city: string, hub: string, type: 'category' | 'neighbourhood', hubLabel: string): string {
+  if (type === 'category') {
+    const category = CATEGORIES.find((c) => c.slug === hub);
+    return category ? `/${city}/map?cat=${encodeURIComponent(category.id)}` : `/${city}/map`;
+  }
+  return `/${city}/map?location=${encodeURIComponent(hubLabel)}`;
+}
+
 type Props = { params: Promise<{ city: string; hub: string }> };
 
 async function getHub(city: string, hub: string) {
@@ -217,6 +236,12 @@ export default async function HubPage({ params }: Props) {
             ? `Free ${hubLabel} Pop-ups, Giveaways & Samples in ${cityLabel}`
             : `Free Pop-ups, Giveaways & Samples at ${hubLabel}, ${cityLabel}`}
         </h1>
+        <div className="hub-badges">
+          <span className="hub-freshness-badge">&#10003; Verified active today: {currentFullDate()}</span>
+          <a href={buildMapUrl(city, hub, resolved.type, hubLabel)} className="hub-map-cta">
+            &#128506; View on map
+          </a>
+        </div>
         <p className="hub-sub">
           {items.length} free listings happening now or coming up in {hubLabel}, {cityLabel}. Updated {currentMonthYear()}.
         </p>

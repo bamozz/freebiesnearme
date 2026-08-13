@@ -536,6 +536,15 @@ async function loadListings(){
   renderMarkers();
 }
 
+// Lets a pSEO hub page's "View on map" link land here pre-filtered
+// (e.g. /toronto/map?location=The+Well or ?cat=food) instead of a blank
+// unfiltered map the user has to re-filter themselves.
+const urlParams = new URLSearchParams(window.location.search);
+const initialLocation = urlParams.get('location');
+const initialCat = urlParams.get('cat');
+if (initialLocation && LOCATIONS.includes(initialLocation)) activeLocations = [initialLocation];
+if (initialCat && categories.some(c => c.id === initialCat)) activeCats = [initialCat];
+
 renderCatFilters();
 renderLocationFilters();
 renderLegend();
