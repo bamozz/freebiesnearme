@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
-import { formatTimeRange, hasClockTime } from '@/lib/datetime';
+import { formatTimeRange, hasClockTime, TORONTO_TZ } from '@/lib/datetime';
 import { CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
 import {
   stripFreeWord,
@@ -39,6 +39,15 @@ function titleCase(slug: string): string {
 
 function hubDisplayLabel(hub: string, type: 'category' | 'neighbourhood'): string {
   return type === 'category' ? CATEGORY_SLUG_LABEL[hub] ?? titleCase(hub) : titleCase(hub);
+}
+
+// "Today" freshness signal for the <title> tag - computed fresh per
+// request (this route is force-dynamic already), not cached. Kept out of
+// the visible H1/subheading on purpose: the page lists upcoming listings
+// too, not just today's, so claiming "Today" in on-page content would
+// reintroduce the exact misleading-copy issue already fixed there.
+function currentMonthYear(): string {
+  return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: TORONTO_TZ });
 }
 
 type Props = { params: Promise<{ city: string; hub: string }> };
@@ -78,10 +87,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const label = hubDisplayLabel(hub, resolved.type);
   const cityLabel = titleCase(city);
+  const monthYear = currentMonthYear();
   const title =
     resolved.type === 'category'
-      ? `Free ${label} in ${cityLabel} | Freebies Near Me`
-      : `Free things to do in ${label}, ${cityLabel} | Freebies Near Me`;
+      ? `Free ${label} in ${cityLabel} Today (${monthYear}) | Freebies Near Me`
+      : `Free Stuff & Freebies at ${label} Today (${monthYear}) | Freebies Near Me`;
 
   // active_listing_count (from the stats view) counts every is_active row
   // regardless of whether its time window has already ended, so it can't be
@@ -146,11 +156,11 @@ export default async function HubPage({ params }: Props) {
       <div className="hub-wrap">
         <h1 className="hub-title display">
           {resolved.type === 'category'
-            ? `Free ${hubLabel} Events & Giveaways in ${cityLabel}`
-            : `Free Giveaways & Events in ${hubLabel}, ${cityLabel}`}
+            ? `Free ${hubLabel} Pop-ups, Giveaways & Samples in ${cityLabel}`
+            : `Free Pop-ups, Giveaways & Samples at ${hubLabel}, ${cityLabel}`}
         </h1>
         <p className="hub-sub">
-          {items.length} free listings happening now or coming up in {hubLabel}, {cityLabel}.
+          {items.length} free listings happening now or coming up in {hubLabel}, {cityLabel}. Updated {currentMonthYear()}.
         </p>
 
         {items.length === 0 ? (
