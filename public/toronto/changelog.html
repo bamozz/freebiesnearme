@@ -147,6 +147,17 @@
   const CHANGELOG = [
     {
       date: 'August 13, 2026',
+      emoji: '\u{1F4E2}',
+      title: '"Submit an event" button added to category and neighbourhood pages',
+      blurb: "The Submit an event button now shows up in the header on category and neighbourhood pages too, not just the homepage, so it's easier to add a listing from wherever you're browsing.",
+      sections: [
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Category & neighbourhood pages', text: 'Header now includes a Submit an event button, matching the homepage.' },
+        ]},
+      ],
+    },
+    {
+      date: 'August 13, 2026',
       emoji: '\u{1F4CD}',
       title: 'Fixed listings not appearing on category and neighbourhood pages',
       blurb: "Category and neighbourhood pages were never showing any listings, no matter how many were approved and live on the homepage - a missing internal flag meant they never qualified to appear there. New submissions are fixed automatically.",
