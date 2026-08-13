@@ -86,6 +86,14 @@ export default async function handler(req, res) {
     submitted_by: p.submitted_by === 'hunter' ? 'hunter' : 'brand',
     submitter_contact: p.submitter_contact || null,
     moderation_status: 'pending',
+    // The pSEO hub pages (app/[city]/[hub]/page.tsx) filter listings on
+    // is_active rather than moderation_status, so that a listing can be
+    // taken off those pages the moment it expires (via the
+    // deactivate-expired cron) without waiting on a human. That only works
+    // if new listings start out active - nothing else in the app ever set
+    // this column, so every listing was defaulting to inactive and
+    // silently never appearing on any pSEO page regardless of approval.
+    is_active: true,
     sponsored: false,
     image_url: p.image_url || null,
     insta_url: p.insta_url || null,

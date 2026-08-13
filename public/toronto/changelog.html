@@ -147,6 +147,17 @@
   const CHANGELOG = [
     {
       date: 'August 13, 2026',
+      emoji: '\u{1F4CD}',
+      title: 'Fixed listings not appearing on category and neighbourhood pages',
+      blurb: "Category and neighbourhood pages were never showing any listings, no matter how many were approved and live on the homepage - a missing internal flag meant they never qualified to appear there. New submissions are fixed automatically.",
+      sections: [
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Category & neighbourhood pages', text: 'Approved, active listings now actually show up there instead of the page always looking empty.' },
+        ]},
+      ],
+    },
+    {
+      date: 'August 13, 2026',
       emoji: '\u{1F319}',
       title: 'Fixed washed-out pages on Android dark mode',
       blurb: "If your phone had dark mode forced on for web pages, some pages could render nearly invisible - too light to read, with parts of the layout out of place. Every page now explicitly tells the browser it's light-only, so this shouldn't happen anymore.",
