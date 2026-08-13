@@ -4,7 +4,7 @@ import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
 import { formatTimeRange } from '@/lib/datetime';
 import { CATEGORY_COLOR, CATEGORY_LABEL } from '@/lib/categories';
-import { stripFreeWord, buildImageAlt, directionsUrl, availInfo, computeListingStatus } from '@/lib/listing-display';
+import { stripFreeWord, buildImageAlt, directionsUrl, availInfo, computeListingStatus, statusLabel } from '@/lib/listing-display';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
 // Starter dynamic route for both category hubs (/toronto/free-coffee) and
@@ -19,12 +19,6 @@ import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types
 // each unique [city]/[hub] combination happened to return, including a
 // false 404 if that first hit landed before the data existed.
 export const dynamic = 'force-dynamic';
-
-const STATUS_LABEL: Record<'live' | 'soon' | 'ended', string> = {
-  live: 'Live now',
-  soon: 'Coming up',
-  ended: 'Wrapped up',
-};
 
 type Props = { params: Promise<{ city: string; hub: string }> };
 
@@ -124,8 +118,8 @@ export default async function HubPage({ params }: Props) {
                       </span>
                     </div>
                     <span className={`status-badge ${status}`}>
-                      <span className="dot" />
-                      {STATUS_LABEL[status]}
+                      {status !== 'ended' && <span className="dot" />}
+                      {statusLabel(status, listing.start_time)}
                     </span>
                   </div>
                   {listing.image_url && (

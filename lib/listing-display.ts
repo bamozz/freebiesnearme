@@ -50,3 +50,15 @@ export function computeListingStatus(startTime: string, endTime: string | null):
   if (now > end) return 'ended';
   return 'live';
 }
+
+// Ported from statusBadge() in index.html: unlike live/ended, the "soon"
+// label isn't a single fixed string - it narrows to how far out the start
+// time is, so cards read the same way here as they do on the homepage.
+export function statusLabel(status: 'live' | 'soon' | 'ended', startTime: string): string {
+  if (status === 'live') return 'Live now';
+  if (status === 'soon') {
+    const daysUntil = (new Date(startTime).getTime() - Date.now()) / 86400000;
+    return daysUntil <= 3 ? 'Next 3 days' : daysUntil <= 7 ? 'Next week' : daysUntil <= 30 ? 'Next 30 days' : 'Next month+';
+  }
+  return 'Wrapped up';
+}
