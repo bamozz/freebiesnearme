@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
@@ -12,6 +13,7 @@ import {
   computeListingStatus,
   statusLabel,
   buildCalendarUrl,
+  buildGoogleCalendarUrl,
   icsFilename,
 } from '@/lib/listing-display';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
@@ -109,6 +111,12 @@ export default async function HubPage({ params }: Props) {
   const resolved = await getHub(city, hub);
   if (!resolved) notFound();
 
+  // Google Calendar is the default app on nearly every Android device, so
+  // Android gets its zero-download "quick add" URL instead of the .ics
+  // link everyone else gets - see buildGoogleCalendarUrl()'s comment.
+  const userAgent = (await headers()).get('user-agent') || '';
+  const isAndroid = /android/i.test(userAgent);
+
   const supabase = createServerClient();
   const filterColumn = resolved.type === 'category' ? 'category_slug' : 'neighbourhood_slug';
   const { data: listings } = await supabase
@@ -204,13 +212,24 @@ export default async function HubPage({ params }: Props) {
                       &#128205; Get directions
                     </a>
                     {hasClockTime(new Date(listing.start_time)) && (
-                      <a
-                        href={buildCalendarUrl(listing)}
-                        download={icsFilename(listing)}
-                        className="calendar-link"
-                      >
-                        &#128197; Add to calendar
-                      </a>
+                      isAndroid ? (
+                        <a
+                          href={buildGoogleCalendarUrl(listing)}
+                          target="_blank"
+                          rel="noopener"
+                          className="calendar-link"
+                        >
+                          &#128197; Add to calendar
+                        </a>
+                      ) : (
+                        <a
+                          href={buildCalendarUrl(listing)}
+                          download={icsFilename(listing)}
+                          className="calendar-link"
+                        >
+                          &#128197; Add to calendar
+                        </a>
+                      )
                     )}
                   </div>
                 </li>

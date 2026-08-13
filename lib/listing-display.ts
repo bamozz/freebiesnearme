@@ -106,6 +106,30 @@ export function buildCalendarUrl(listing: Listing): string {
   return `data:text/calendar;charset=utf8,${encodeURIComponent(ics)}`;
 }
 
+// Google Calendar's own "quick add" URL - opens Google Calendar directly
+// prefilled with the event, no file download involved at all (unlike the
+// .ics link above). Used in place of buildCalendarUrl() specifically for
+// Android, where Google Calendar is the default calendar app on nearly
+// every device; there's no equivalent URL for Apple Calendar that works
+// from an arbitrary website, so iOS/macOS/everything else keeps using the
+// .ics link, which Safari already hands directly to Calendar.app anyway.
+export function buildGoogleCalendarUrl(listing: Listing): string {
+  const start = toIcsUtc(listing.start_time);
+  const end = toIcsUtc(listing.end_time || assumedEndIso(listing.start_time));
+  const what = stripFreeWord(listing.what);
+  const location = listing.address
+    ? `${listing.address}, ${listing.neighbourhood}, Toronto, ON`
+    : `${listing.neighbourhood}, Toronto, ON`;
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: `${listing.brand} - ${what}`,
+    dates: `${start}/${end}`,
+    details: `${what} - free, hosted by ${listing.brand}, in ${listing.neighbourhood}.`,
+    location,
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
 export function icsFilename(listing: Listing): string {
   return `${listing.brand}-${listing.what}`
     .toLowerCase()

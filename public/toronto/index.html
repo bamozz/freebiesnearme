@@ -1195,7 +1195,9 @@ function renderList(){
         ${renderMetaTimes(ev)}
         ${a ? `<span class="avail ${a.cls}">${a.text}</span>` : ''}
         ${ev.signup_url ? `<a href="${ev.signup_url}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">&#128221; Register</a>` : ''}
-        ${hasClockTime(new Date(ev.startTime)) ? `<a href="${buildCalendarUrl(ev)}" download="${icsFilename(ev)}" class="calendar-link" onclick="event.stopPropagation()">&#128197; Add to calendar</a>` : ''}
+        ${hasClockTime(new Date(ev.startTime)) ? (isAndroidDevice()
+          ? `<a href="${buildGoogleCalendarUrl(ev)}" target="_blank" rel="noopener" class="calendar-link" onclick="event.stopPropagation()">&#128197; Add to calendar</a>`
+          : `<a href="${buildCalendarUrl(ev)}" download="${icsFilename(ev)}" class="calendar-link" onclick="event.stopPropagation()">&#128197; Add to calendar</a>`) : ''}
       </div>
       <a class="mobile-directions-link" href="${directionsUrl(ev)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">&#128205; Get directions</a>
       ${renderReportSection(ev)}
@@ -1426,6 +1428,28 @@ function buildCalendarUrl(ev){
 }
 function icsFilename(ev){
   return `${ev.brand}-${ev.what}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') + '.ics';
+}
+function isAndroidDevice(){
+  return /android/i.test(navigator.userAgent);
+}
+// Google Calendar's own "quick add" URL - opens Google Calendar directly
+// prefilled, no file download at all. Used in place of buildCalendarUrl()
+// on Android specifically, since Google Calendar is the default app there
+// on nearly every device; there's no equivalent for Apple Calendar that
+// works from an arbitrary website, so iOS/macOS/everything else keeps
+// using the .ics link, which Safari already hands directly to Calendar.app.
+function buildGoogleCalendarUrl(ev){
+  const start = toIcsUtc(ev.startTime);
+  const end = toIcsUtc(ev.endTime || assumedEnd(ev.startTime));
+  const what = stripFreeWord(ev.what);
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: `${ev.brand} - ${what}`,
+    dates: `${start}/${end}`,
+    details: `${what} - free, hosted by ${ev.brand}, in ${ev.location}.`,
+    location: ev.address ? `${ev.address}, ${ev.location}, Toronto, ON` : `${ev.location}, Toronto, ON`,
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
 function statusFromTimes(start, end){
