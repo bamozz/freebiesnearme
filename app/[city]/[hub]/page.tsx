@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
-import { formatTimeRange } from '@/lib/datetime';
+import { formatTimeRange, hasClockTime } from '@/lib/datetime';
 import { CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
 import {
   stripFreeWord,
@@ -170,7 +170,7 @@ export default async function HubPage({ params }: Props) {
                         rel="noopener"
                         className="signup-link"
                       >
-                        Register &rarr;
+                        &#128221; Register
                       </a>
                     )}
                     <a
@@ -181,13 +181,15 @@ export default async function HubPage({ params }: Props) {
                     >
                       &#128205; Get directions
                     </a>
-                    <a
-                      href={buildCalendarUrl(listing)}
-                      download={icsFilename(listing)}
-                      className="calendar-link"
-                    >
-                      &#128197; Add to calendar
-                    </a>
+                    {hasClockTime(new Date(listing.start_time)) && (
+                      <a
+                        href={buildCalendarUrl(listing)}
+                        download={icsFilename(listing)}
+                        className="calendar-link"
+                      >
+                        &#128197; Add to calendar
+                      </a>
+                    )}
                   </div>
                 </li>
               );

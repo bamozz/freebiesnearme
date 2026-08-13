@@ -69,7 +69,7 @@ function torontoParts(d: Date): { hour: number; minute: number } {
   return { hour: Number(parts.hour), minute: Number(parts.minute) };
 }
 
-function hasClockTime(d: Date): boolean {
+export function hasClockTime(d: Date): boolean {
   const { hour, minute } = torontoParts(d);
   return hour !== 0 || minute !== 0;
 }

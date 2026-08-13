@@ -1191,8 +1191,8 @@ function renderList(){
       <div class="card-meta">
         ${renderMetaTimes(ev)}
         ${a ? `<span class="avail ${a.cls}">${a.text}</span>` : ''}
-        ${ev.signup_url ? `<a href="${ev.signup_url}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">Register &rarr;</a>` : ''}
-        <a href="${buildCalendarUrl(ev)}" download="${icsFilename(ev)}" class="calendar-link" onclick="event.stopPropagation()">&#128197; Add to calendar</a>
+        ${ev.signup_url ? `<a href="${ev.signup_url}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">&#128221; Register</a>` : ''}
+        ${hasClockTime(new Date(ev.startTime)) ? `<a href="${buildCalendarUrl(ev)}" download="${icsFilename(ev)}" class="calendar-link" onclick="event.stopPropagation()">&#128197; Add to calendar</a>` : ''}
       </div>
       <a class="mobile-directions-link" href="${directionsUrl(ev)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">&#128205; Get directions</a>
       ${renderReportSection(ev)}
