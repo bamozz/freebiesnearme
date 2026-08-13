@@ -1,12 +1,23 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Freebies Near Me',
   description: 'Free giveaways, samples, and pop up events happening in Toronto right now.',
-  other: {
-    'color-scheme': 'light',
-  },
+};
+
+// colorScheme belongs on the dedicated viewport export, not
+// metadata.other - the generic `other` field gets emitted at the very end
+// of <head>, after the stylesheet <link> and other resource hints, so by
+// the time the browser saw it, Chromium's forced-dark heuristic had
+// already made its paint-time decision for the page (this is why the
+// static public/toronto/*.html pages, which hand-write this meta tag near
+// the very top of <head>, weren't affected while this page rendered
+// almost invisibly on mobile Chrome with a dark system preference,
+// despite every computed style being correct). The viewport export's tags
+// are grouped with charset/viewport meta, which Next.js does emit early.
+export const viewport: Viewport = {
+  colorScheme: 'light',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
