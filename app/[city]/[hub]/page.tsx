@@ -100,7 +100,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title,
-    description: `${activeCount} free listings live right now.`,
+    description: `${activeCount} free listings happening now or coming up.`,
   };
 }
 
@@ -142,7 +142,7 @@ export default async function HubPage({ params }: Props) {
             : `Free Giveaways & Events in ${hubLabel}, ${cityLabel}`}
         </h1>
         <p className="hub-sub">
-          {items.length} free listings live right now in {hubLabel}, {cityLabel}.
+          {items.length} free listings happening now or coming up in {hubLabel}, {cityLabel}.
         </p>
 
         {items.length === 0 ? (
@@ -171,7 +171,7 @@ export default async function HubPage({ params }: Props) {
                     </span>
                   </div>
                   {listing.image_url && (
-                    <div className="card-thumb">
+                    <div className="card-thumb" data-image={listing.image_url} data-insta={listing.insta_url ?? ''}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={listing.image_url} alt={buildImageAlt(listing)} loading="lazy" />
                     </div>

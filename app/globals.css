@@ -110,10 +110,10 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
 .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
 .card-what{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;line-height:1.3;}
 .card-brand{font-size:13px;color:var(--muted);font-weight:600;margin:0 0 8px;line-height:1.35;}
-.card.has-thumb .card-text{margin-right:66px;}
+.card.has-thumb .card-text{margin-right:66px;min-height:56px;}
 .card-thumb{
   position:absolute;top:44px;right:16px;width:56px;height:56px;
-  border-radius:8px;overflow:hidden;border:1px solid var(--line);
+  border-radius:8px;overflow:hidden;border:1px solid var(--line);cursor:pointer;
 }
 .card-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
 .card-meta{
@@ -137,3 +137,25 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
   font-family:'Anton',sans-serif;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;
   padding:3px 9px;border-radius:9px;transform:rotate(-4deg);border:1.5px solid var(--paper);
 }
+
+/* ===== Lightbox (ported from public/toronto/index.html) ===== */
+.lightbox{
+  display:none;position:fixed;inset:0;background:rgba(10,12,14,0.88);z-index:2000;
+  align-items:center;justify-content:center;padding:32px;cursor:zoom-out;
+}
+.lightbox.open{display:flex;}
+.lightbox-frame{position:relative;display:inline-block;line-height:0;}
+.lightbox-frame img{display:block;max-width:calc(100vw - 64px);max-height:calc(100vh - 64px);border-radius:10px;cursor:default;box-shadow:0 10px 40px rgba(0,0,0,0.4);}
+.lightbox-insta-badge{
+  display:none;position:absolute;bottom:14px;right:14px;align-items:center;gap:6px;
+  background:rgba(10,12,14,0.72);backdrop-filter:blur(4px);color:#fff;
+  padding:10px;border-radius:20px;font-size:12.5px;font-weight:600;
+  text-decoration:none;cursor:pointer;
+}
+.lightbox-insta-badge.show{display:inline-flex;}
+.lightbox-insta-badge svg{width:24px;height:24px;flex-shrink:0;}
+.lightbox-close{
+  position:absolute;top:18px;right:22px;color:#fff;font-size:28px;font-weight:400;
+  cursor:pointer;line-height:1;opacity:0.85;
+}
+.lightbox-close:hover{opacity:1;}
