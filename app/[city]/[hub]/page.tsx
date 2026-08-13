@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
 import { formatTimeRange, hasClockTime, TORONTO_TZ } from '@/lib/datetime';
-import { CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
+import { CATEGORIES, CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
 import {
   stripFreeWord,
   buildImageAlt,
@@ -75,6 +75,24 @@ async function getHub(city: string, hub: string) {
 
   if (neighbourhoodStats) {
     return { type: 'neighbourhood' as const, stats: neighbourhoodStats };
+  }
+
+  // pseo_category_stats only has a row for a category once it has at least
+  // one active listing, so a real, known category (e.g. fashion, tech)
+  // 404s the moment it briefly has zero - even though CATEGORIES (a fixed,
+  // known list, unlike neighbourhoods which are free-text) says it's a
+  // real page. Synthesize an empty result instead of 404ing.
+  if (city === 'toronto' && CATEGORIES.some((c) => c.slug === hub)) {
+    return {
+      type: 'category' as const,
+      stats: {
+        city_slug: city,
+        category_slug: hub,
+        active_listing_count: 0,
+        neighbourhood_breakdown: {},
+        latest_addition_at: null,
+      } satisfies PseoCategoryStats,
+    };
   }
 
   return null;
