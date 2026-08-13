@@ -255,7 +255,16 @@
     align-items:center;justify-content:center;padding:32px;cursor:zoom-out;
   }
   .lightbox.open{display:flex;}
-  .lightbox img{max-width:100%;max-height:100%;border-radius:10px;cursor:default;box-shadow:0 10px 40px rgba(0,0,0,0.4);}
+  .lightbox-frame{position:relative;display:inline-flex;max-width:100%;max-height:100%;}
+  .lightbox-frame img{display:block;max-width:100%;max-height:100%;border-radius:10px;cursor:default;box-shadow:0 10px 40px rgba(0,0,0,0.4);}
+  .lightbox-insta-badge{
+    display:none;position:absolute;bottom:14px;right:14px;align-items:center;gap:6px;
+    background:rgba(10,12,14,0.72);backdrop-filter:blur(4px);color:#fff;
+    padding:6px 10px;border-radius:20px;font-size:12.5px;font-weight:600;
+    text-decoration:none;cursor:pointer;
+  }
+  .lightbox-insta-badge.show{display:inline-flex;}
+  .lightbox-insta-badge svg{width:15px;height:15px;flex-shrink:0;}
   .lightbox-close{
     position:absolute;top:18px;right:22px;color:#fff;font-size:28px;font-weight:400;
     cursor:pointer;line-height:1;opacity:0.85;
@@ -464,7 +473,13 @@
 
 <div class="lightbox" id="lightbox">
   <span class="lightbox-close" id="lightboxClose">&times;</span>
-  <img id="lightboxImg" src="" alt="Photo shared by a user">
+  <div class="lightbox-frame">
+    <img id="lightboxImg" src="" alt="Photo shared by a user">
+    <a class="lightbox-insta-badge" id="lightboxInstaBadge" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M16.25 3A4.75 4.75 0 0 1 21 7.75v8.5A4.75 4.75 0 0 1 16.25 21H8a4.75 4.75 0 0 1-4.75-4.75v-8.5A4.75 4.75 0 0 1 8 3zM8 4.5a3.25 3.25 0 0 0-3.25 3.25v8.5A3.25 3.25 0 0 0 8 19.5h8.25a3.25 3.25 0 0 0 3.25-3.25v-8.5a3.25 3.25 0 0 0-3.25-3.25zm4 2.75a4.75 4.75 0 1 1 0 9.5a4.75 4.75 0 0 1 0-9.5m0 1.5a3.25 3.25 0 1 0 0 6.5a3.25 3.25 0 0 0 0-6.5M17 6a1 1 0 1 1 0 2a1 1 0 0 1 0-2"/></svg>
+      <span id="lightboxInstaHandle"></span>
+    </a>
+  </div>
 </div>
 
 <nav class="bottom-tabbar">
@@ -545,19 +560,52 @@ function showToast(message, isError){
 
 const lightboxEl = document.getElementById('lightbox');
 const lightboxImgEl = document.getElementById('lightboxImg');
+const lightboxInstaBadge = document.getElementById('lightboxInstaBadge');
+const lightboxInstaHandle = document.getElementById('lightboxInstaHandle');
+
+// insta_url is stored inconsistently - sometimes a full profile URL,
+// sometimes a post/reel permalink (which has no username in it at all,
+// e.g. instagram.com/p/xxxxx), sometimes a bare "@handle". This normalizes
+// all three into a real clickable URL, with a "@handle" label only when
+// one can actually be recovered - post/reel links get the icon with no
+// text rather than a wrong or fabricated handle.
+const INSTA_NON_PROFILE_PATHS = new Set(['p', 'reel', 'reels', 'tv', 'stories', 'explore']);
+function instaMeta(value){
+  if (!value) return null;
+  const match = value.match(/instagram\.com\/([^/?#]+)/i);
+  if (match){
+    const segment = match[1];
+    const isProfile = !INSTA_NON_PROFILE_PATHS.has(segment.toLowerCase());
+    return { url: value, label: isProfile ? `@${segment}` : null };
+  }
+  const handle = value.replace(/^@/, '').trim();
+  if (!handle) return null;
+  return { url: `https://instagram.com/${handle}`, label: `@${handle}` };
+}
+
 // instaUrl is optional - when present, clicking the enlarged image inside
 // the lightbox opens the original Instagram story/post in a new tab, as
-// credit to the source.
+// credit to the source, and a badge in the photo's corner shows the handle.
 function openLightbox(url, instaUrl){
   lightboxImgEl.src = url;
-  lightboxImgEl.style.cursor = instaUrl ? 'pointer' : 'default';
-  lightboxImgEl.onclick = instaUrl ? () => window.open(instaUrl, '_blank', 'noopener') : null;
+  const insta = instaMeta(instaUrl);
+  lightboxImgEl.style.cursor = insta ? 'pointer' : 'default';
+  lightboxImgEl.onclick = insta ? () => window.open(insta.url, '_blank', 'noopener') : null;
+  if (insta){
+    lightboxInstaBadge.href = insta.url;
+    lightboxInstaHandle.textContent = insta.label || '';
+    lightboxInstaHandle.style.display = insta.label ? '' : 'none';
+    lightboxInstaBadge.classList.add('show');
+  } else {
+    lightboxInstaBadge.classList.remove('show');
+  }
   lightboxEl.classList.add('open');
 }
 function closeLightbox(){
   lightboxEl.classList.remove('open');
   lightboxImgEl.src = '';
   lightboxImgEl.onclick = null;
+  lightboxInstaBadge.classList.remove('show');
 }
 lightboxEl.onclick = (e) => { if (e.target === lightboxEl) closeLightbox(); };
 document.getElementById('lightboxClose').onclick = closeLightbox;
