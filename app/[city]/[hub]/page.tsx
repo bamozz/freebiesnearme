@@ -136,27 +136,25 @@ export default async function HubPage({ params }: Props) {
                     <span>
                       {formatTimeRange(listing.start_time, listing.end_time)} &middot; {listing.neighbourhood}
                     </span>
-                    <div className="card-meta-row">
-                      {avail && <span className={`avail ${avail.cls}`}>{avail.text}</span>}
-                      {listing.signup_url && (
-                        <a
-                          href={listing.signup_url}
-                          target="_blank"
-                          rel="noopener"
-                          className="signup-link"
-                        >
-                          Register &rarr;
-                        </a>
-                      )}
+                    {avail && <span className={`avail ${avail.cls}`}>{avail.text}</span>}
+                    {listing.signup_url && (
                       <a
-                        href={directionsUrl(listing)}
+                        href={listing.signup_url}
                         target="_blank"
                         rel="noopener"
-                        className="directions-link"
+                        className="signup-link"
                       >
-                        Get directions
+                        Register &rarr;
                       </a>
-                    </div>
+                    )}
+                    <a
+                      href={directionsUrl(listing)}
+                      target="_blank"
+                      rel="noopener"
+                      className="directions-link"
+                    >
+                      &#128205; Get directions
+                    </a>
                   </div>
                 </li>
               );
