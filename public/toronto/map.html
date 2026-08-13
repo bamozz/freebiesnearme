@@ -179,7 +179,6 @@
   <a href="/toronto/map" class="tab-item on"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m15 19.923l-6-2.1l-3.958 1.53q-.384.143-.713-.083T4 18.634V6.404q0-.268.13-.489t.378-.307L9 4.077l6 2.1l3.958-1.53q.384-.143.713.054t.329.588v12.384q0 .287-.159.498q-.158.212-.426.298zm-.5-1.22v-11.7l-5-1.745v11.7zm1 0L19 17.55V5.7l-3.5 1.304zM5 18.3l3.5-1.342v-11.7L5 6.45zM15.5 7.004v11.7zm-7-1.746v11.7z"/></svg></span>Map</a>
 </nav>
 
-<div class="filter-bar" id="statusFilters"></div>
 <div class="filter-bar" id="catFilters"></div>
 <div class="filter-bar" id="locationFilters"></div>
 
@@ -221,7 +220,6 @@ const locationOptions = ['All locations', ...LOCATIONS];
 
 let events = [];
 let markers = [];
-let activeStatus = 'all';
 let activeCats = [];       // empty = all categories
 let activeLocations = [];  // empty = all locations
 
@@ -428,30 +426,6 @@ function transformGroup(rows){
   };
 }
 
-function matchesStatusFilter(ev){
-  if (activeStatus === 'all') return true;
-  if (activeStatus === 'live') return ev.status === 'live';
-  // Every "upcoming" bucket below only ever applies to not-yet-started
-  // listings, so a live (or ended) listing can never leak into one of them
-  // regardless of how the day-count math below is written.
-  if (ev.status !== 'soon') return false;
-  const start = new Date(ev.startTime).getTime();
-  const day = 24 * 60 * 60 * 1000;
-  if (activeStatus === 'next3'){
-    return start <= Date.now() + 3 * day;
-  }
-  if (activeStatus === 'nextweek'){
-    return start > Date.now() + 3 * day && start <= Date.now() + 7 * day;
-  }
-  if (activeStatus === 'next30'){
-    return start > Date.now() + 7 * day && start <= Date.now() + 30 * day;
-  }
-  if (activeStatus === 'nextmonth'){
-    return start > Date.now() + 30 * day;
-  }
-  return true;
-}
-
 // Pins render at their real geocoded lat/lng always, with no spread-apart
 // logic - a couple of attempts at nudging overlapping pins into a small
 // ring introduced zoom-timing edge cases that occasionally sent pins far
@@ -461,10 +435,9 @@ function matchesStatusFilter(ev){
 function renderMarkers(){
   markers.forEach(m => m.remove());
   markers = [];
-  // Pins only ever show currently-live events, regardless of which status
-  // chip is active - the status chips still drive next3/nextweek filtering
-  // for anything that reads matchesStatusFilter elsewhere, but the map
-  // itself is meant to answer "what can I go to right now."
+  // Pins only ever show currently-live events - the map is meant to answer
+  // "what can I go to right now," not double as an upcoming-events browser
+  // (that's what the homepage's status filters are for).
   const filtered = events.filter(ev =>
     ev.status === 'live' &&
     (activeCats.length===0 || activeCats.includes(ev.cat)) &&
@@ -488,26 +461,6 @@ function renderMarkers(){
         .addTo(map);
       markers.push(marker);
     });
-  });
-}
-
-function renderStatusFilters(){
-  const opts = [
-    {id:'all', label:'All'},
-    {id:'live', label:'Live now', pulse:true},
-    {id:'next3', label:'Next 3 days'},
-    {id:'nextweek', label:'Next week'},
-    {id:'next30', label:'Next 30 days'},
-    {id:'nextmonth', label:'Next month+'},
-  ];
-  const wrap = document.getElementById('statusFilters');
-  wrap.innerHTML = '';
-  opts.forEach(o=>{
-    const chip = document.createElement('div');
-    chip.className = 'cat-chip' + (activeStatus===o.id ? ' active' : '');
-    chip.innerHTML = (o.pulse ? '<span class="pulse"></span>' : '') + o.label;
-    chip.onclick = ()=>{ activeStatus = o.id; renderStatusFilters(); renderMarkers(); };
-    wrap.appendChild(chip);
   });
 }
 
@@ -581,7 +534,6 @@ async function loadListings(){
   renderMarkers();
 }
 
-renderStatusFilters();
 renderCatFilters();
 renderLocationFilters();
 renderLegend();

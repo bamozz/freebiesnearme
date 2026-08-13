@@ -34,6 +34,30 @@ nav{
 .nav-links a{text-decoration:none;color:inherit;}
 .nav-links a:hover{color:var(--ink);}
 
+/* ===== Mobile bottom tab bar (ported from public/toronto/index.html) =====
+   Uses position:fixed rather than index.html's flex/page-scroll app-shell
+   trick, since these are plain scrolling document pages, not an app shell
+   with an independently-scrolling inner pane. */
+.bottom-tabbar{display:none;}
+@media (max-width:760px){
+  .logo{font-size:17px;}
+  .nav-links{display:none;}
+  .bottom-tabbar{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:600;
+    background:rgba(255,255,255,0.96);backdrop-filter:blur(6px);
+    border-top:1px solid var(--line);
+    padding:8px 0 calc(8px + env(safe-area-inset-bottom));
+  }
+  .tab-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+    font-size:11px;font-weight:600;color:var(--muted);text-decoration:none;
+  }
+  .tab-item.on{color:var(--ink);}
+  .tab-icon{font-size:18px;line-height:1;display:flex;}
+  .tab-icon svg{width:1em;height:1em;}
+  body{padding-bottom:64px;}
+}
+
 /* ===== Footer ===== */
 footer{margin-top:34px;border-top:1px solid var(--line);background:#fff;}
 .footer-inner{
@@ -48,7 +72,7 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
 
 /* ===== pSEO hub page ===== */
 .hub-wrap{max-width:920px;margin:0 auto;padding:32px 24px 60px;}
-.hub-title{font-size:clamp(24px,3.6vw,32px);margin:0 0 6px;}
+.hub-title{font-size:clamp(30px,4.2vw,46px);line-height:1.08;margin:0 0 10px;font-weight:700;max-width:640px;}
 .hub-sub{font-size:14.5px;color:var(--muted);margin:0 0 28px;}
 .hub-list{display:flex;flex-direction:column;gap:14px;list-style:none;margin:0;padding:0;}
 .hub-empty{font-size:14px;color:var(--muted);padding:24px 0;}

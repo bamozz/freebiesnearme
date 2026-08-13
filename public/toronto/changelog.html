@@ -144,6 +144,20 @@
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
     {
+      date: 'August 13, 2026',
+      emoji: '\u{1F9ED}',
+      title: 'Tidier navigation on mobile and the map',
+      blurb: "A few polish passes: category/neighbourhood pages now share the same title style and mobile navigation as the rest of the site, and the map dropped a set of filters that never did anything there.",
+      sections: [
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Category & neighbourhood pages', text: 'Page titles and mobile bottom navigation now match the homepage.' },
+        ]},
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Map', text: 'Removed the Live now / Next 3 days / Next week filters - the map only ever shows what\'s live right now, so those chips did nothing.' },
+        ]},
+      ],
+    },
+    {
       date: 'August 12, 2026',
       emoji: '\u{1F3A8}',
       title: 'Category and neighbourhood pages get the full treatment',
