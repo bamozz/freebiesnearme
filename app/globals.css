@@ -1,4 +1,12 @@
-@import "tailwindcss";
+/* No Tailwind import - this page's content is styled entirely by the
+   semantic classes below (ported 1:1 from public/toronto/index.html), not
+   Tailwind utilities (grep confirms zero usage in app/). Tailwind's own
+   preflight/reset layer was the only remaining difference between this
+   page and the static site's plain CSS - removing it fixed pages rendering
+   near-invisible on mobile Chrome (Android's forced-dark heuristic was
+   still triggering here despite color-scheme:light being correctly set,
+   even though the static pages with the identical color-scheme fix and no
+   Tailwind involved render correctly under the same conditions). */
 
 /* ===== Brand tokens (ported from public/toronto/index.html's :root) ===== */
 :root{
