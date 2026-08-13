@@ -147,6 +147,21 @@
   const CHANGELOG = [
     {
       date: 'August 13, 2026',
+      emoji: '\u{1F5BC}\u{FE0F}',
+      title: 'Photo lightbox on category and neighbourhood pages',
+      blurb: "Listing photos on category and neighbourhood pages are now tappable and open in the same full-size photo view (with an Instagram credit badge) as the homepage. Also fixed a couple of small display bugs: a divider line that could cut through a listing's photo, and a page description that said every listing was live right now even when some were just coming up.",
+      sections: [
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Category & neighbourhood pages', text: 'Listing photos are now clickable and open a full-size view, matching the homepage.' },
+        ]},
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Listing photos', text: "A divider line no longer cuts across a listing's photo when the listing text is short." },
+          { label: 'Page description', text: 'No longer claims every listing is "live right now" when some are just coming up.' },
+        ]},
+      ],
+    },
+    {
+      date: 'August 13, 2026',
       emoji: '\u{1F4C5}',
       title: '"Add to calendar" button on every listing',
       blurb: "Every listing card now has an Add to calendar button that downloads the event straight into your phone or computer's calendar app - works with Apple Calendar, Google Calendar, Outlook, and Android, on any device.",
