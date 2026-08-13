@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
 import { formatTimeRange } from '@/lib/datetime';
-import { CATEGORY_COLOR, CATEGORY_LABEL } from '@/lib/categories';
+import { CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
 import { stripFreeWord, buildImageAlt, directionsUrl, availInfo, computeListingStatus, statusLabel } from '@/lib/listing-display';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
@@ -19,6 +19,16 @@ import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types
 // each unique [city]/[hub] combination happened to return, including a
 // false 404 if that first hit landed before the data existed.
 export const dynamic = 'force-dynamic';
+
+// Neighbourhood/city slugs have no CATEGORY_SLUG_LABEL-style lookup table,
+// so they fall back to title-casing the slug's words directly.
+function titleCase(slug: string): string {
+  return slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function hubDisplayLabel(hub: string, type: 'category' | 'neighbourhood'): string {
+  return type === 'category' ? CATEGORY_SLUG_LABEL[hub] ?? titleCase(hub) : titleCase(hub);
+}
 
 type Props = { params: Promise<{ city: string; hub: string }> };
 
@@ -55,11 +65,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolved = await getHub(city, hub);
   if (!resolved) return {};
 
-  const label = hub.replace(/-/g, ' ');
+  const label = hubDisplayLabel(hub, resolved.type);
+  const cityLabel = titleCase(city);
   const title =
     resolved.type === 'category'
-      ? `Free ${label} in ${city} | Freebies Near Me`
-      : `Free things to do in ${label}, ${city} | Freebies Near Me`;
+      ? `Free ${label} in ${cityLabel} | Freebies Near Me`
+      : `Free things to do in ${label}, ${cityLabel} | Freebies Near Me`;
 
   return {
     title,
@@ -84,7 +95,8 @@ export default async function HubPage({ params }: Props) {
     .returns<Listing[]>();
 
   const items = listings ?? [];
-  const hubLabel = hub.replace(/-/g, ' ');
+  const hubLabel = hubDisplayLabel(hub, resolved.type);
+  const cityLabel = titleCase(city);
   const jsonLd = buildHubItemList(items, hubLabel);
 
   return (
@@ -93,9 +105,13 @@ export default async function HubPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <div className="hub-wrap">
         <h1 className="hub-title display">
-          {resolved.stats.active_listing_count} free listings in {hubLabel}
+          {resolved.type === 'category'
+            ? `Free ${hubLabel} Events & Giveaways in ${cityLabel}`
+            : `Free Giveaways & Events in ${hubLabel}, ${cityLabel}`}
         </h1>
-        <p className="hub-sub">Free giveaways, samples, and pop up events in {hubLabel}, Toronto.</p>
+        <p className="hub-sub">
+          {resolved.stats.active_listing_count} free listings live right now in {hubLabel}, {cityLabel}.
+        </p>
 
         {items.length === 0 ? (
           <div className="hub-empty">No free listings here right now. Check back soon, or explore the full map.</div>
