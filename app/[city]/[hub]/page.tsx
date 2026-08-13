@@ -5,6 +5,7 @@ import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
 import { formatTimeRange, hasClockTime, TORONTO_TZ } from '@/lib/datetime';
 import { CATEGORIES, CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
+import { NEIGHBOURHOODS, NEIGHBOURHOOD_SLUG_LABEL } from '@/lib/neighbourhoods';
 import {
   stripFreeWord,
   buildImageAlt,
@@ -31,14 +32,20 @@ import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types
 // false 404 if that first hit landed before the data existed.
 export const dynamic = 'force-dynamic';
 
-// Neighbourhood/city slugs have no CATEGORY_SLUG_LABEL-style lookup table,
-// so they fall back to title-casing the slug's words directly.
+// City slugs (just "toronto" today) have no curated lookup table, so they
+// fall back to title-casing the slug's words directly.
 function titleCase(slug: string): string {
   return slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function hubDisplayLabel(hub: string, type: 'category' | 'neighbourhood'): string {
-  return type === 'category' ? CATEGORY_SLUG_LABEL[hub] ?? titleCase(hub) : titleCase(hub);
+  if (type === 'category') return CATEGORY_SLUG_LABEL[hub] ?? titleCase(hub);
+  // Prefer NEIGHBOURHOOD_SLUG_LABEL's proper casing/punctuation (e.g. "St.
+  // Lawrence Market", "Church-Wellesley Village") over titleCase(), which
+  // can't reconstruct those - titleCase() only stays as a fallback for a
+  // neighbourhood with real listings that hasn't been added to the curated
+  // list yet.
+  return NEIGHBOURHOOD_SLUG_LABEL[hub] ?? titleCase(hub);
 }
 
 // "Today" freshness signal for the <title> tag - computed fresh per
@@ -92,6 +99,24 @@ async function getHub(city: string, hub: string) {
         neighbourhood_breakdown: {},
         latest_addition_at: null,
       } satisfies PseoCategoryStats,
+    };
+  }
+
+  // Same idea as the category fallback above, but neighbourhood text is
+  // free-form rather than a fixed enum - NEIGHBOURHOODS is a curated
+  // allowlist of real places (mirrors the homepage's own filter-chip
+  // list), so only those get an empty-state page instead of 404. An
+  // arbitrary/mistyped slug not on that list still correctly 404s.
+  if (city === 'toronto' && NEIGHBOURHOODS.some((n) => n.slug === hub)) {
+    return {
+      type: 'neighbourhood' as const,
+      stats: {
+        city_slug: city,
+        neighbourhood_slug: hub,
+        active_listing_count: 0,
+        category_breakdown: {},
+        latest_addition_at: null,
+      } satisfies PseoNeighbourhoodStats,
     };
   }
 
