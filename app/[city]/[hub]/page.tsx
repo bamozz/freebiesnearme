@@ -97,7 +97,8 @@ export default async function HubPage({ params }: Props) {
   const items = listings ?? [];
   const hubLabel = hubDisplayLabel(hub, resolved.type);
   const cityLabel = titleCase(city);
-  const jsonLd = buildHubItemList(items, hubLabel);
+  const hubUrl = `https://freebiesnearme.app/${city}/${hub}`;
+  const jsonLd = buildHubItemList(items, hubLabel, hubUrl);
 
   return (
     <>
