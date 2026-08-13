@@ -30,6 +30,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="/toronto">Explore</a>
               <a href="/toronto/map">Map</a>
             </div>
+            <div className="nav-right">
+              <a className="btn-solid" href="/toronto/submit">Submit an event</a>
+            </div>
           </div>
         </nav>
         <nav className="bottom-tabbar">
