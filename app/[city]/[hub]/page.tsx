@@ -81,9 +81,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? `Free ${label} in ${cityLabel} | Freebies Near Me`
       : `Free things to do in ${label}, ${cityLabel} | Freebies Near Me`;
 
+  // active_listing_count (from the stats view) counts every is_active row
+  // regardless of whether its time window has already ended, so it can't be
+  // reused here - this counts only listings that haven't wrapped up yet,
+  // matching what the page itself actually shows.
+  const supabase = createServerClient();
+  const filterColumn = resolved.type === 'category' ? 'category_slug' : 'neighbourhood_slug';
+  const { data: listings } = await supabase
+    .from('listings')
+    .select('start_time, end_time')
+    .eq('city_slug', city)
+    .eq(filterColumn, hub)
+    .eq('is_active', true)
+    .returns<Pick<Listing, 'start_time' | 'end_time'>[]>();
+  const activeCount = (listings ?? []).filter(
+    (l) => computeListingStatus(l.start_time, l.end_time) !== 'ended'
+  ).length;
+
   return {
     title,
-    description: `${resolved.stats.active_listing_count} free listings live right now.`,
+    description: `${activeCount} free listings live right now.`,
   };
 }
 
@@ -103,7 +120,12 @@ export default async function HubPage({ params }: Props) {
     .order('start_time', { ascending: true })
     .returns<Listing[]>();
 
-  const items = listings ?? [];
+  // Wrapped-up listings stay is_active until the deactivation cron sweeps
+  // them, so they'd otherwise still show up here (and inflate the visible
+  // count) for however long that gap lasts.
+  const items = (listings ?? []).filter(
+    (listing) => computeListingStatus(listing.start_time, listing.end_time) !== 'ended'
+  );
   const hubLabel = hubDisplayLabel(hub, resolved.type);
   const cityLabel = titleCase(city);
   const hubUrl = `https://freebiesnearme.app/${city}/${hub}`;
@@ -120,7 +142,7 @@ export default async function HubPage({ params }: Props) {
             : `Free Giveaways & Events in ${hubLabel}, ${cityLabel}`}
         </h1>
         <p className="hub-sub">
-          {resolved.stats.active_listing_count} free listings live right now in {hubLabel}, {cityLabel}.
+          {items.length} free listings live right now in {hubLabel}, {cityLabel}.
         </p>
 
         {items.length === 0 ? (
