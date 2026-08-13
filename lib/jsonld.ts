@@ -47,7 +47,8 @@ export function buildHubItemList(listings: Listing[], hubLabel: string, hubUrl: 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: `Free listings in ${hubLabel}`,
+    name: `Free Giveaways and Pop-ups in ${hubLabel}`,
+    numberOfItems: itemListElement.length,
     itemListElement,
   };
 

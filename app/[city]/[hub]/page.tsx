@@ -19,6 +19,21 @@ import {
 } from '@/lib/listing-display';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
+// Curated subset of NEIGHBOURHOODS for the cross-link footer on every hub
+// page - linking to all ~39 would be link-heavy/spammy-looking rather than
+// useful, so this sticks to well-known, high-signal destinations.
+const POPULAR_NEIGHBOURHOOD_SLUGS = [
+  'the-well',
+  'yorkville',
+  'liberty-village',
+  'distillery-district',
+  'kensington-market',
+  'harbourfront',
+  'king-west',
+  'the-junction',
+];
+const POPULAR_NEIGHBOURHOODS = NEIGHBOURHOODS.filter((n) => POPULAR_NEIGHBOURHOOD_SLUGS.includes(n.slug));
+
 // Starter dynamic route for both category hubs (/toronto/free-coffee) and
 // neighbourhood hubs (/toronto/kensington-market) under one [hub] segment.
 // It resolves [hub] against pseo_category_stats first, then
@@ -290,6 +305,33 @@ export default async function HubPage({ params }: Props) {
             })}
           </ul>
         )}
+
+        {/* Internal linking mesh: every hub page cross-links to the other
+            category hubs and a curated set of popular neighbourhood hubs,
+            excluding itself, so crawlers (and users) can reach every page
+            from any page rather than relying solely on the sitemap. */}
+        <div className="hub-crosslinks">
+          <div className="hub-crosslinks-group">
+            <h2>Browse by category</h2>
+            <div className="hub-crosslinks-tags">
+              {CATEGORIES.filter((c) => c.slug !== hub).map((c) => (
+                <a key={c.slug} href={`/${city}/${c.slug}`} className="hub-crosslink-tag">
+                  {c.label}
+                </a>
+              ))}
+            </div>
+          </div>
+          <div className="hub-crosslinks-group">
+            <h2>Popular neighbourhoods</h2>
+            <div className="hub-crosslinks-tags">
+              {POPULAR_NEIGHBOURHOODS.filter((n) => n.slug !== hub).map((n) => (
+                <a key={n.slug} href={`/${city}/${n.slug}`} className="hub-crosslink-tag">
+                  {n.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
