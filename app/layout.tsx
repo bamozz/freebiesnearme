@@ -5,7 +5,10 @@ export const metadata: Metadata = {
   title: 'Freebies Near Me',
   description: 'Free giveaways, samples, and pop up events happening in Toronto right now.',
   icons: {
-    icon: '/toronto/assets/favicon.svg',
+    icon: [
+      { url: '/toronto/assets/favicon.svg', type: 'image/svg+xml' },
+      { url: '/toronto/assets/favicon-192.png', type: 'image/png', sizes: '192x192' },
+    ],
   },
 };
 
