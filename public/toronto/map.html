@@ -141,6 +141,15 @@
   .legend-item{display:flex;align-items:center;gap:7px;margin-bottom:4px;color:var(--muted);}
   .legend-item:last-child{margin-bottom:0;}
   .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .map-empty-state{display:none;position:absolute;inset:0;align-items:center;justify-content:center;pointer-events:none;z-index:15;}
+  .map-empty-state.show{display:flex;}
+  .map-empty-card{
+    pointer-events:auto;background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:20px 24px;max-width:280px;text-align:center;box-shadow:0 8px 30px rgba(21,27,33,0.14);
+  }
+  .map-empty-card p{margin:0 0 8px;font-size:14px;color:var(--ink);font-weight:600;}
+  .map-empty-card a{font-size:13px;font-weight:700;color:var(--teal);text-decoration:none;}
+  .map-empty-card a:hover{text-decoration:underline;}
   @media (max-width:760px){
     .map-legend{max-width:120px;font-size:10.5px;padding:8px 10px;bottom:12px;left:12px;}
     .legend-dot{width:8px;height:8px;}
@@ -188,6 +197,7 @@
   <div id="map"></div>
   <div class="map-badge"><span class="pulse"></span><span id="liveCount">0</span> free events live in Toronto</div>
   <div class="map-legend" id="mapLegend"></div>
+  <div class="map-empty-state" id="mapEmptyState"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -210,6 +220,15 @@ const categories = [
 ];
 const catColor = Object.fromEntries(categories.map(c=>[c.id,c.color]));
 const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
+// category enum id -> pSEO hub slug (irregular for food, matches
+// lib/categories.ts's CATEGORY_SLUG_LABEL on the Next.js side).
+const CATEGORY_SLUGS = {
+  food:'food-drink', beauty:'beauty', fashion:'fashion', tech:'tech', wellness:'wellness',
+  class_workshop:'class-workshop', concert_screening:'concert-screening', tour:'tour', misc:'misc',
+};
+function slugify(text){
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
 
 const LOCATIONS = [
   'The Annex','Bell Manor Park','Biidaasige Park','Cherry Beach','Chinatown','Christie Pits','Church-Wellesley Village','Corktown','Danforth','Distillery District',
@@ -464,6 +483,26 @@ function renderMarkers(){
       markers.push(marker);
     });
   });
+
+  // A filter with zero live pins (e.g. a neighbourhood that only has
+  // upcoming, not-yet-live listings) would otherwise just look like a
+  // blank/broken map with no explanation - show a card pointing at where
+  // the upcoming listings actually are instead.
+  const emptyEl = document.getElementById('mapEmptyState');
+  const hasFilter = activeCats.length > 0 || activeLocations.length > 0;
+  if (hasFilter && filtered.length === 0){
+    const singleLocation = activeLocations.length === 1 ? activeLocations[0] : null;
+    const singleCat = activeCats.length === 1 ? activeCats[0] : null;
+    const label = singleLocation || (singleCat ? catLabel[singleCat] : 'these filters');
+    const hubSlug = singleLocation ? slugify(singleLocation) : (singleCat ? CATEGORY_SLUGS[singleCat] : null);
+    emptyEl.innerHTML = `<div class="map-empty-card">
+      <p>No live events in ${label} right now.</p>
+      ${hubSlug ? `<a href="/toronto/${hubSlug}">See upcoming listings for ${label} &rarr;</a>` : ''}
+    </div>`;
+    emptyEl.classList.add('show');
+  } else {
+    emptyEl.classList.remove('show');
+  }
 }
 
 function renderCatFilters(){

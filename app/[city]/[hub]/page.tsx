@@ -221,6 +221,14 @@ export default async function HubPage({ params }: Props) {
   const items = (listings ?? []).filter(
     (listing) => computeListingStatus(listing.start_time, listing.end_time) !== 'ended'
   );
+  // map.html's pins only ever show currently-live events, by design (it
+  // answers "what can I go to right now," not "what's coming up"). A hub
+  // with only upcoming ("soon") listings would send the map CTA into a
+  // guaranteed-blank filtered map, so it only shows when there's actually
+  // something live to see there.
+  const hasLiveListing = items.some(
+    (listing) => computeListingStatus(listing.start_time, listing.end_time) === 'live'
+  );
   const hubLabel = hubDisplayLabel(hub, resolved.type);
   const cityLabel = titleCase(city);
   const hubUrl = `https://freebiesnearme.app/${city}/${hub}`;
@@ -238,9 +246,11 @@ export default async function HubPage({ params }: Props) {
         </h1>
         <div className="hub-badges">
           <span className="hub-freshness-badge">&#10003; Verified active today: {currentFullDate()}</span>
-          <a href={buildMapUrl(city, hub, resolved.type, hubLabel)} className="hub-map-cta">
-            &#128506; View on map
-          </a>
+          {hasLiveListing && (
+            <a href={buildMapUrl(city, hub, resolved.type, hubLabel)} className="hub-map-cta">
+              &#128506; View on map
+            </a>
+          )}
         </div>
         <p className="hub-sub">
           {items.length} free listings happening now or coming up in {hubLabel}, {cityLabel}. Updated {currentMonthYear()}.
