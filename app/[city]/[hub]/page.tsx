@@ -341,32 +341,36 @@ export default async function HubPage({ params }: Props) {
           </ul>
         )}
 
-        {/* Internal linking mesh: every hub page cross-links to the other
-            category hubs and a curated set of popular neighbourhood hubs,
-            excluding itself, so crawlers (and users) can reach every page
-            from any page rather than relying solely on the sitemap. */}
-        <div className="hub-crosslinks">
-          <div className="hub-crosslinks-group">
-            <h2>Browse by category</h2>
-            <div className="hub-crosslinks-tags">
-              {CATEGORIES.filter((c) => c.slug !== hub).map((c) => (
-                <a key={c.slug} href={`/${city}/${c.slug}`} className="hub-crosslink-tag">
-                  {c.label}
-                </a>
-              ))}
-            </div>
-          </div>
-          <div className="hub-crosslinks-group">
-            <h2>Popular neighbourhoods</h2>
-            <div className="hub-crosslinks-tags">
-              {POPULAR_NEIGHBOURHOODS.filter((n) => n.slug !== hub).map((n) => (
-                <a key={n.slug} href={`/${city}/${n.slug}`} className="hub-crosslink-tag">
-                  {n.label}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
+      </div>
+
+      {/* Internal linking mesh: every hub page cross-links to the other
+          category hubs and a curated set of popular neighbourhood hubs,
+          excluding itself, so crawlers (and users) can reach every page
+          from any page rather than relying solely on the sitemap. Sits
+          flush against the shared footer (app/layout.tsx) with matching
+          small/muted styling, rather than as its own prominent section -
+          it can't render inside that <footer> directly (it needs this
+          page's hub-specific self-exclusion logic, which the shared
+          layout doesn't have), so this is styled to read as part of it. */}
+      <div className="hub-crosslinks">
+        <p>
+          <span>Categories:</span>{' '}
+          {CATEGORIES.filter((c) => c.slug !== hub).map((c, i, arr) => (
+            <span key={c.slug}>
+              <a href={`/${city}/${c.slug}`}>{c.label}</a>
+              {i < arr.length - 1 ? ', ' : ''}
+            </span>
+          ))}
+        </p>
+        <p>
+          <span>Neighbourhoods:</span>{' '}
+          {POPULAR_NEIGHBOURHOODS.filter((n) => n.slug !== hub).map((n, i, arr) => (
+            <span key={n.slug}>
+              <a href={`/${city}/${n.slug}`}>{n.label}</a>
+              {i < arr.length - 1 ? ', ' : ''}
+            </span>
+          ))}
+        </p>
       </div>
     </>
   );

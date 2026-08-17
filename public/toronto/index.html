@@ -395,17 +395,11 @@
   .value-item h3{font-size:15px;margin:6px 0 4px;font-family:'Space Grotesk',sans-serif;}
   .value-item p{font-size:13px;color:var(--muted);margin:0;line-height:1.4;}
 
-  .popular-hubs{
-    max-width:1220px;margin:34px auto 0;padding:24px 28px 0;
-    display:flex;flex-direction:column;gap:20px;
-  }
-  .popular-hubs-group h2{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin:0 0 10px;}
-  .popular-hubs-tags{display:flex;flex-wrap:wrap;gap:8px;}
-  .popular-hub-tag{
-    font-size:12.5px;font-weight:600;color:var(--muted);text-decoration:none;
-    background:var(--paper-alt);padding:6px 12px;border-radius:20px;
-  }
-  .popular-hub-tag:hover{color:var(--ink);background:var(--line);}
+  .footer-hubs{display:flex;flex-direction:column;gap:4px;margin-top:2px;}
+  .footer-hubs p{font-size:11px;line-height:1.7;color:var(--muted);margin:0;max-width:640px;}
+  .footer-hubs span{font-weight:600;}
+  .footer-hubs a{color:var(--muted);text-decoration:none;}
+  .footer-hubs a:hover{color:var(--ink);text-decoration:underline;}
   footer{
     margin-top:34px;border-top:1px solid var(--line);background:#fff;
   }
@@ -473,36 +467,6 @@
   </div>
 </div>
 
-<div class="popular-hubs">
-  <div class="popular-hubs-group">
-    <h2>Browse by category</h2>
-    <div class="popular-hubs-tags">
-      <a href="/toronto/food-drink" class="popular-hub-tag">Food &amp; Drink</a>
-      <a href="/toronto/beauty" class="popular-hub-tag">Beauty</a>
-      <a href="/toronto/fashion" class="popular-hub-tag">Fashion</a>
-      <a href="/toronto/tech" class="popular-hub-tag">Tech</a>
-      <a href="/toronto/wellness" class="popular-hub-tag">Wellness</a>
-      <a href="/toronto/class-workshop" class="popular-hub-tag">Class &amp; Workshop</a>
-      <a href="/toronto/concert-screening" class="popular-hub-tag">Concert &amp; Screening</a>
-      <a href="/toronto/tour" class="popular-hub-tag">Tour</a>
-      <a href="/toronto/misc" class="popular-hub-tag">Misc.</a>
-    </div>
-  </div>
-  <div class="popular-hubs-group">
-    <h2>Popular neighbourhoods</h2>
-    <div class="popular-hubs-tags">
-      <a href="/toronto/the-well" class="popular-hub-tag">The Well</a>
-      <a href="/toronto/yorkville" class="popular-hub-tag">Yorkville</a>
-      <a href="/toronto/liberty-village" class="popular-hub-tag">Liberty Village</a>
-      <a href="/toronto/distillery-district" class="popular-hub-tag">Distillery District</a>
-      <a href="/toronto/kensington-market" class="popular-hub-tag">Kensington Market</a>
-      <a href="/toronto/harbourfront" class="popular-hub-tag">Harbourfront</a>
-      <a href="/toronto/king-west" class="popular-hub-tag">King West</a>
-      <a href="/toronto/the-junction" class="popular-hub-tag">The Junction</a>
-    </div>
-  </div>
-</div>
-
 <footer>
   <div class="footer-inner">
     <a class="logo" href="/toronto">Freebies Near Me</a>
@@ -512,6 +476,10 @@
       <a class="feedback-link" href="/toronto/changelog">Changelog</a>
     </div>
     <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
+    <div class="footer-hubs">
+      <p><span>Categories:</span> <a href="/toronto/food-drink">Food &amp; Drink</a>, <a href="/toronto/beauty">Beauty</a>, <a href="/toronto/fashion">Fashion</a>, <a href="/toronto/tech">Tech</a>, <a href="/toronto/wellness">Wellness</a>, <a href="/toronto/class-workshop">Class &amp; Workshop</a>, <a href="/toronto/concert-screening">Concert &amp; Screening</a>, <a href="/toronto/tour">Tour</a>, <a href="/toronto/misc">Misc.</a></p>
+      <p><span>Neighbourhoods:</span> <a href="/toronto/the-well">The Well</a>, <a href="/toronto/yorkville">Yorkville</a>, <a href="/toronto/liberty-village">Liberty Village</a>, <a href="/toronto/distillery-district">Distillery District</a>, <a href="/toronto/kensington-market">Kensington Market</a>, <a href="/toronto/harbourfront">Harbourfront</a>, <a href="/toronto/king-west">King West</a>, <a href="/toronto/the-junction">The Junction</a></p>
+    </div>
   </div>
 </footer>
 
