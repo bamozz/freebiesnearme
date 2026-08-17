@@ -65,6 +65,7 @@ nav{
   .tab-icon{font-size:18px;line-height:1;display:flex;}
   .tab-icon svg{width:1em;height:1em;}
   body{padding-bottom:64px;}
+  .footer-hubs p{white-space:normal;overflow-x:visible;}
 }
 
 /* ===== Footer ===== */
