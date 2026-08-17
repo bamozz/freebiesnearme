@@ -5,8 +5,6 @@
 // guessing/scraping a UUID, which is what mattered once event_updates'
 // RLS insert/delete policies got locked down to service-role-only.
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -18,9 +16,12 @@ export default async function handler(req, res) {
   }
   body = body || {};
 
-  const id = String(body.id || '').trim();
+  // event_updates.id is a bigint/serial primary key (unlike listings.id,
+  // which is a UUID) - the client_token, not the id's format, is what
+  // actually gates this.
+  const id = Number(body.id);
   const clientToken = String(body.client_token || '').trim();
-  if (!UUID_RE.test(id) || !clientToken) {
+  if (!Number.isInteger(id) || id <= 0 || !clientToken) {
     return res.status(400).json({ error: 'Invalid request.' });
   }
 
