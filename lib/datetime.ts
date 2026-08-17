@@ -85,7 +85,7 @@ function formatClock(d: Date): string {
     .replace(' ', '');
 }
 
-function torontoDateKey(d: Date): string {
+export function torontoDateKey(d: Date): string {
   return d.toLocaleDateString('en-CA', { timeZone: TORONTO_TZ });
 }
 

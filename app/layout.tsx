@@ -35,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="nav-links">
               <a href="/toronto">Explore</a>
               <a href="/toronto/map">Map</a>
+              <a href="/toronto/calendar">Calendar</a>
             </div>
             <div className="nav-right">
               <a className="btn-solid" href="/toronto/submit">Submit an event</a>
@@ -65,6 +66,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </svg>
             </span>
             Map
+          </a>
+          <a href="/toronto/calendar" className="tab-item">
+            <span className="tab-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path
+                  fill="currentColor"
+                  d="M19 4h-1V3a1 1 0 0 0-2 0v1H8V3a1 1 0 0 0-2 0v1H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3M4 7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2H4zm15 13H5a1 1 0 0 1-1-1v-8h16v8a1 1 0 0 1-1 1"
+                />
+              </svg>
+            </span>
+            Calendar
           </a>
         </nav>
         {children}
@@ -162,17 +175,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
 
-        <footer>
-          <div className="footer-inner">
-            <a className="logo" href="/toronto">Freebies Near Me</a>
-            <div className="footer-links">
-              <a className="feedback-link" href="/toronto/advertise">Advertise</a>
-              <a className="feedback-link" href="/toronto/feedback">Feedback</a>
-              <a className="feedback-link" href="/toronto/changelog">Changelog</a>
-            </div>
-            <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
-          </div>
-        </footer>
       </body>
     </html>
   );

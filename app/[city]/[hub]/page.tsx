@@ -6,6 +6,7 @@ import { buildHubItemList } from '@/lib/jsonld';
 import { formatTimeRange, hasClockTime, TORONTO_TZ } from '@/lib/datetime';
 import { CATEGORIES, CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
 import { NEIGHBOURHOODS, NEIGHBOURHOOD_SLUG_LABEL } from '@/lib/neighbourhoods';
+import SiteFooter from '@/app/components/SiteFooter';
 import {
   stripFreeWord,
   buildImageAlt,
@@ -346,32 +347,14 @@ export default async function HubPage({ params }: Props) {
       {/* Internal linking mesh: every hub page cross-links to the other
           category hubs and a curated set of popular neighbourhood hubs,
           excluding itself, so crawlers (and users) can reach every page
-          from any page rather than relying solely on the sitemap. Sits
-          flush against the shared footer (app/layout.tsx) with matching
-          small/muted styling, rather than as its own prominent section -
-          it can't render inside that <footer> directly (it needs this
-          page's hub-specific self-exclusion logic, which the shared
-          layout doesn't have), so this is styled to read as part of it. */}
-      <div className="hub-crosslinks">
-        <p>
-          <span>Categories:</span>{' '}
-          {CATEGORIES.filter((c) => c.slug !== hub).map((c, i, arr) => (
-            <span key={c.slug}>
-              <a href={`/${city}/${c.slug}`}>{c.label}</a>
-              {i < arr.length - 1 ? ', ' : ''}
-            </span>
-          ))}
-        </p>
-        <p>
-          <span>Neighbourhoods:</span>{' '}
-          {POPULAR_NEIGHBOURHOODS.filter((n) => n.slug !== hub).map((n, i, arr) => (
-            <span key={n.slug}>
-              <a href={`/${city}/${n.slug}`}>{n.label}</a>
-              {i < arr.length - 1 ? ', ' : ''}
-            </span>
-          ))}
-        </p>
-      </div>
+          from any page rather than relying solely on the sitemap. Each
+          page renders its own <footer> (rather than a shared one in
+          app/layout.tsx) because this list needs per-page self-exclusion. */}
+      <SiteFooter
+        city={city}
+        categories={CATEGORIES.filter((c) => c.slug !== hub)}
+        neighbourhoods={POPULAR_NEIGHBOURHOODS.filter((n) => n.slug !== hub)}
+      />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import type { Listing } from '@/types/pseo_types';
-import { assumedEndIso } from '@/lib/datetime';
+import { assumedEndIso, hasClockTime, torontoDateKey } from '@/lib/datetime';
 
 // Ported from the stripFreeWord/buildImageAlt/directionsUrl/availInfo/
 // statusFromWindows family in public/toronto/index.html so listing cards
@@ -77,30 +77,13 @@ function toIcsUtc(iso: string): string {
 // computed once server-side. Every major calendar app (Apple, Google,
 // Outlook, Android) opens or imports .ics files directly.
 export function buildCalendarUrl(listing: Listing): string {
-  const start = toIcsUtc(listing.start_time);
-  const end = toIcsUtc(listing.end_time || assumedEndIso(listing.start_time));
   const stamp = toIcsUtc(new Date().toISOString());
-  const what = stripFreeWord(listing.what);
-  const summary = icsEscape(`${listing.brand} - ${what}`);
-  const description = icsEscape(`${what} - free, hosted by ${listing.brand}, in ${listing.neighbourhood}.`);
-  const location = icsEscape(
-    listing.address ? `${listing.address}, ${listing.neighbourhood}, Toronto, ON` : `${listing.neighbourhood}, Toronto, ON`
-  );
   const ics = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//Freebies Near Me//EN',
     'CALSCALE:GREGORIAN',
-    'BEGIN:VEVENT',
-    `UID:${listing.id}@freebiesnearme.app`,
-    `DTSTAMP:${stamp}`,
-    `DTSTART:${start}`,
-    `DTEND:${end}`,
-    `SUMMARY:${summary}`,
-    `DESCRIPTION:${description}`,
-    `LOCATION:${location}`,
-    `URL:${directionsUrl(listing)}`,
-    'END:VEVENT',
+    buildVevent(listing, stamp),
     'END:VCALENDAR',
   ].join('\r\n');
   return `data:text/calendar;charset=utf8,${encodeURIComponent(ics)}`;
@@ -128,6 +111,77 @@ export function buildGoogleCalendarUrl(listing: Listing): string {
     location,
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function toIcsDate(d: Date): string {
+  return torontoDateKey(d).replace(/-/g, '');
+}
+
+function addDaysToIcsDate(dateStr: string, days: number): string {
+  const y = Number(dateStr.slice(0, 4));
+  const m = Number(dateStr.slice(4, 6)) - 1;
+  const d = Number(dateStr.slice(6, 8));
+  return new Date(Date.UTC(y, m, d + days)).toISOString().slice(0, 10).replace(/-/g, '');
+}
+
+// One VEVENT block per listing, shared by both buildCalendarUrl() (single
+// listing, data: URI) and buildFeedIcs() (the whole site, as a real file) -
+// factored out so the two can't drift apart on field handling.
+function buildVevent(listing: Listing, stamp: string): string {
+  const what = stripFreeWord(listing.what);
+  const summary = icsEscape(`${listing.brand} - ${what}`);
+  const description = icsEscape(`${what} - free, hosted by ${listing.brand}, in ${listing.neighbourhood}.`);
+  const location = icsEscape(
+    listing.address ? `${listing.address}, ${listing.neighbourhood}, Toronto, ON` : `${listing.neighbourhood}, Toronto, ON`
+  );
+
+  // A listing with no known clock time (the site's date-only convention -
+  // start_time at Toronto midnight) renders as a real all-day event here
+  // rather than a misleading midnight-timed one.
+  const startDate = new Date(listing.start_time);
+  const lines: string[] = [];
+  if (!hasClockTime(startDate)) {
+    const startIcsDate = toIcsDate(startDate);
+    const endIcsDate = listing.end_time ? toIcsDate(new Date(listing.end_time)) : addDaysToIcsDate(startIcsDate, 1);
+    lines.push(`DTSTART;VALUE=DATE:${startIcsDate}`, `DTEND;VALUE=DATE:${endIcsDate}`);
+  } else {
+    lines.push(
+      `DTSTART:${toIcsUtc(listing.start_time)}`,
+      `DTEND:${toIcsUtc(listing.end_time || assumedEndIso(listing.start_time))}`
+    );
+  }
+
+  return [
+    'BEGIN:VEVENT',
+    `UID:${listing.id}@freebiesnearme.app`,
+    `DTSTAMP:${stamp}`,
+    ...lines,
+    `SUMMARY:${summary}`,
+    `DESCRIPTION:${description}`,
+    `LOCATION:${location}`,
+    `URL:${directionsUrl(listing)}`,
+    'END:VEVENT',
+  ].join('\r\n');
+}
+
+// The full-site subscribable feed (app/toronto/calendar.ics/route.ts) -
+// every currently active, not-yet-ended listing as one VEVENT each, so a
+// calendar app can sync the whole site rather than one listing at a time.
+export function buildFeedIcs(listings: Listing[]): string {
+  const stamp = toIcsUtc(new Date().toISOString());
+  const vevents = listings.map((listing) => buildVevent(listing, stamp));
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Freebies Near Me//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:Freebies Near Me - Toronto',
+    'X-WR-CALDESC:Free giveaways, samples, and pop up events happening in Toronto.',
+    'REFRESH-INTERVAL;VALUE=DURATION:PT6H',
+    ...vevents,
+    'END:VCALENDAR',
+  ].join('\r\n');
 }
 
 export function icsFilename(listing: Listing): string {
