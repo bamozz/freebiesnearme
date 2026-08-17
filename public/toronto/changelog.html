@@ -146,6 +146,35 @@
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
     {
+      date: 'August 14, 2026',
+      emoji: '\u{1F389}',
+      title: 'New Festival category',
+      blurb: "Added a new Festival category for street festivals, cultural celebrations, and similar events - browsable and filterable everywhere the other categories are. Also quietened down the category/neighbourhood links at the bottom of every page (they now live in the footer instead of their own big section), and Add to calendar opens Google Calendar directly on Android instead of downloading a file.",
+      sections: [
+        { heading: 'New', tone: 'new', emoji: '\u{1F195}', items: [
+          { label: 'Festival category', text: 'Browse, filter, and submit festival listings alongside the existing categories.' },
+        ]},
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Category & neighbourhood links', text: 'Moved into the footer and made smaller/quieter instead of a prominent section.' },
+          { label: 'Add to calendar', text: 'Opens Google Calendar directly on Android - no file download needed.' },
+        ]},
+      ],
+    },
+    {
+      date: 'August 14, 2026',
+      emoji: '\u{1F4CD}',
+      title: 'Category and neighbourhood pages stop 404ing when empty',
+      blurb: "A category or neighbourhood with zero listings right now (e.g. a quiet week for Tech, or a neighbourhood before its first listing) used to show a 404 page instead of the site. Now it shows the normal page with a friendly \"nothing right now\" message. Also added a freshness badge and a View on map link to every category/neighbourhood page.",
+      sections: [
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Category & neighbourhood pages', text: 'No longer show a 404 when there are currently zero listings.' },
+        ]},
+        { heading: 'New', tone: 'new', emoji: '\u{1F195}', items: [
+          { label: 'View on map', text: 'Jump straight to the map, pre-filtered to what you were just looking at.' },
+        ]},
+      ],
+    },
+    {
       date: 'August 13, 2026',
       emoji: '\u{1F5BC}\u{FE0F}',
       title: 'Photo lightbox on category and neighbourhood pages',
