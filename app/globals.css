@@ -67,7 +67,32 @@ nav{
   .tab-icon svg{width:1em;height:1em;}
   body{padding-bottom:64px;}
   .footer-hubs p{white-space:normal;overflow-x:visible;}
+  }
+
+/* ===== Install app banner (preview/testing only - see the hostname check
+   in the script that shows it) ===== */
+.install-banner{
+  display:none;
+  background:var(--paper-alt);color:var(--ink);border-bottom:1px solid var(--line);
 }
+.install-banner.show{display:block;}
+.install-banner-inner{
+  max-width:920px;margin:0 auto;padding:10px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;
+}
+.install-banner-text{flex:1;line-height:1.35;}
+.install-banner-text strong{display:block;font-size:13.5px;}
+.install-banner-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.install-banner-btn{
+  background:var(--ink);color:#fff;font-size:12.5px;font-weight:700;
+  padding:7px 14px;border-radius:16px;border:none;cursor:pointer;white-space:nowrap;
+}
+.install-banner-btn:disabled{opacity:.6;cursor:default;}
+.install-banner-close{
+  background:none;border:none;color:var(--muted);font-size:18px;line-height:1;
+  cursor:pointer;padding:4px;
+}
+.install-banner-close:hover{color:var(--ink);}
 
 /* ===== Footer ===== */
 footer{margin-top:34px;border-top:1px solid var(--line);background:#fff;}

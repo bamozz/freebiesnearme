@@ -1,0 +1,14 @@
+{
+  "name": "Freebies Near Me",
+  "short_name": "Freebies Near Me",
+  "description": "Free giveaways, samples, and pop up events happening in Toronto right now.",
+  "start_url": "/toronto",
+  "id": "/toronto",
+  "display": "standalone",
+  "background_color": "#FEFCF6",
+  "theme_color": "#151B21",
+  "icons": [
+    { "src": "/toronto/assets/favicon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/toronto/assets/favicon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

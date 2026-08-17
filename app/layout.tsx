@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from 'next';
 import BottomTabbar from '@/app/components/BottomTabbar';
+import InstallBanner from '@/app/components/InstallBanner';
 import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Freebies Near Me',
   description: 'Free giveaways, samples, and pop up events happening in Toronto right now.',
+  manifest: '/manifest.json',
   icons: {
     icon: [
       { url: '/toronto/assets/favicon.svg', type: 'image/svg+xml' },
@@ -44,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </nav>
         <BottomTabbar />
+        <InstallBanner />
         {children}
 
         {/* Shared lightbox for any .card-thumb rendered by a page (e.g. the

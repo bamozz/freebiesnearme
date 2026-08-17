@@ -25,6 +25,7 @@
 <meta name="description" content="See every free giveaway and pop up event happening in Toronto on one interactive map, updated as new listings come in.">
 <link rel="icon" type="image/svg+xml" href="/toronto/assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="/toronto/assets/favicon-192.png">
+<link rel="manifest" href="/manifest.json">
 <link rel="canonical" href="https://freebiesnearme.app/toronto/map">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Freebies Near Me">
@@ -101,6 +102,31 @@
     .tab-icon{font-size:18px;line-height:1;display:flex;}
     .tab-icon svg{width:1em;height:1em;}
   }
+
+  /* ===== Install app banner (preview/testing only - see the hostname
+     check in the script that shows it) ===== */
+  .install-banner{
+    display:none;
+    background:var(--paper-alt);color:var(--ink);border-bottom:1px solid var(--line);
+  }
+  .install-banner.show{display:block;}
+  .install-banner-inner{
+    max-width:1220px;margin:0 auto;padding:10px 28px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;
+  }
+  .install-banner-text{flex:1;line-height:1.35;}
+  .install-banner-text strong{display:block;font-size:13.5px;}
+  .install-banner-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+  .install-banner-btn{
+    background:var(--ink);color:#fff;font-size:12.5px;font-weight:700;
+    padding:7px 14px;border-radius:16px;border:none;cursor:pointer;white-space:nowrap;
+  }
+  .install-banner-btn:disabled{opacity:.6;cursor:default;}
+  .install-banner-close{
+    background:none;border:none;color:var(--muted);font-size:18px;line-height:1;
+    cursor:pointer;padding:4px;
+  }
+  .install-banner-close:hover{color:var(--ink);}
 
   .filter-bar{
     border-bottom:1px solid var(--line);background:#fff;flex-shrink:0;z-index:400;
@@ -186,6 +212,65 @@
     </div>
   </div>
 </nav>
+
+<!-- Install app banner: preview/testing only, see hostname check below -->
+<div class="install-banner" id="installBanner">
+  <div class="install-banner-inner">
+    <div class="install-banner-text" id="installBannerText"><strong>Install this app</strong>Get quick access from your home screen</div>
+    <div class="install-banner-actions">
+      <button class="install-banner-btn" id="installBannerBtn" type="button">Install</button>
+      <button class="install-banner-close" id="installBannerClose" type="button" aria-label="Dismiss">&times;</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var PROD_HOSTS = ['freebiesnearme.app','www.freebiesnearme.app'];
+  if (PROD_HOSTS.indexOf(location.hostname) !== -1) return;
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(function(){}); }
+  var isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if (isStandalone) return;
+
+  var banner = document.getElementById('installBanner');
+  var textEl = document.getElementById('installBannerText');
+  var btnEl = document.getElementById('installBannerBtn');
+  var closeEl = document.getElementById('installBannerClose');
+  if (!banner) return;
+
+  function show(){ banner.classList.add('show'); }
+  function dismiss(){
+    banner.classList.remove('show');
+  }
+
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (isIOS){
+    // Safari has no beforeinstallprompt event at all, so this is the only
+    // way to offer install there - shown immediately, no event to wait on.
+    textEl.innerHTML = '<strong>Install this app</strong>Tap Share, then "Add to Home Screen"';
+    btnEl.style.display = 'none';
+    show();
+  } else {
+    // Follows the real browser signal: only appears once Chrome itself has
+    // decided (via its own installability + engagement checks) that this
+    // visit is eligible, and hands over the native one-tap prompt.
+    var deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e){
+      e.preventDefault();
+      deferredPrompt = e;
+      show();
+    });
+    btnEl.addEventListener('click', function(){
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.finally(function(){
+        deferredPrompt = null;
+        dismiss();
+      });
+    });
+  }
+  closeEl.addEventListener('click', dismiss);
+})();
+</script>
 
 <nav class="bottom-tabbar">
   <a href="/toronto" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m8.154 15.846l5.808-1.884l1.884-5.808l-5.807 1.885zm3.842-2.73q-.467 0-.79-.327q-.321-.327-.321-.793q0-.467.326-.79q.327-.321.793-.321q.467 0 .79.326q.322.327.322.793q0 .467-.327.79q-.327.322-.793.322M12.003 21q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.344 0 5.672-2.328T20 12t-2.328-5.672T12 4T6.328 6.328T4 12t2.328 5.672T12 20m0-8"/></svg></span>Explore</a>
