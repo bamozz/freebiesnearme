@@ -4,6 +4,8 @@
 // should be locked down so this endpoint (using the service role key) is
 // the only way a new pending listing gets created.
 
+import { containsBlockedContent } from './_lib/content-filter.js';
+
 function countUrls(text) {
   const urlPattern = /(https?:\/\/|www\.)\S+/gi;
   return ((text || '').match(urlPattern) || []).length;
@@ -66,6 +68,12 @@ export default async function handler(req, res) {
     }
     if (countUrls(what) > 1) {
       return res.status(400).json({ error: 'Please limit the description to one link.', field: 'what' });
+    }
+    if (containsBlockedContent(brand)) {
+      return res.status(400).json({ error: 'Brand or business name contains language we don\'t allow.', field: 'brand' });
+    }
+    if (containsBlockedContent(what)) {
+      return res.status(400).json({ error: 'Description contains language we don\'t allow.', field: 'what' });
     }
   }
 

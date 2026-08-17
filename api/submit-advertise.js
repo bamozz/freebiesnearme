@@ -4,6 +4,8 @@
 // on `feedback` should be locked down so this endpoint (using the service
 // role key) is the only way a new pending inquiry gets created.
 
+import { containsBlockedContent } from './_lib/content-filter.js';
+
 // Small curated list of common disposable/temporary email providers.
 const DISPOSABLE_EMAIL_DOMAINS = new Set([
   'mailinator.com', 'guerrillamail.com', 'guerrillamail.info', 'guerrillamail.biz',
@@ -79,6 +81,12 @@ export default async function handler(req, res) {
   }
   if (countUrls(contact) > 1) {
     return res.status(400).json({ error: 'Please limit your email to one link.', field: 'contact' });
+  }
+  if (containsBlockedContent(brand)) {
+    return res.status(400).json({ error: 'Brand or business name contains language we don\'t allow.', field: 'brand' });
+  }
+  if (containsBlockedContent(message)) {
+    return res.status(400).json({ error: 'Message contains language we don\'t allow.', field: 'message' });
   }
 
   const emailMatch = contact.match(/^[^\s@]+@([^\s@]+\.[^\s@]+)$/);

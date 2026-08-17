@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759" crossorigin="anonymous"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SRH6EG57P0"></script>
 <script>
@@ -516,6 +517,13 @@
 
 </div><!-- /page-scroll -->
 
+<!-- Invisible/execute-mode Turnstile widget for "share an update" reports.
+     Lives here (outside .page-scroll, never touched by renderList()'s
+     innerHTML regeneration) so it persists as one widget instance reused
+     across submissions, rather than being destroyed/recreated on every
+     re-render if it lived inside a card's templated HTML. -->
+<div id="reportTurnstileWidget" class="cf-turnstile" data-sitekey="0x4AAAAAAEKzPyqeHOiqJiic" data-appearance="execute" data-execution="execute" data-callback="onReportTurnstileToken" data-error-callback="onReportTurnstileError"></div>
+
 <div class="lightbox" id="lightbox">
   <span class="lightbox-close" id="lightboxClose">&times;</span>
   <div class="lightbox-frame">
@@ -1025,40 +1033,95 @@ function compressImage(file){
   });
 }
 
+// Invisible/execute-mode Turnstile (see #reportTurnstileWidget in the
+// body) - resolves with a fresh token per call rather than the
+// getResponse()-after-checkbox-click pattern used on submit.html/
+// advertise.html, since there's no visible widget here to click.
+let reportTurnstileResolve = null;
+let reportTurnstileReject = null;
+function onReportTurnstileToken(token){
+  if (reportTurnstileResolve) reportTurnstileResolve(token);
+  reportTurnstileResolve = null;
+  reportTurnstileReject = null;
+}
+function onReportTurnstileError(){
+  if (reportTurnstileReject) reportTurnstileReject(new Error('Verification failed'));
+  reportTurnstileResolve = null;
+  reportTurnstileReject = null;
+}
+function getReportTurnstileToken(){
+  return new Promise((resolve, reject) => {
+    if (typeof turnstile === 'undefined'){ reject(new Error('Verification unavailable. Try again in a moment.')); return; }
+    reportTurnstileResolve = resolve;
+    reportTurnstileReject = reject;
+    try { turnstile.reset('#reportTurnstileWidget'); } catch (e){}
+    turnstile.execute('#reportTurnstileWidget');
+  });
+}
+
+function blobToBase64(blob){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Could not read photo'));
+    reader.onload = () => {
+      const result = reader.result;
+      const idx = result.indexOf(',');
+      resolve(idx !== -1 ? result.slice(idx + 1) : result);
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
 async function submitReport(id, type, options){
   options = options || {};
   const key = id + ':' + type;
   if (reportedByMe[key]) return;
 
-  let imageUrl = null;
-  if (options.photoBlob){
-    const path = `${id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
-    const { error: uploadError } = await sb.storage.from('event-update-photos').upload(path, options.photoBlob, {contentType: 'image/jpeg'});
-    if (uploadError){
-      showToast("Couldn't upload your photo. Try again in a moment.", true);
-      return;
-    }
-    imageUrl = sb.storage.from('event-update-photos').getPublicUrl(path).data.publicUrl;
-  }
-
-  const payload = {listing_id: id, type};
-  if (type === 'ran_out' && options.quantity !== null && options.quantity !== undefined) payload.quantity = options.quantity;
-  if (imageUrl) payload.image_url = imageUrl;
-  if (options.instaUrl) payload.insta_url = options.instaUrl;
-
-  const { data, error } = await sb.from('event_updates').insert(payload).select('id').single();
-  if (error){
-    showToast("Couldn't submit your update. Try again in a moment.", true);
+  let turnstileToken;
+  try {
+    turnstileToken = await getReportTurnstileToken();
+  } catch (e){
+    showToast("Couldn't verify you're not a bot. Try again in a moment.", true);
     return;
   }
-  reportedByMe[key] = {rowId: data.id, quantity: payload.quantity ?? null};
+
+  let photoBase64 = null;
+  if (options.photoBlob){
+    try {
+      photoBase64 = await blobToBase64(options.photoBlob);
+    } catch (e){
+      showToast("Couldn't read your photo. Try again.", true);
+      return;
+    }
+  }
+
+  const payload = {listing_id: id, type, turnstileToken};
+  if (type === 'ran_out' && options.quantity !== null && options.quantity !== undefined) payload.quantity = options.quantity;
+  if (photoBase64) payload.photoBase64 = photoBase64;
+  if (options.instaUrl) payload.insta_url = options.instaUrl;
+
+  let result;
+  try {
+    const res = await fetch('/api/submit-update', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+    result = await res.json();
+    if (!res.ok || !result.success) throw new Error(result.error || '');
+  } catch (e){
+    showToast(e.message || "Couldn't submit your update. Try again in a moment.", true);
+    return;
+  }
+
+  reportedByMe[key] = {rowId: result.id, clientToken: result.client_token, quantity: payload.quantity ?? null};
   localStorage.setItem('reportedListings', JSON.stringify(reportedByMe));
   const s = updateStats[id] || {};
   s[type] = (s[type] || 0) + 1;
   updateStats[id] = s;
-  if (imageUrl){
+  if (result.image_url){
     const photos = updatePhotos[id] || [];
-    photos.unshift({rowId: data.id, type, imageUrl, instaUrl: options.instaUrl || null});
+    photos.unshift({rowId: result.id, type, imageUrl: result.image_url, instaUrl: options.instaUrl || null});
     updatePhotos[id] = photos.slice(0, 6);
   }
   openReportPickerId = null;
@@ -1072,18 +1135,17 @@ async function undoReport(id, type){
   const key = id + ':' + type;
   const entry = reportedByMe[key];
   if (!entry) return;
-  const { data, error } = await sb.from('event_updates').delete().eq('id', entry.rowId).select();
-  if (error || !data || !data.length){
+  try {
+    const res = await fetch('/api/undo-update', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({id: entry.rowId, client_token: entry.clientToken}),
+    });
+    const result = await res.json();
+    if (!res.ok || !result.success) throw new Error();
+  } catch (e){
     showToast("Couldn't undo your report. Try again in a moment.", true);
     return;
-  }
-  const deletedImageUrl = data[0].image_url;
-  if (deletedImageUrl){
-    const marker = '/event-update-photos/';
-    const idx = deletedImageUrl.indexOf(marker);
-    if (idx !== -1){
-      try { await sb.storage.from('event-update-photos').remove([deletedImageUrl.slice(idx + marker.length)]); } catch (e){}
-    }
   }
   delete reportedByMe[key];
   localStorage.setItem('reportedListings', JSON.stringify(reportedByMe));
