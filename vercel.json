@@ -8,7 +8,10 @@
     { "source": "/toronto/submit.html", "destination": "/toronto/submit", "statusCode": 301 },
     { "source": "/toronto/feedback.html", "destination": "/toronto/feedback", "statusCode": 301 },
     { "source": "/toronto/advertise.html", "destination": "/toronto/advertise", "statusCode": 301 },
-    { "source": "/toronto/changelog.html", "destination": "/toronto/changelog", "statusCode": 301 }
+    { "source": "/toronto/changelog.html", "destination": "/toronto/changelog", "statusCode": 301 },
+    { "source": "/toronto/privacy.html", "destination": "/toronto/privacy", "statusCode": 301 },
+    { "source": "/toronto/terms.html", "destination": "/toronto/terms", "statusCode": 301 },
+    { "source": "/toronto/about.html", "destination": "/toronto/about", "statusCode": 301 }
   ],
   "rewrites": [
     { "source": "/toronto", "destination": "/toronto/index.html" },
@@ -16,7 +19,10 @@
     { "source": "/toronto/submit", "destination": "/toronto/submit.html" },
     { "source": "/toronto/feedback", "destination": "/toronto/feedback.html" },
     { "source": "/toronto/advertise", "destination": "/toronto/advertise.html" },
-    { "source": "/toronto/changelog", "destination": "/toronto/changelog.html" }
+    { "source": "/toronto/changelog", "destination": "/toronto/changelog.html" },
+    { "source": "/toronto/privacy", "destination": "/toronto/privacy.html" },
+    { "source": "/toronto/terms", "destination": "/toronto/terms.html" },
+    { "source": "/toronto/about", "destination": "/toronto/about.html" }
   ],
   "crons": [
     { "path": "/api/cron/deactivate-expired", "schedule": "0 8 * * *" }

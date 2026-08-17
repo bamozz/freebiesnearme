@@ -16,7 +16,13 @@ function staticRoutes(): MetadataRoute.Sitemap {
   return [
     { url: `${BASE_URL}/toronto`, changeFrequency: 'daily', priority: 1.0 },
     { url: `${BASE_URL}/toronto/map`, changeFrequency: 'daily', priority: 0.8 },
+    { url: `${BASE_URL}/toronto/calendar`, changeFrequency: 'daily', priority: 0.7 },
     { url: `${BASE_URL}/toronto/submit`, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${BASE_URL}/toronto/advertise`, changeFrequency: 'monthly', priority: 0.4 },
+    { url: `${BASE_URL}/toronto/about`, changeFrequency: 'monthly', priority: 0.4 },
+    { url: `${BASE_URL}/toronto/changelog`, changeFrequency: 'weekly', priority: 0.3 },
+    { url: `${BASE_URL}/toronto/privacy`, changeFrequency: 'yearly', priority: 0.2 },
+    { url: `${BASE_URL}/toronto/terms`, changeFrequency: 'yearly', priority: 0.2 },
   ];
 }
 
@@ -28,14 +34,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const [{ data: categoryStats, error: categoryError }, { data: neighbourhoodStats, error: neighbourhoodError }] =
       await Promise.all([
-        supabase.from('pseo_category_stats').select('city_slug, category_slug, latest_addition_at').returns<PseoCategoryStats[]>(),
-        supabase.from('pseo_neighbourhood_stats').select('city_slug, neighbourhood_slug, latest_addition_at').returns<PseoNeighbourhoodStats[]>(),
+        supabase.from('pseo_category_stats').select('city_slug, category_slug, active_listing_count, latest_addition_at').returns<PseoCategoryStats[]>(),
+        supabase.from('pseo_neighbourhood_stats').select('city_slug, neighbourhood_slug, active_listing_count, latest_addition_at').returns<PseoNeighbourhoodStats[]>(),
       ]);
 
     if (categoryError) console.error('sitemap: pseo_category_stats fetch failed', categoryError);
     if (neighbourhoodError) console.error('sitemap: pseo_neighbourhood_stats fetch failed', neighbourhoodError);
 
+    // A hub with zero currently-active listings renders as a bare empty
+    // state (see app/[city]/[hub]/page.tsx) - nothing there for a crawler
+    // to index, so it's left out of the sitemap rather than hardcoding
+    // which slugs to skip.
     for (const row of categoryStats ?? []) {
+      if (!row.active_listing_count) continue;
       routes.push({
         url: `${BASE_URL}/${row.city_slug}/${row.category_slug}`,
         lastModified: row.latest_addition_at ? new Date(row.latest_addition_at) : undefined,
@@ -45,6 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     for (const row of neighbourhoodStats ?? []) {
+      if (!row.active_listing_count) continue;
       routes.push({
         url: `${BASE_URL}/${row.city_slug}/${row.neighbourhood_slug}`,
         lastModified: row.latest_addition_at ? new Date(row.latest_addition_at) : undefined,

@@ -17,6 +17,9 @@ export default function SiteFooter({
           <a className="feedback-link" href="/toronto/advertise">Advertise</a>
           <a className="feedback-link" href="/toronto/feedback">Feedback</a>
           <a className="feedback-link" href="/toronto/changelog">Changelog</a>
+          <a className="feedback-link" href="/toronto/about">About</a>
+          <a className="feedback-link" href="/toronto/privacy">Privacy</a>
+          <a className="feedback-link" href="/toronto/terms">Terms</a>
         </div>
         <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
         <div className="footer-hubs">

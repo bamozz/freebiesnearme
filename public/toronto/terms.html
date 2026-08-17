@@ -21,27 +21,26 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <!-- Vercel Speed Insights -->
 <script defer src="/_vercel/speed-insights/script.js"></script>
-<title>Feedback and Support | Freebies Near Me</title>
-<meta name="description" content="Report an issue with a listing or share an idea to help us improve Freebies Near Me, your guide to free events around Toronto.">
+<title>Terms of Use | Freebies Near Me</title>
+<meta name="description" content="Terms of use for Freebies Near Me, including ownership of submitted content and our liability disclaimer.">
 <link rel="icon" type="image/svg+xml" href="/toronto/assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="/toronto/assets/favicon-192.png">
 <link rel="manifest" href="/manifest.json">
-<link rel="canonical" href="https://freebiesnearme.app/toronto/feedback">
+<link rel="canonical" href="https://freebiesnearme.app/toronto/terms">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Freebies Near Me">
-<meta property="og:url" content="https://freebiesnearme.app/toronto/feedback">
-<meta property="og:title" content="Feedback and Support">
-<meta property="og:description" content="Report an issue with a listing or share an idea to help us improve Freebies Near Me, your guide to free events around Toronto.">
+<meta property="og:url" content="https://freebiesnearme.app/toronto/terms">
+<meta property="og:title" content="Terms of Use | Freebies Near Me">
+<meta property="og:description" content="Terms of use for Freebies Near Me, including ownership of submitted content and our liability disclaimer.">
 <meta property="og:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Feedback and Support">
-<meta name="twitter:description" content="Report an issue with a listing or share an idea to help us improve Freebies Near Me, your guide to free events around Toronto.">
+<meta name="twitter:title" content="Terms of Use | Freebies Near Me">
+<meta name="twitter:description" content="Terms of use for Freebies Near Me, including ownership of submitted content and our liability disclaimer.">
 <meta name="twitter:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
     color-scheme:light;
@@ -58,7 +57,7 @@
     backdrop-filter:blur(6px);z-index:500;
   }
   .nav-inner{
-    max-width:640px;margin:0 auto;padding:16px 24px;
+    max-width:720px;margin:0 auto;padding:16px 24px;
     display:flex;align-items:center;justify-content:space-between;
   }
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);}
@@ -68,11 +67,9 @@
     text-decoration:none;
   }
 
-  footer{
-    margin-top:34px;border-top:1px solid var(--line);background:#fff;
-  }
+  footer{margin-top:34px;border-top:1px solid var(--line);background:#fff;}
   .footer-inner{
-    max-width:640px;margin:0 auto;padding:24px 24px 40px;
+    max-width:720px;margin:0 auto;padding:24px 24px 40px;
     display:flex;flex-direction:column;align-items:flex-start;gap:10px;
   }
   footer .logo{font-size:16px;}
@@ -97,7 +94,7 @@
   }
   .install-banner.show{display:block;}
   .install-banner-inner{
-    max-width:640px;margin:0 auto;padding:10px 24px;
+    max-width:720px;margin:0 auto;padding:10px 24px;
     display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;
   }
   .install-banner-text{flex:1;line-height:1.35;}
@@ -114,45 +111,17 @@
   }
   .install-banner-close:hover{color:var(--ink);}
 
-  .wrap{max-width:640px;margin:0 auto;padding:36px 24px 60px;}
+  .wrap{max-width:720px;margin:0 auto;padding:36px 24px 60px;}
   h1{font-size:clamp(26px,4vw,34px);margin:0 0 6px;}
-  .sub{font-size:14.5px;color:var(--muted);margin:0 0 28px;max-width:480px;}
+  .updated{font-size:12px;color:var(--muted);margin:0 0 32px;}
 
-  .mode-toggle{display:flex;gap:10px;margin-bottom:26px;}
-  .mode-btn{
-    flex:1;text-align:left;padding:14px;border-radius:10px;border:1.5px solid var(--line);
-    cursor:pointer;font-weight:700;font-size:14px;background:#fff;
-  }
-  .mode-btn.active{border-color:var(--teal);background:var(--teal-dim);color:var(--teal);}
-  .mode-btn small{display:block;font-weight:500;color:var(--muted);font-size:11.5px;margin-top:3px;}
-  .mode-btn.active small{color:var(--teal);}
-
-  form{display:flex;flex-direction:column;gap:16px;}
-  label{font-size:12.5px;font-weight:700;color:var(--ink);display:flex;flex-direction:column;gap:6px;}
-  label.optional::after{content:" (optional)";font-weight:500;color:var(--muted);text-transform:none;}
-  input,textarea{
-    font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;border-radius:8px;
-    border:1px solid var(--line);background:#fff;color:var(--ink);
-  }
-  textarea{resize:vertical;min-height:90px;}
-  textarea.field-error{border-color:var(--coral);background:#FDE8E6;}
-  .field-error-msg{font-size:12px;font-weight:600;color:var(--coral);display:none;}
-  .field-error-msg.show{display:block;}
-
-  .field-group{display:flex;flex-direction:column;gap:16px;}
-  .field-group[hidden]{display:none;}
-
-  .submit-btn{
-    margin-top:8px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;
-    padding:13px;border:none;border-radius:10px;cursor:pointer;
-  }
-  .submit-btn:disabled{opacity:0.5;cursor:default;}
-
-  .result{
-    margin-top:18px;padding:14px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none;
-  }
-  .result.ok{background:var(--teal-dim);color:var(--teal);display:block;}
-  .result.err{background:#FDE8E6;color:var(--coral);display:block;}
+  .legal h2{font-size:17px;margin:30px 0 8px;font-family:'Space Grotesk',sans-serif;}
+  .legal h2:first-of-type{margin-top:0;}
+  .legal p{font-size:14.5px;line-height:1.65;color:var(--ink);margin:0 0 14px;max-width:600px;}
+  .legal ul{margin:0 0 14px;padding-left:20px;max-width:600px;}
+  .legal li{font-size:14.5px;line-height:1.65;color:var(--ink);margin-bottom:6px;}
+  .legal a{color:var(--teal);text-decoration:none;font-weight:600;}
+  .legal a:hover{text-decoration:underline;}
 </style>
 </head>
 <body>
@@ -160,7 +129,7 @@
 <nav>
   <div class="nav-inner">
     <a class="logo" href="/toronto">Freebies Near Me</a>
-    <a class="btn-solid" href="/toronto/submit">Submit an event</a>
+    <a class="btn-solid" href="/toronto">Back to map</a>
   </div>
 </nav>
 
@@ -195,15 +164,10 @@
 
   var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   if (isIOS){
-    // Safari has no beforeinstallprompt event at all, so this is the only
-    // way to offer install there - shown immediately, no event to wait on.
     textEl.innerHTML = '<strong>Install this app</strong>Tap Share, then "Add to Home Screen"';
     btnEl.style.display = 'none';
     show();
   } else {
-    // Follows the real browser signal: only appears once Chrome itself has
-    // decided (via its own installability + engagement checks) that this
-    // visit is eligible, and hands over the native one-tap prompt.
     var deferredPrompt = null;
     window.addEventListener('beforeinstallprompt', function(e){
       e.preventDefault();
@@ -224,38 +188,39 @@
 </script>
 
 <div class="wrap">
-  <h1 class="display">Help us improve</h1>
-  <p class="sub">Found wrong info on a listing? Have an idea for the site? We read everything.</p>
+  <h1 class="display">Terms of Use</h1>
+  <p class="updated">Last updated August 17, 2026</p>
 
-  <div class="mode-toggle">
-    <div class="mode-btn active" data-mode="issue">Report an issue<small>Something's wrong with a listing</small></div>
-    <div class="mode-btn" data-mode="idea">Share an idea<small>Suggest something new</small></div>
+  <div class="legal">
+    <h2>Acceptance of these terms</h2>
+    <p>By using Freebies Near Me, you agree to these terms. If you don't agree, please don't use the site.</p>
+
+    <h2>What Freebies Near Me is</h2>
+    <p>Freebies Near Me is a directory of free giveaways, samples, and pop up events happening in Toronto. Listings are submitted by brands, organizers, and the community, and reviewed before they go live. We don't run these events ourselves and aren't affiliated with the businesses or organizers behind them unless stated otherwise.</p>
+
+    <h2>Content you submit</h2>
+    <p>When you submit a listing, photo, update, or other content, you keep ownership of it. By submitting, you grant Freebies Near Me a nonexclusive, worldwide license to display, edit for clarity or length, and remove that content on the site. You confirm that you have the right to submit whatever you send us, and that it doesn't infringe on anyone else's rights.</p>
+
+    <h2>No guarantee listings are accurate or available</h2>
+    <p>We do our best to keep listings accurate and up to date, but details can change or an event can be cancelled, sell out, or run out of stock without notice. We don't guarantee that any listing is accurate, currently available, or will still be running by the time you get there. Always confirm directly with the organizer or venue before heading out.</p>
+
+    <h2>Limitation of liability</h2>
+    <p>Freebies Near Me is provided "as is," without warranties of any kind. To the fullest extent permitted by law, we're not liable for any loss, damage, or inconvenience arising from your use of this site or your attendance at any listed event, including events that turn out to be inaccurate, cancelled, or unavailable.</p>
+
+    <h2>Acceptable use</h2>
+    <ul>
+      <li>Don't submit spam, fake listings, or content you don't have the rights to.</li>
+      <li>Don't scrape or systematically copy the site's listings without permission.</li>
+      <li>Don't use the submission or contact forms to send anything unlawful, harassing, or misleading.</li>
+    </ul>
+    <p>We may remove any listing or content, and restrict access to the site, at our discretion.</p>
+
+    <h2>Changes to these terms</h2>
+    <p>We may update these terms as the site changes. Continued use of the site after a change means you accept the updated terms.</p>
+
+    <h2>Questions</h2>
+    <p>Reach out any time through our <a href="/toronto/feedback">feedback form</a>.</p>
   </div>
-
-  <form id="feedbackForm">
-    <div class="field-group" id="issueFields">
-      <label class="optional">Which listing?
-        <input type="text" id="listingRef" placeholder="e.g. brand name or neighbourhood">
-      </label>
-      <label>What's wrong?
-        <textarea id="whatIsWrong" placeholder="Tell us what's incorrect or not working"></textarea>
-        <span class="field-error-msg" id="whatIsWrongError">Let us know what's wrong.</span>
-      </label>
-      <label class="optional">Correct information
-        <textarea id="correctInfo" placeholder="What should it say instead?"></textarea>
-      </label>
-    </div>
-
-    <div class="field-group" id="ideaFields" hidden>
-      <label>Your idea
-        <textarea id="idea" placeholder="I'd love to see..."></textarea>
-        <span class="field-error-msg" id="ideaError">Tell us your idea first.</span>
-      </label>
-    </div>
-
-    <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
-    <div class="result" id="result"></div>
-  </form>
 </div>
 
 <footer>
@@ -277,90 +242,5 @@
   </div>
 </footer>
 
-
-<script>
-  // Fill these in from Supabase, Project Settings, API
-  const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  let mode = 'issue';
-  const issueFields = document.getElementById('issueFields');
-  const ideaFields = document.getElementById('ideaFields');
-  const whatIsWrongInput = document.getElementById('whatIsWrong');
-  const ideaInput = document.getElementById('idea');
-  const submitBtn = document.getElementById('submitBtn');
-
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      mode = btn.dataset.mode;
-      const isIssue = mode === 'issue';
-      issueFields.hidden = !isIssue;
-      ideaFields.hidden = isIssue;
-      submitBtn.textContent = isIssue ? 'Submit report' : 'Share idea';
-      clearFieldError(whatIsWrongInput, document.getElementById('whatIsWrongError'));
-      clearFieldError(ideaInput, document.getElementById('ideaError'));
-    };
-  });
-
-  function showFieldError(field, errorEl){
-    field.classList.add('field-error');
-    errorEl.classList.add('show');
-  }
-  function clearFieldError(field, errorEl){
-    field.classList.remove('field-error');
-    errorEl.classList.remove('show');
-  }
-  [whatIsWrongInput, ideaInput].forEach(field => {
-    field.addEventListener('input', () => {
-      const errorEl = document.getElementById(field.id + 'Error');
-      if (field.value.trim()) clearFieldError(field, errorEl);
-    });
-  });
-
-  document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const resultEl = document.getElementById('result');
-    resultEl.className = 'result';
-
-    const activeField = mode === 'issue' ? whatIsWrongInput : ideaInput;
-    const activeErrorEl = document.getElementById(activeField.id + 'Error');
-    const message = activeField.value.trim();
-    if (!message) {
-      showFieldError(activeField, activeErrorEl);
-      activeField.focus();
-      activeField.scrollIntoView({behavior:'smooth', block:'center'});
-      return;
-    }
-    clearFieldError(activeField, activeErrorEl);
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting...';
-
-    const payload = {
-      type: mode,
-      listing_ref: mode === 'issue' ? (document.getElementById('listingRef').value || null) : null,
-      message: message,
-      correction: mode === 'issue' ? (document.getElementById('correctInfo').value || null) : null,
-      contact: null,
-    };
-
-    const { error } = await sb.from('feedback').insert(payload);
-
-    submitBtn.disabled = false;
-    submitBtn.textContent = mode === 'issue' ? 'Submit report' : 'Share idea';
-
-    if (error) {
-      resultEl.className = 'result err';
-      resultEl.textContent = 'Something went wrong: ' + error.message;
-    } else {
-      resultEl.className = 'result ok';
-      resultEl.textContent = "Thanks, we've got it.";
-      document.getElementById('feedbackForm').reset();
-    }
-  });
-</script>
 </body>
 </html>
