@@ -15,6 +15,7 @@ export const CATEGORIES: { id: ListingCategory; slug: string; label: string; col
   { id: 'class_workshop', slug: 'class-workshop', label: 'Class & Workshop', color: '#2E8B57' },
   { id: 'concert_screening', slug: 'concert-screening', label: 'Concert & Screening', color: '#C2703E' },
   { id: 'tour', slug: 'tour', label: 'Tour', color: '#C99A2E' },
+  { id: 'festival', slug: 'festival', label: 'Festival', color: '#B23A9E' },
   { id: 'misc', slug: 'misc', label: 'Misc.', color: '#8B6F47' },
 ];
 

@@ -18,7 +18,8 @@ export type ListingCategory =
   | 'misc'
   | 'class_workshop'
   | 'concert_screening'
-  | 'tour';
+  | 'tour'
+  | 'festival';
 
 export type SubmittedBy = 'brand' | 'hunter';
 

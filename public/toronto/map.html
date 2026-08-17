@@ -217,6 +217,7 @@ const categories = [
   {id:'class_workshop', label:'Class & Workshop', color:'#2E8B57'},
   {id:'concert_screening', label:'Concert & Screening', color:'#C2703E'},
   {id:'tour', label:'Tour', color:'#C99A2E'},
+  {id:'festival', label:'Festival', color:'#B23A9E'},
   {id:'misc', label:'Misc.', color:'#8B6F47'},
 ];
 const catColor = Object.fromEntries(categories.map(c=>[c.id,c.color]));
@@ -226,6 +227,7 @@ const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
 const CATEGORY_SLUGS = {
   food:'food-drink', beauty:'beauty', fashion:'fashion', tech:'tech', wellness:'wellness',
   class_workshop:'class-workshop', concert_screening:'concert-screening', tour:'tour', misc:'misc',
+  festival:'festival',
 };
 function slugify(text){
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
