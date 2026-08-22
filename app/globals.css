@@ -140,7 +140,7 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
 .hero-stat{
   display:inline-block;
   background:var(--paper-alt);border:1px solid var(--line);border-left:1.5px dashed #C9C2A6;border-radius:10px;
-  padding:14px 18px;min-width:190px;position:relative;
+  padding:14px 18px;width:190px;position:relative;
 }
 .hero-stat::before{
   content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);
