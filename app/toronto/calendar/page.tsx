@@ -51,14 +51,17 @@ export default async function CalendarPage() {
   return (
     <>
     <div className="hub-wrap">
-      <h1 className="hub-title display">Free stuff and free things to do in Toronto, by date</h1>
-      <p className="hub-sub">
-        Browse what&apos;s on by date.
-      </p>
-
-      <div className="hero-stat">
-        <div className="num">{liveCount}</div>
-        <div className="lbl">free events live in Toronto today</div>
+      <div className="hub-hero-row">
+        <div>
+          <h1 className="hub-title display">Free stuff and free things to do in Toronto, by date</h1>
+          <p className="hub-sub">
+            Browse what&apos;s on by date.
+          </p>
+        </div>
+        <div className="hero-stat">
+          <div className="num">{liveCount}</div>
+          <div className="lbl">free events live in Toronto today</div>
+        </div>
       </div>
 
       {SUBSCRIBE_ENABLED && (

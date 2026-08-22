@@ -49,32 +49,40 @@ export function availInfo(listing: Listing): { cls: 'low' | 'ok'; text: string }
   return { cls, text };
 }
 
+// A row's own last calendar date, Toronto-local - the half-open-midnight
+// convention (a date-only end landing exactly at midnight represents the
+// end of the previous day) is honoured the same way formatTimeRange() does.
+function rowEndKey(startTime: string, endTime: string | null): string {
+  const startKey = torontoDateKey(new Date(startTime));
+  if (!endTime) return startKey;
+  const end = new Date(endTime);
+  const endKey = hasClockTime(end) ? torontoDateKey(end) : torontoDateKey(new Date(end.getTime() - 60000));
+  return endKey < startKey ? startKey : endKey;
+}
+
 // Single-listing equivalent of statusFromWindows() in index.html/map.html -
 // those group a brand's multiple time windows into one status, but pSEO
 // listing rows are ungrouped, so this only ever looks at one start/end pair.
+// "Live" means today's date falls somewhere in the listing's own date
+// range, not that the current time is precisely between its start and end
+// clock times - a class starting at 6pm today reads as live all day today.
 export function computeListingStatus(startTime: string, endTime: string | null): 'live' | 'soon' | 'ended' {
-  const now = Date.now();
-  const start = new Date(startTime).getTime();
-  const end = new Date(endTime || assumedEndIso(startTime)).getTime();
-  if (now < start) return 'soon';
-  if (now > end) return 'ended';
-  return 'live';
+  const todayKey = torontoDateKey(new Date());
+  const startKey = torontoDateKey(new Date(startTime));
+  if (todayKey >= startKey && todayKey <= rowEndKey(startTime, endTime)) return 'live';
+  if (todayKey < startKey) return 'soon';
+  return 'ended';
 }
 
 // Ported from statusBadge() in index.html: unlike live/ended, the "soon"
 // label isn't a single fixed string - it narrows to how far out the start
 // time is, so cards read the same way here as they do on the homepage.
+// Never same-day here - computeListingStatus() already resolves any
+// same-day listing to 'live', so 'soon' only ever means a future date.
 export function statusLabel(status: 'live' | 'soon' | 'ended', startTime: string): string {
   if (status === 'live') return 'Live now';
   if (status === 'soon') {
-    const start = new Date(startTime);
-    // A listing later today (just hasn't started yet) reads as "Today"
-    // rather than being lumped into the same "Next 3 days" bucket as
-    // something genuinely 2-3 days out - compared by Toronto-local
-    // calendar date, not a raw hour count, so this doesn't waver near
-    // midnight the way a plain daysUntil<1 check would.
-    if (torontoDateKey(start) === torontoDateKey(new Date())) return 'Today';
-    const daysUntil = (start.getTime() - Date.now()) / 86400000;
+    const daysUntil = (new Date(startTime).getTime() - Date.now()) / 86400000;
     return daysUntil <= 3 ? 'Next 3 days' : daysUntil <= 7 ? 'Next week' : daysUntil <= 30 ? 'Next 30 days' : 'Next month+';
   }
   return 'Wrapped up';

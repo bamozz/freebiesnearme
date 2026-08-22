@@ -247,6 +247,26 @@
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
     {
+      date: 'August 22, 2026',
+      emoji: '\u{1F4CD}',
+      title: 'Multi-location listings now show as one card',
+      blurb: "A promo running at several spots at once (like Krispy Kreme's downtown locations or Mighty Patch's pop-ups) now shows as a single card listing every address, with a pin on the map for each spot instead of one card per location. Fixed a bug where recurring or multi-day listings could read as \"Live now\" on days they weren't actually running, and made statuses update automatically as the day goes on instead of only refreshing the page.",
+      sections: [
+        { heading: 'New', tone: 'new', emoji: '\u{1F195}', items: [
+          { label: 'Multi-location cards', text: 'Promos running at multiple spots combine into one card with a pin per location on the map.' },
+          { label: 'Calendar Register link', text: 'Calendar cards now include a Register link when one is available, same as the homepage.' },
+          { label: 'Live count on the calendar', text: 'The calendar page now shows how many free events are live in Toronto today, like the homepage.' },
+        ]},
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Status updates', text: 'Live/upcoming statuses now refresh automatically as the day goes on, no page reload needed.' },
+        ]},
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Recurring listings', text: 'Multi-date listings no longer show "Live now" on days they aren’t actually happening.' },
+          { label: 'Duplicate locations', text: 'Listings with the same location entered twice no longer show a doubled-up address on the card or calendar.' },
+        ]},
+      ],
+    },
+    {
       date: 'August 17, 2026',
       emoji: '\u{1F41B}',
       title: 'Fixed the map legend arrow on mobile',

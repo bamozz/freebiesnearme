@@ -1,5 +1,5 @@
 import type { Listing } from '@/types/pseo_types';
-import { assumedEndIso } from '@/lib/datetime';
+import { hasClockTime, torontoDateKey } from '@/lib/datetime';
 
 export type ListingStop = {
   address: string | null;
@@ -15,6 +15,27 @@ export type GroupedListing = Listing & {
   stops: ListingStop[];
   groupStatus: 'live' | 'soon' | 'ended';
 };
+
+// A row's own last calendar date, Toronto-local - the half-open-midnight
+// convention (a date-only end landing exactly at midnight represents the
+// end of the previous day) is honoured the same way formatTimeRange() and
+// CalendarGrid's stopDateKeys() do.
+function rowEndKey(row: { start_time: string; end_time: string | null }): string {
+  const startKey = torontoDateKey(new Date(row.start_time));
+  if (!row.end_time) return startKey;
+  const end = new Date(row.end_time);
+  const endKey = hasClockTime(end) ? torontoDateKey(end) : torontoDateKey(new Date(end.getTime() - 60000));
+  return endKey < startKey ? startKey : endKey;
+}
+
+// "Live" means today's date falls somewhere in the row's own date range -
+// not that the current time is precisely between its start and end clock
+// times. A class starting at 6pm today reads as live all day today, not
+// just from 6pm on.
+function isRowLiveToday(row: { start_time: string; end_time: string | null }, todayKey: string): boolean {
+  const startKey = torontoDateKey(new Date(row.start_time));
+  return todayKey >= startKey && todayKey <= rowEndKey(row);
+}
 
 // Mirrors groupRows()/transformGroup()/statusFromWindows() in
 // public/toronto/index.html and map.html, so a multi-location promo
@@ -47,13 +68,15 @@ export function groupListings(rows: Listing[]): GroupedListing[] {
       .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
     const primary = group[0];
 
-    // Deduped on address/time - two rows that are accidental exact
-    // duplicates (same brand, same what, same spot, same window) would
-    // otherwise render as two identical stops/pins instead of one.
+    // Deduped on coordinates/time (rounded to ~11m, not an exact address
+    // string match - two rows for the same real place can have slightly
+    // different address text) - two rows that are accidental duplicates
+    // (same brand, same what, same spot, same window) would otherwise
+    // render as two identical stops/pins instead of one.
     const seenStops = new Set<string>();
     const stops: ListingStop[] = [];
     for (const r of group) {
-      const dedupeKey = `${r.address}|${r.lat}|${r.lng}|${r.start_time}|${r.end_time}`;
+      const dedupeKey = `${r.lat.toFixed(4)}|${r.lng.toFixed(4)}|${r.start_time}|${r.end_time}`;
       if (seenStops.has(dedupeKey)) continue;
       seenStops.add(dedupeKey);
       stops.push({
@@ -67,18 +90,14 @@ export function groupListings(rows: Listing[]): GroupedListing[] {
       });
     }
 
-    // A row currently inside its own start/end window, if any - checked
-    // per row rather than the group's overall min/max span, so a
-    // recurring listing (e.g. weekly Tuesday evening classes) doesn't
-    // read as "live" on the days between sessions just because it's
-    // after the first session and before the last.
-    const now = Date.now();
-    const activeRow = group.find((r) => {
-      const start = new Date(r.start_time).getTime();
-      const end = new Date(r.end_time || assumedEndIso(r.start_time)).getTime();
-      return now >= start && now <= end;
-    });
-    const upcomingRows = group.filter((r) => new Date(r.start_time).getTime() > now);
+    // A row whose own date range includes today, if any - checked per
+    // row rather than the group's overall min/max span, so a recurring
+    // listing (e.g. weekly Tuesday evening classes) doesn't read as
+    // "live" on the days between sessions just because it's after the
+    // first session and before the last.
+    const todayKey = torontoDateKey(new Date());
+    const activeRow = group.find((r) => isRowLiveToday(r, todayKey));
+    const upcomingRows = group.filter((r) => torontoDateKey(new Date(r.start_time)) > todayKey);
     const groupStatus: 'live' | 'soon' | 'ended' = activeRow ? 'live' : upcomingRows.length ? 'soon' : 'ended';
 
     // The occurrence relevant right now: today's, else the soonest
