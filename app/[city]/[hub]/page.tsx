@@ -10,14 +10,14 @@ import SiteFooter from '@/app/components/SiteFooter';
 import {
   stripFreeWord,
   buildImageAlt,
-  directionsUrl,
+  directionsUrlForStop,
   availInfo,
-  computeListingStatus,
   statusLabel,
   buildCalendarUrl,
   buildGoogleCalendarUrl,
   icsFilename,
 } from '@/lib/listing-display';
+import { groupListings } from '@/lib/group-listings';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
 // Curated subset of NEIGHBOURHOODS for the cross-link footer on every hub
@@ -179,14 +179,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const filterColumn = resolved.type === 'category' ? 'category_slug' : 'neighbourhood_slug';
   const { data: listings } = await supabase
     .from('listings')
-    .select('start_time, end_time')
+    .select('*')
     .eq('city_slug', city)
     .eq(filterColumn, hub)
     .eq('is_active', true)
-    .returns<Pick<Listing, 'start_time' | 'end_time'>[]>();
-  const activeCount = (listings ?? []).filter(
-    (l) => computeListingStatus(l.start_time, l.end_time) !== 'ended'
-  ).length;
+    .returns<Listing[]>();
+  const activeCount = groupListings(listings ?? []).filter((l) => l.groupStatus !== 'ended').length;
 
   return {
     title,
@@ -218,18 +216,17 @@ export default async function HubPage({ params }: Props) {
 
   // Wrapped-up listings stay is_active until the deactivation cron sweeps
   // them, so they'd otherwise still show up here (and inflate the visible
-  // count) for however long that gap lasts.
-  const items = (listings ?? []).filter(
-    (listing) => computeListingStatus(listing.start_time, listing.end_time) !== 'ended'
-  );
+  // count) for however long that gap lasts. Grouped first so a
+  // multi-location promo (matching group_id, e.g. Krispy Kreme's downtown
+  // locations) reads as one card with multiple stops instead of one card
+  // per row - see lib/group-listings.ts.
+  const items = groupListings(listings ?? []).filter((listing) => listing.groupStatus !== 'ended');
   // map.html's pins only ever show currently-live events, by design (it
   // answers "what can I go to right now," not "what's coming up"). A hub
   // with only upcoming ("soon") listings would send the map CTA into a
   // guaranteed-blank filtered map, so it only shows when there's actually
   // something live to see there.
-  const hasLiveListing = items.some(
-    (listing) => computeListingStatus(listing.start_time, listing.end_time) === 'live'
-  );
+  const hasLiveListing = items.some((listing) => listing.groupStatus === 'live');
   const hubLabel = hubDisplayLabel(hub, resolved.type);
   const cityLabel = titleCase(city);
   const hubUrl = `https://freebiesnearme.app/${city}/${hub}`;
@@ -262,7 +259,7 @@ export default async function HubPage({ params }: Props) {
         ) : (
           <ul className="hub-list">
             {items.map((listing) => {
-              const status = computeListingStatus(listing.start_time, listing.end_time);
+              const status = listing.groupStatus;
               const avail = availInfo(listing);
               return (
                 <li
@@ -292,10 +289,31 @@ export default async function HubPage({ params }: Props) {
                     <div className="card-what">{stripFreeWord(listing.what)}</div>
                     <div className="card-brand">{listing.brand}</div>
                   </div>
+                  {listing.stops.length > 1 && (
+                    <div className="card-stops">
+                      {listing.stops.map((stop, i) => (
+                        <div className="card-stop" key={i}>
+                          <span className="card-stop-meta">
+                            {formatTimeRange(stop.start_time, stop.end_time)} &middot; {stop.neighbourhood}
+                          </span>
+                          <a
+                            href={directionsUrlForStop(stop)}
+                            target="_blank"
+                            rel="noopener"
+                            className="directions-link"
+                          >
+                            &#128205; Get directions
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <div className="card-meta">
-                    <span>
-                      {formatTimeRange(listing.start_time, listing.end_time)} &middot; {listing.neighbourhood}
-                    </span>
+                    {listing.stops.length <= 1 && (
+                      <span>
+                        {formatTimeRange(listing.start_time, listing.end_time)} &middot; {listing.neighbourhood}
+                      </span>
+                    )}
                     {avail && <span className={`avail ${avail.cls}`}>{avail.text}</span>}
                     {listing.signup_url && (
                       <a
@@ -307,14 +325,16 @@ export default async function HubPage({ params }: Props) {
                         &#128221; Register
                       </a>
                     )}
-                    <a
-                      href={directionsUrl(listing)}
-                      target="_blank"
-                      rel="noopener"
-                      className="directions-link"
-                    >
-                      &#128205; Get directions
-                    </a>
+                    {listing.stops.length <= 1 && (
+                      <a
+                        href={directionsUrlForStop(listing.stops[0])}
+                        target="_blank"
+                        rel="noopener"
+                        className="directions-link"
+                      >
+                        &#128205; Get directions
+                      </a>
+                    )}
                     {hasClockTime(new Date(listing.start_time)) && (
                       isAndroid ? (
                         <a

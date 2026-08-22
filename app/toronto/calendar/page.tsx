@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { createServerClient } from '@/lib/supabase';
-import { computeListingStatus } from '@/lib/listing-display';
 import { CATEGORIES } from '@/lib/categories';
 import { NEIGHBOURHOODS } from '@/lib/neighbourhoods';
+import { groupListings } from '@/lib/group-listings';
 import type { Listing } from '@/types/pseo_types';
 import SiteFooter from '@/app/components/SiteFooter';
 import CalendarGrid from './CalendarGrid';
@@ -45,9 +45,7 @@ export default async function CalendarPage() {
     .order('start_time', { ascending: true })
     .returns<Listing[]>();
 
-  const items = (listings ?? []).filter(
-    (listing) => computeListingStatus(listing.start_time, listing.end_time) !== 'ended'
-  );
+  const items = groupListings(listings ?? []).filter((listing) => listing.groupStatus !== 'ended');
 
   return (
     <>

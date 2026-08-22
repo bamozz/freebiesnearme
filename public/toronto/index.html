@@ -1696,21 +1696,40 @@ function groupRows(rows){
   return order.map(key => groups[key].sort((a,b) => new Date(a.start_time) - new Date(b.start_time)));
 }
 
-function statusFromWindows(rows){
-  // Once the earliest window has started, the whole multi-day event reads
-  // as live through to the last window's end, including overnight gaps
-  // between individual windows (e.g. a festival that closes each night and
-  // reopens the next morning shouldn't flip back to "starting soon").
+// A row currently inside its own start/end window, if any - checked
+// against each row individually rather than the group's overall min/max
+// span, so a recurring listing (e.g. weekly Tuesday evening classes)
+// doesn't read as "live" on the Wednesday-through-Monday days between
+// sessions just because it's after the first session and before the
+// last.
+function activeWindowRow(rows){
   const now = new Date();
-  const minStart = new Date(Math.min(...rows.map(r => new Date(r.start_time).getTime())));
-  const maxEnd = new Date(Math.max(...rows.map(r => new Date(r.end_time || assumedEnd(r.start_time)).getTime())));
-  if (now < minStart) return 'soon';
-  if (now > maxEnd) return 'ended';
-  return 'live';
+  return rows.find(r => now >= new Date(r.start_time) && now <= new Date(r.end_time || assumedEnd(r.start_time)));
+}
+
+function statusFromWindows(rows){
+  if (activeWindowRow(rows)) return 'live';
+  const hasUpcoming = rows.some(r => new Date(r.start_time) > new Date());
+  return hasUpcoming ? 'soon' : 'ended';
+}
+
+// The occurrence relevant right now: the one happening today, else the
+// soonest upcoming one, else (everything's wrapped up) the most recent
+// past one - rows are pre-sorted ascending by groupRows(), so the first
+// upcoming/last row is exactly that. Used for the status label's day
+// count, the calendar-add link, and the single "time" display, so those
+// reflect what's actually next instead of always the group's very first
+// (likely already past) row.
+function referenceRow(rows){
+  const active = activeWindowRow(rows);
+  if (active) return active;
+  const upcoming = rows.filter(r => new Date(r.start_time) > new Date());
+  return upcoming.length ? upcoming[0] : rows[rows.length - 1];
 }
 
 function transformGroup(rows){
   const primary = rows[0];
+  const ref = referenceRow(rows);
   // One stop per row: covers both the "same location, several time windows"
   // case (explicit group_id) and the "same brand, different addresses
   // and/or dates" case (grouped by brand name above) with the same shape.
@@ -1733,9 +1752,9 @@ function transformGroup(rows){
     stops,
     what: primary.what,
     timeWindows: rows.map(r => formatTimeRange(r.start_time, r.end_time)),
-    time: formatTimeRange(primary.start_time, primary.end_time),
-    startTime: primary.start_time,
-    endTime: primary.end_time,
+    time: formatTimeRange(ref.start_time, ref.end_time),
+    startTime: ref.start_time,
+    endTime: ref.end_time,
     claimed: primary.claimed_count || 0,
     total: primary.total_count,
     sponsored: primary.sponsored,

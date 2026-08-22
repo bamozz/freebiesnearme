@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import type { Listing } from '@/types/pseo_types';
 import { TORONTO_TZ, hasClockTime, torontoDateKey, formatTimeRange } from '@/lib/datetime';
 import { CATEGORY_COLOR, CATEGORY_LABEL } from '@/lib/categories';
-import { stripFreeWord, directionsUrl } from '@/lib/listing-display';
+import { stripFreeWord, directionsUrlForStop } from '@/lib/listing-display';
+import type { GroupedListing, ListingStop } from '@/lib/group-listings';
 
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_LABELS = [
@@ -25,22 +25,38 @@ function dateKeysBetween(startKey: string, endKey: string): string[] {
   return keys;
 }
 
-// Every Toronto-local calendar date a listing occupies, so a multi-day
-// listing gets a dot on each day it spans, not just its start day. Mirrors
-// the half-open-midnight-end convention used everywhere else on the site
+// Every Toronto-local calendar date one stop occupies. Mirrors the
+// half-open-midnight-end convention used everywhere else on the site
 // (formatTimeRange, buildFeedIcs's all-day VEVENT end date).
-function listingDateKeys(listing: Listing): string[] {
-  const start = new Date(listing.start_time);
+function stopDateKeys(stop: { start_time: string; end_time: string | null }): string[] {
+  const start = new Date(stop.start_time);
   const startKey = torontoDateKey(start);
-  if (!listing.end_time) return [startKey];
+  if (!stop.end_time) return [startKey];
 
-  const end = new Date(listing.end_time);
+  const end = new Date(stop.end_time);
   const effectiveEndKey = hasClockTime(end)
     ? torontoDateKey(end)
     : torontoDateKey(new Date(end.getTime() - 60000));
 
   if (effectiveEndKey <= startKey) return [startKey];
   return dateKeysBetween(startKey, effectiveEndKey);
+}
+
+// Union of every stop's dates, so a grouped listing gets a dot on any day
+// at least one of its locations is running - not just its earliest stop.
+function listingDateKeys(listing: GroupedListing): string[] {
+  const keys = new Set<string>();
+  for (const stop of listing.stops) {
+    for (const key of stopDateKeys(stop)) keys.add(key);
+  }
+  return [...keys];
+}
+
+// Which of a grouped listing's stops are actually happening on a given
+// day - a multi-location promo could in principle run different stops on
+// different dates, so the day panel only shows what's really on that day.
+function stopsOnDay(listing: GroupedListing, dayKey: string): ListingStop[] {
+  return listing.stops.filter((stop) => stopDateKeys(stop).includes(dayKey));
 }
 
 function getMonthWeeks(year: number, month: number): (string | null)[][] {
@@ -81,7 +97,7 @@ function PanelToggleIcon({ direction }: { direction: 'expand' | 'collapse' }) {
   );
 }
 
-export default function CalendarGrid({ listings }: { listings: Listing[] }) {
+export default function CalendarGrid({ listings }: { listings: GroupedListing[] }) {
   const now = new Date();
   const nowParts = new Intl.DateTimeFormat('en-US', { timeZone: TORONTO_TZ, year: 'numeric', month: 'numeric' })
     .formatToParts(now)
@@ -93,7 +109,7 @@ export default function CalendarGrid({ listings }: { listings: Listing[] }) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   const listingsByDate = useMemo(() => {
-    const map = new Map<string, Listing[]>();
+    const map = new Map<string, GroupedListing[]>();
     for (const listing of listings) {
       for (const key of listingDateKeys(listing)) {
         const arr = map.get(key) ?? [];
@@ -161,21 +177,48 @@ export default function CalendarGrid({ listings }: { listings: Listing[] }) {
                   <p className="cal-day-empty-msg">No free listings on this day.</p>
                 ) : (
                   <ul className="cal-day-list">
-                    {selectedListings.map((listing) => (
-                      <li className="cal-day-item" key={listing.id}>
-                        <span className="tag cat" style={{ color: CATEGORY_COLOR[listing.category] }}>
-                          {CATEGORY_LABEL[listing.category]}
-                        </span>
-                        <div className="cal-day-item-what">{stripFreeWord(listing.what)}</div>
-                        <div className="cal-day-item-brand">{listing.brand}</div>
-                        <div className="cal-day-item-meta">
-                          {formatTimeRange(listing.start_time, listing.end_time)} &middot; {listing.neighbourhood}
-                        </div>
-                        <a href={directionsUrl(listing)} target="_blank" rel="noopener" className="directions-link">
-                          &#128205; Get directions
-                        </a>
-                      </li>
-                    ))}
+                    {selectedListings.map((listing) => {
+                      const stops = selectedKey ? stopsOnDay(listing, selectedKey) : listing.stops;
+                      return (
+                        <li className="cal-day-item" key={listing.id}>
+                          <span className="tag cat" style={{ color: CATEGORY_COLOR[listing.category] }}>
+                            {CATEGORY_LABEL[listing.category]}
+                          </span>
+                          <div className="cal-day-item-what">{stripFreeWord(listing.what)}</div>
+                          <div className="cal-day-item-brand">{listing.brand}</div>
+
+                          {stops.length > 1 ? (
+                            <div className="cal-day-item-stops">
+                              {stops.map((stop, i) => (
+                                <div className="cal-day-item-stop" key={i}>
+                                  <div className="cal-day-item-meta">
+                                    {formatTimeRange(stop.start_time, stop.end_time)} &middot; {stop.neighbourhood}
+                                  </div>
+                                  <a href={directionsUrlForStop(stop)} target="_blank" rel="noopener" className="directions-link">
+                                    &#128205; Get directions
+                                  </a>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <>
+                              <div className="cal-day-item-meta">
+                                {formatTimeRange(stops[0].start_time, stops[0].end_time)} &middot; {stops[0].neighbourhood}
+                              </div>
+                              <a href={directionsUrlForStop(stops[0])} target="_blank" rel="noopener" className="directions-link">
+                                &#128205; Get directions
+                              </a>
+                            </>
+                          )}
+
+                          {listing.signup_url && (
+                            <a href={listing.signup_url} target="_blank" rel="noopener" className="signup-link">
+                              &#128221; Register
+                            </a>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 )
               )}

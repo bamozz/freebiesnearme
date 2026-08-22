@@ -23,11 +23,21 @@ export function buildImageAlt(listing: Listing): string {
   return `${listing.brand} - ${what} in ${listing.neighbourhood}, Toronto | Freebies Near Me`;
 }
 
-export function directionsUrl(listing: Listing): string {
-  const query = listing.address
-    ? encodeURIComponent(`${listing.address}, ${listing.neighbourhood}, Toronto, ON`)
-    : `${listing.lat},${listing.lng}`;
+function directionsUrlFor(address: string | null, neighbourhood: string, lat: number, lng: number): string {
+  const query = address
+    ? encodeURIComponent(`${address}, ${neighbourhood}, Toronto, ON`)
+    : `${lat},${lng}`;
   return `https://www.google.com/maps/search/?api=1&query=${query}`;
+}
+
+export function directionsUrl(listing: Listing): string {
+  return directionsUrlFor(listing.address, listing.neighbourhood, listing.lat, listing.lng);
+}
+
+// Same as directionsUrl(), but for one stop of a multi-location grouped
+// listing (see lib/group-listings.ts) rather than a whole Listing row.
+export function directionsUrlForStop(stop: { address: string | null; neighbourhood: string; lat: number; lng: number }): string {
+  return directionsUrlFor(stop.address, stop.neighbourhood, stop.lat, stop.lng);
 }
 
 export function availInfo(listing: Listing): { cls: 'low' | 'ok'; text: string } | null {
