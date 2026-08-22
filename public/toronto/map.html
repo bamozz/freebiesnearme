@@ -528,15 +528,26 @@ function transformGroup(rows){
   // One stop per row: covers both the "same location, several time windows"
   // case (explicit group_id) and the "same brand, different addresses
   // and/or dates" case (grouped by brand name above) with the same shape.
-  const stops = rows.map(r => ({
-    address: r.address,
-    neighbourhood: r.neighbourhood,
-    lat: r.lat,
-    lng: r.lng,
-    timeWindow: formatTimeRange(r.start_time, r.end_time),
-    startTime: r.start_time,
-    endTime: r.end_time,
-  }));
+  // Deduped on address/time - two rows that are accidental exact
+  // duplicates (same brand, same what, same spot, same window) would
+  // otherwise render as two identical stops (and two identical pins)
+  // instead of one.
+  const seenStops = new Set();
+  const stops = [];
+  rows.forEach(r => {
+    const key = r.address + '|' + r.lat + '|' + r.lng + '|' + r.start_time + '|' + r.end_time;
+    if (seenStops.has(key)) return;
+    seenStops.add(key);
+    stops.push({
+      address: r.address,
+      neighbourhood: r.neighbourhood,
+      lat: r.lat,
+      lng: r.lng,
+      timeWindow: formatTimeRange(r.start_time, r.end_time),
+      startTime: r.start_time,
+      endTime: r.end_time,
+    });
+  });
   return {
     id: primary.id,
     brand: primary.brand,

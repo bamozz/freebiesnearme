@@ -67,7 +67,14 @@ export function computeListingStatus(startTime: string, endTime: string | null):
 export function statusLabel(status: 'live' | 'soon' | 'ended', startTime: string): string {
   if (status === 'live') return 'Live now';
   if (status === 'soon') {
-    const daysUntil = (new Date(startTime).getTime() - Date.now()) / 86400000;
+    const start = new Date(startTime);
+    // A listing later today (just hasn't started yet) reads as "Today"
+    // rather than being lumped into the same "Next 3 days" bucket as
+    // something genuinely 2-3 days out - compared by Toronto-local
+    // calendar date, not a raw hour count, so this doesn't waver near
+    // midnight the way a plain daysUntil<1 check would.
+    if (torontoDateKey(start) === torontoDateKey(new Date())) return 'Today';
+    const daysUntil = (start.getTime() - Date.now()) / 86400000;
     return daysUntil <= 3 ? 'Next 3 days' : daysUntil <= 7 ? 'Next week' : daysUntil <= 30 ? 'Next 30 days' : 'Next month+';
   }
   return 'Wrapped up';

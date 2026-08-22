@@ -906,7 +906,16 @@ function statusBadge(ev){
   // listing itself (via Supabase) changes what's shown here.
   if (ev.status==='live') return '<span class="status-badge live"><span class="dot"></span>Live now</span>';
   if (ev.status==='soon'){
-    const daysUntil = (new Date(ev.startTime).getTime() - Date.now()) / 86400000;
+    const start = new Date(ev.startTime);
+    // A listing later today (just hasn't started yet) reads as "Today"
+    // rather than being lumped into the same "Next 3 days" bucket as
+    // something genuinely 2-3 days out - compared by Toronto-local
+    // calendar date, not a raw hour count, so this doesn't waver near
+    // midnight the way a plain daysUntil<1 check would.
+    if (torontoDateKey(start) === torontoDateKey(new Date())){
+      return '<span class="status-badge soon"><span class="dot"></span>Today</span>';
+    }
+    const daysUntil = (start.getTime() - Date.now()) / 86400000;
     const label = daysUntil <= 3 ? 'Next 3 days' : daysUntil <= 7 ? 'Next week' : daysUntil <= 30 ? 'Next 30 days' : 'Next month+';
     return `<span class="status-badge soon"><span class="dot"></span>${label}</span>`;
   }
@@ -1733,13 +1742,23 @@ function transformGroup(rows){
   // One stop per row: covers both the "same location, several time windows"
   // case (explicit group_id) and the "same brand, different addresses
   // and/or dates" case (grouped by brand name above) with the same shape.
-  const stops = rows.map(r => ({
-    address: r.address,
-    neighbourhood: r.neighbourhood,
-    lat: r.lat,
-    lng: r.lng,
-    timeWindow: formatTimeRange(r.start_time, r.end_time),
-  }));
+  // Deduped on address/time - two rows that are accidental exact
+  // duplicates (same brand, same what, same spot, same window) would
+  // otherwise render as two identical stops instead of one.
+  const seenStops = new Set();
+  const stops = [];
+  rows.forEach(r => {
+    const key = r.address + '|' + r.lat + '|' + r.lng + '|' + r.start_time + '|' + r.end_time;
+    if (seenStops.has(key)) return;
+    seenStops.add(key);
+    stops.push({
+      address: r.address,
+      neighbourhood: r.neighbourhood,
+      lat: r.lat,
+      lng: r.lng,
+      timeWindow: formatTimeRange(r.start_time, r.end_time),
+    });
+  });
   return {
     id: primary.id,
     brand: primary.brand,
@@ -1789,6 +1808,7 @@ async function loadListings(){
 function recomputeEventStatuses(){
   if (!rawListingRows.length) return;
   events = groupRows(rawListingRows).map(transformGroup);
+  document.getElementById('liveCount').textContent = events.filter(e=>e.status==='live').length;
   renderList();
 }
 setInterval(recomputeEventStatuses, 60000);

@@ -46,6 +46,7 @@ export default async function CalendarPage() {
     .returns<Listing[]>();
 
   const items = groupListings(listings ?? []).filter((listing) => listing.groupStatus !== 'ended');
+  const liveCount = items.filter((listing) => listing.groupStatus === 'live').length;
 
   return (
     <>
@@ -54,6 +55,11 @@ export default async function CalendarPage() {
       <p className="hub-sub">
         Browse what&apos;s on by date.
       </p>
+
+      <div className="hero-stat">
+        <div className="num">{liveCount}</div>
+        <div className="lbl">free events live in Toronto today</div>
+      </div>
 
       {SUBSCRIBE_ENABLED && (
         <div className="cal-subscribe">

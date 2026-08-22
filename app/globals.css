@@ -126,6 +126,22 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
 }
 .hub-map-cta:hover{background:var(--line);}
 .hub-sub{font-size:14.5px;color:var(--muted);margin:0 0 28px;}
+
+/* Ported from public/toronto/index.html's hero-stat - the "N free events
+   live in Toronto today" pill, reused standalone (outside that page's
+   full hero flex row) wherever a page wants the same live count. */
+.hero-stat{
+  display:inline-block;
+  background:var(--paper-alt);border:1px solid var(--line);border-left:1.5px dashed #C9C2A6;border-radius:10px;
+  padding:14px 18px;min-width:210px;position:relative;margin:0 0 24px;
+}
+.hero-stat::before{
+  content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);
+  width:11px;height:11px;background:var(--paper);border:1px solid var(--line);border-radius:50%;
+  clip-path:inset(0 0 0 50%);
+}
+.hero-stat .num{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--teal);}
+.hero-stat .lbl{font-size:12px;color:var(--muted);margin-top:2px;}
 .hub-list{display:flex;flex-direction:column;gap:14px;list-style:none;margin:0;padding:0;}
 .hub-empty{font-size:14px;color:var(--muted);padding:24px 0;}
 /* ===== Card (ported from public/toronto/index.html's .card family) =====

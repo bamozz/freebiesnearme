@@ -47,15 +47,25 @@ export function groupListings(rows: Listing[]): GroupedListing[] {
       .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
     const primary = group[0];
 
-    const stops: ListingStop[] = group.map((r) => ({
-      address: r.address,
-      neighbourhood: r.neighbourhood,
-      neighbourhood_slug: r.neighbourhood_slug,
-      lat: r.lat,
-      lng: r.lng,
-      start_time: r.start_time,
-      end_time: r.end_time,
-    }));
+    // Deduped on address/time - two rows that are accidental exact
+    // duplicates (same brand, same what, same spot, same window) would
+    // otherwise render as two identical stops/pins instead of one.
+    const seenStops = new Set<string>();
+    const stops: ListingStop[] = [];
+    for (const r of group) {
+      const dedupeKey = `${r.address}|${r.lat}|${r.lng}|${r.start_time}|${r.end_time}`;
+      if (seenStops.has(dedupeKey)) continue;
+      seenStops.add(dedupeKey);
+      stops.push({
+        address: r.address,
+        neighbourhood: r.neighbourhood,
+        neighbourhood_slug: r.neighbourhood_slug,
+        lat: r.lat,
+        lng: r.lng,
+        start_time: r.start_time,
+        end_time: r.end_time,
+      });
+    }
 
     // A row currently inside its own start/end window, if any - checked
     // per row rather than the group's overall min/max span, so a
