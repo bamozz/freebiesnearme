@@ -42,6 +42,7 @@ export default async function CalendarPage() {
     .select('*')
     .eq('city_slug', 'toronto')
     .eq('is_active', true)
+    .eq('moderation_status', 'approved')
     .order('start_time', { ascending: true })
     .returns<Listing[]>();
 

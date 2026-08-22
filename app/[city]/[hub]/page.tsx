@@ -183,6 +183,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq('city_slug', city)
     .eq(filterColumn, hub)
     .eq('is_active', true)
+    .eq('moderation_status', 'approved')
     .returns<Listing[]>();
   const activeCount = groupListings(listings ?? []).filter((l) => l.groupStatus !== 'ended').length;
 
@@ -211,6 +212,7 @@ export default async function HubPage({ params }: Props) {
     .eq('city_slug', city)
     .eq(filterColumn, hub)
     .eq('is_active', true)
+    .eq('moderation_status', 'approved')
     .order('start_time', { ascending: true })
     .returns<Listing[]>();
 
@@ -294,7 +296,7 @@ export default async function HubPage({ params }: Props) {
                       {listing.stops.map((stop, i) => (
                         <div className="card-stop" key={i}>
                           <span className="card-stop-meta">
-                            &#128205; {formatTimeRange(stop.start_time, stop.end_time)} &middot; {stop.neighbourhood}
+                            {formatTimeRange(stop.start_time, stop.end_time)} &middot; {stop.neighbourhood}
                           </span>
                           <a
                             href={directionsUrlForStop(stop)}

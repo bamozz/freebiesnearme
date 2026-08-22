@@ -722,7 +722,7 @@ function renderLegend(){
 let rawListingRows = [];
 
 async function loadListings(){
-  const { data, error } = await sb.from('listings').select('*').eq('moderation_status', 'approved');
+  const { data, error } = await sb.from('listings').select('*').eq('moderation_status', 'approved').eq('is_active', true);
   if (error) return;
   rawListingRows = data;
   events = groupRows(rawListingRows).map(transformGroup).filter(ev => ev.status !== 'ended');
