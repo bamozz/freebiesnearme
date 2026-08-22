@@ -192,7 +192,7 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                               {stops.map((stop, i) => (
                                 <div className="cal-day-item-stop" key={i}>
                                   <div className="cal-day-item-meta">
-                                    {formatTimeRange(stop.start_time, stop.end_time)} &middot; {stop.neighbourhood}
+                                    &#128205; {formatTimeRange(stop.start_time, stop.end_time)} &middot; {stop.neighbourhood}
                                   </div>
                                   <a href={directionsUrlForStop(stop)} target="_blank" rel="noopener" className="directions-link">
                                     &#128205; Get directions

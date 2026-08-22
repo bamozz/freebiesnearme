@@ -1765,12 +1765,33 @@ function transformGroup(rows){
   };
 }
 
+// Raw Supabase rows, kept around so statuses can be recomputed against
+// the current clock without a new network round trip - see
+// recomputeEventStatuses() below.
+let rawListingRows = [];
+
 async function loadListings(){
   const { data, error } = await sb.from('listings').select('*').eq('moderation_status', 'approved');
   if (error) return false;
-  events = groupRows(data).map(transformGroup);
+  rawListingRows = data;
+  events = groupRows(rawListingRows).map(transformGroup);
   return true;
 }
+
+// live/soon/ended (and the "soon" day-count label) are computed once,
+// at load or last re-render, and then just sit in `events` - so a tab
+// left open across a listing's start or end time keeps showing the
+// stale badge until something else happens to trigger a re-render.
+// Re-running the (already-correct, already-fetched) grouping/transform
+// logic on a timer picks up whatever's changed against the real clock,
+// no re-fetch needed since nothing about the underlying data changed,
+// only how "now" relates to it.
+function recomputeEventStatuses(){
+  if (!rawListingRows.length) return;
+  events = groupRows(rawListingRows).map(transformGroup);
+  renderList();
+}
+setInterval(recomputeEventStatuses, 60000);
 
 async function ensureAnonSession(){
   const { data: { session } } = await sb.auth.getSession();

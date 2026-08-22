@@ -397,7 +397,7 @@ function buildPopup(ev, stop){
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${stripFreeWord(ev.what)}</div>
-  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${timeText} &middot; ${neighbourhood}</div>
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${stop ? '&#128205; ' : ''}${timeText} &middot; ${neighbourhood}</div>
   <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
@@ -534,6 +534,8 @@ function transformGroup(rows){
     lat: r.lat,
     lng: r.lng,
     timeWindow: formatTimeRange(r.start_time, r.end_time),
+    startTime: r.start_time,
+    endTime: r.end_time,
   }));
   return {
     id: primary.id,
@@ -572,14 +574,23 @@ function renderMarkers(){
   );
   // A brand with several stops (different addresses and/or dates) is one
   // event but gets one pin per stop, since each stop is a real, distinct
-  // place someone can go. When a location filter is active, only stops in
-  // that location get a pin - a brand touring several neighbourhoods
-  // matches the filter as a whole, but a pin in a neighbourhood the user
-  // didn't select would be confusing.
+  // place someone can go - but only for stops that are themselves live
+  // right now. Several locations all running the same window at once
+  // (e.g. a doughnut giveaway at every downtown store today) still get a
+  // pin each, since every one of them individually passes this check;
+  // a brand touring different neighbourhoods on different dates only
+  // shows the pin for whichever stop is actually open right now, not
+  // ones that already wrapped up or haven't started yet. When a location
+  // filter is active, only stops in that location get a pin too - a
+  // brand touring several neighbourhoods matches the filter as a whole,
+  // but a pin in a neighbourhood the user didn't select would be
+  // confusing.
   filtered.forEach(ev=>{
+    const now = new Date();
+    const liveStops = ev.stops.filter(s => now >= new Date(s.startTime) && now <= new Date(s.endTime || assumedEnd(s.startTime)));
     const stopsToShow = activeLocations.length === 0
-      ? ev.stops
-      : ev.stops.filter(s => activeLocations.includes(s.neighbourhood));
+      ? liveStops
+      : liveStops.filter(s => activeLocations.includes(s.neighbourhood));
     stopsToShow.forEach(stop => {
       const popup = new maplibregl.Popup({offset:22}).setHTML(buildPopup(ev, ev.stops.length > 1 ? stop : undefined));
       const marker = new maplibregl.Marker({element: pinElement(ev), anchor:'center'})
@@ -673,13 +684,33 @@ function renderLegend(){
   document.getElementById('legendToggle').onclick = () => wrap.classList.toggle('collapsed');
 }
 
+// Raw Supabase rows, kept around so statuses (and which stops count as
+// "live" for pin purposes) can be recomputed against the current clock
+// without a new network round trip - see recomputeEventStatuses() below.
+let rawListingRows = [];
+
 async function loadListings(){
   const { data, error } = await sb.from('listings').select('*').eq('moderation_status', 'approved');
   if (error) return;
-  events = groupRows(data).map(transformGroup).filter(ev => ev.status !== 'ended');
+  rawListingRows = data;
+  events = groupRows(rawListingRows).map(transformGroup).filter(ev => ev.status !== 'ended');
   document.getElementById('liveCount').textContent = events.filter(e=>e.status==='live').length;
   renderMarkers();
 }
+
+// live/soon/ended sit frozen in `events` from load time otherwise, so a
+// tab left open across a listing's start or end time keeps showing
+// stale pins (or a pin that's disappeared even though its window just
+// started) until something else triggers a reload. Re-running the
+// already-fetched grouping/transform logic on a timer picks up whatever
+// changed against the real clock - no re-fetch needed.
+function recomputeEventStatuses(){
+  if (!rawListingRows.length) return;
+  events = groupRows(rawListingRows).map(transformGroup).filter(ev => ev.status !== 'ended');
+  document.getElementById('liveCount').textContent = events.filter(e=>e.status==='live').length;
+  renderMarkers();
+}
+setInterval(recomputeEventStatuses, 60000);
 
 // Lets a pSEO hub page's "View on map" link land here pre-filtered
 // (e.g. /toronto/map?location=The+Well or ?cat=food) instead of a blank

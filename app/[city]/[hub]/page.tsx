@@ -294,7 +294,7 @@ export default async function HubPage({ params }: Props) {
                       {listing.stops.map((stop, i) => (
                         <div className="card-stop" key={i}>
                           <span className="card-stop-meta">
-                            {formatTimeRange(stop.start_time, stop.end_time)} &middot; {stop.neighbourhood}
+                            &#128205; {formatTimeRange(stop.start_time, stop.end_time)} &middot; {stop.neighbourhood}
                           </span>
                           <a
                             href={directionsUrlForStop(stop)}
