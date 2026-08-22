@@ -868,7 +868,7 @@ function renderMetaTimes(ev){
   // showing one address followed by every time window across all stops
   // would misleadingly suggest they're all at the same place.
   if (ev.stops.length > 1 && ev.locations.length > 1){
-    return ev.stops.map(s => `<span>${placeLabel(s.address, s.neighbourhood)} &middot; ${s.timeWindow}</span>`).join('');
+    return ev.stops.map(s => `<span>&#128205; ${placeLabel(s.address, s.neighbourhood)} &middot; ${s.timeWindow}</span>`).join('');
   }
   return `<span>${placeLabel(ev.address, ev.location)}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
 }
