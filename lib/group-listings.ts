@@ -28,11 +28,25 @@ function rowEndKey(row: { start_time: string; end_time: string | null }): string
   return endKey < startKey ? startKey : endKey;
 }
 
+// A row with a real end clock time (e.g. 6pm, not a date-only listing's
+// midnight marker) is done once that moment passes, even if today's date
+// is still within its range - a 4-6pm pop-up should read "wrapped up" at
+// 6:01pm, not stay "live" for the rest of the day.
+function isRowPastExactEnd(row: { end_time: string | null }, now: Date): boolean {
+  if (!row.end_time) return false;
+  const end = new Date(row.end_time);
+  return hasClockTime(end) && now > end;
+}
+
 // "Live" means today's date falls somewhere in the row's own date range -
 // not that the current time is precisely between its start and end clock
 // times. A class starting at 6pm today reads as live all day today, not
-// just from 6pm on.
-function isRowLiveToday(row: { start_time: string; end_time: string | null }, todayKey: string): boolean {
+// just from 6pm on. The exception is the end boundary: a row with an
+// exact end time is excluded once that time has actually passed (see
+// isRowPastExactEnd) - date-only listings have no such moment, so they
+// stay live for their whole last calendar day.
+function isRowLiveToday(row: { start_time: string; end_time: string | null }, todayKey: string, now: Date): boolean {
+  if (isRowPastExactEnd(row, now)) return false;
   const startKey = torontoDateKey(new Date(row.start_time));
   return todayKey >= startKey && todayKey <= rowEndKey(row);
 }
@@ -95,8 +109,9 @@ export function groupListings(rows: Listing[]): GroupedListing[] {
     // listing (e.g. weekly Tuesday evening classes) doesn't read as
     // "live" on the days between sessions just because it's after the
     // first session and before the last.
-    const todayKey = torontoDateKey(new Date());
-    const activeRow = group.find((r) => isRowLiveToday(r, todayKey));
+    const now = new Date();
+    const todayKey = torontoDateKey(now);
+    const activeRow = group.find((r) => isRowLiveToday(r, todayKey, now));
     const upcomingRows = group.filter((r) => torontoDateKey(new Date(r.start_time)) > todayKey);
     const groupStatus: 'live' | 'soon' | 'ended' = activeRow ? 'live' : upcomingRows.length ? 'soon' : 'ended';
 

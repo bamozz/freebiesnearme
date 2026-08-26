@@ -247,6 +247,17 @@
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
     {
+      date: 'August 25, 2026',
+      emoji: '\u{1F41B}',
+      title: 'Timed listings now wrap up on time',
+      blurb: "A listing with a specific start and end time (like a 2-hour pop-up) was staying marked \"Live now\" for the rest of the day even after it had actually ended. It now flips to \"Wrapped up\" as soon as its real end time passes - multi-day festivals and other listings without a specific end time are unaffected.",
+      sections: [
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Timed listings', text: 'Now show "Wrapped up" once their actual end time passes, instead of staying "Live now" the rest of the day.' },
+        ]},
+      ],
+    },
+    {
       date: 'August 22, 2026',
       emoji: '\u{1F4CD}',
       title: 'Multi-location listings now show as one card',

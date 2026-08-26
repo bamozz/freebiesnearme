@@ -66,10 +66,16 @@ function rowEndKey(startTime: string, endTime: string | null): string {
 // "Live" means today's date falls somewhere in the listing's own date
 // range, not that the current time is precisely between its start and end
 // clock times - a class starting at 6pm today reads as live all day today.
+// Exception: a listing with a real end clock time (not a date-only
+// listing's midnight marker) is "ended" once that moment actually passes,
+// even if today's date is still in range - a 4-6pm pop-up reads "wrapped
+// up" at 6:01pm rather than staying live for the rest of the day.
 export function computeListingStatus(startTime: string, endTime: string | null): 'live' | 'soon' | 'ended' {
   const todayKey = torontoDateKey(new Date());
   const startKey = torontoDateKey(new Date(startTime));
-  if (todayKey >= startKey && todayKey <= rowEndKey(startTime, endTime)) return 'live';
+  const end = endTime ? new Date(endTime) : null;
+  const pastExactEnd = end !== null && hasClockTime(end) && new Date() > end;
+  if (!pastExactEnd && todayKey >= startKey && todayKey <= rowEndKey(startTime, endTime)) return 'live';
   if (todayKey < startKey) return 'soon';
   return 'ended';
 }
