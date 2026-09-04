@@ -1,0 +1,36 @@
+-- Freebies Near Me screener run: 2026-09-04
+-- NO INSERTS THIS RUN — the run could not check any sources.
+--
+-- This environment's network egress policy blocks all general internet
+-- access (only an infra allowlist — npm, pypi, api.anthropic.com, etc. —
+-- is reachable; everything else gets a 403 CONNECT tunnel failure from
+-- the agent egress proxy with reason "organization policy"). Confirmed
+-- with a raw curl to https://example.com and https://www.google.com,
+-- which failed the same way as every source below, ruling out a
+-- per-domain block or a flaky individual site.
+--
+-- Every required source was unreachable via WebFetch, all with the
+-- identical EGRESS_BLOCKED / "organization policy" error:
+--   - https://www.instagram.com/torontodiscounts/         (blocked)
+--   - https://www.instagram.com/toronto_popup777/         (blocked)
+--   - https://www.instagram.com/todotoronto/               (blocked)
+--   - https://ma.to/events/toronto/today                   (blocked)
+--   - https://www.eventbrite.ca/d/canada--toronto/free--events/  (blocked)
+--   - https://torontounion.ca/toronto-union-events/category/union-samples/month/  (blocked)
+--   - https://thewelltoronto.com/whats-on/                 (blocked)
+--   - https://stacktmarket.com/events/                     (blocked)
+--
+-- The duplicate cross-check source was also unreachable:
+--   - https://www.freebiesnearme.app/toronto/calendar      (blocked)
+--
+-- WebSearch (a separate tool, not routed through the general egress
+-- proxy) still worked and returned some Toronto event snippets, but
+-- without page fetches there was no way to confirm exact address, a
+-- real specific date, an explicit free-ness signal, or non-duplication
+-- against the site's own live calendar — so nothing from it was
+-- promoted to a candidate here, per the "if you can't confirm it's
+-- genuinely free / non-duplicate, leave it out" rule.
+--
+-- Action needed: this environment's network policy needs to allow
+-- outbound access to the source domains above (and to
+-- www.freebiesnearme.app) for this screener to function on future runs.
