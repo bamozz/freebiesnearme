@@ -1,14 +1,18 @@
 import type { Listing } from '@/types/pseo_types';
 import { hasClockTime, torontoDateKey } from '@/lib/datetime';
 
+export type ListingWindow = {
+  start_time: string;
+  end_time: string | null;
+};
+
 export type ListingStop = {
   address: string | null;
   neighbourhood: string;
   neighbourhood_slug: string;
   lat: number;
   lng: number;
-  start_time: string;
-  end_time: string | null;
+  windows: ListingWindow[];
 };
 
 export type GroupedListing = Listing & {
@@ -82,27 +86,37 @@ export function groupListings(rows: Listing[]): GroupedListing[] {
       .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
     const primary = group[0];
 
-    // Deduped on coordinates/time (rounded to ~11m, not an exact address
+    // Deduped on coordinates alone (rounded to ~11m, not an exact address
     // string match - two rows for the same real place can have slightly
-    // different address text) - two rows that are accidental duplicates
-    // (same brand, same what, same spot, same window) would otherwise
-    // render as two identical stops/pins instead of one.
-    const seenStops = new Set<string>();
-    const stops: ListingStop[] = [];
+    // different address text) rather than coordinates+time, so the same
+    // location on different dates (e.g. a book sale running Oct 1, 2, 3)
+    // collapses into one pin with multiple dates listed, instead of one
+    // identical pin per date.
+    const stopsByLocation = new Map<string, ListingStop>();
+    const stopOrder: string[] = [];
     for (const r of group) {
-      const dedupeKey = `${r.lat.toFixed(4)}|${r.lng.toFixed(4)}|${r.start_time}|${r.end_time}`;
-      if (seenStops.has(dedupeKey)) continue;
-      seenStops.add(dedupeKey);
-      stops.push({
-        address: r.address,
-        neighbourhood: r.neighbourhood,
-        neighbourhood_slug: r.neighbourhood_slug,
-        lat: r.lat,
-        lng: r.lng,
-        start_time: r.start_time,
-        end_time: r.end_time,
-      });
+      const locationKey = `${r.lat.toFixed(4)}|${r.lng.toFixed(4)}`;
+      let stop = stopsByLocation.get(locationKey);
+      if (!stop) {
+        stop = {
+          address: r.address,
+          neighbourhood: r.neighbourhood,
+          neighbourhood_slug: r.neighbourhood_slug,
+          lat: r.lat,
+          lng: r.lng,
+          windows: [],
+        };
+        stopsByLocation.set(locationKey, stop);
+        stopOrder.push(locationKey);
+      }
+      // Guards against a literal duplicate row (same place, same window)
+      // adding the same date twice.
+      const windowKey = `${r.start_time}|${r.end_time}`;
+      if (!stop.windows.some((w) => `${w.start_time}|${w.end_time}` === windowKey)) {
+        stop.windows.push({ start_time: r.start_time, end_time: r.end_time });
+      }
     }
+    const stops = stopOrder.map((k) => stopsByLocation.get(k)!);
 
     // A row whose own date range includes today, if any - checked per
     // row rather than the group's overall min/max span, so a recurring

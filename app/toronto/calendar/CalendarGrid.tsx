@@ -25,21 +25,32 @@ function dateKeysBetween(startKey: string, endKey: string): string[] {
   return keys;
 }
 
-// Every Toronto-local calendar date one stop occupies. Mirrors the
+// Every Toronto-local calendar date one time window occupies. Mirrors the
 // half-open-midnight-end convention used everywhere else on the site
 // (formatTimeRange, buildFeedIcs's all-day VEVENT end date).
-function stopDateKeys(stop: { start_time: string; end_time: string | null }): string[] {
-  const start = new Date(stop.start_time);
+function windowDateKeys(window: { start_time: string; end_time: string | null }): string[] {
+  const start = new Date(window.start_time);
   const startKey = torontoDateKey(start);
-  if (!stop.end_time) return [startKey];
+  if (!window.end_time) return [startKey];
 
-  const end = new Date(stop.end_time);
+  const end = new Date(window.end_time);
   const effectiveEndKey = hasClockTime(end)
     ? torontoDateKey(end)
     : torontoDateKey(new Date(end.getTime() - 60000));
 
   if (effectiveEndKey <= startKey) return [startKey];
   return dateKeysBetween(startKey, effectiveEndKey);
+}
+
+// Every date a stop occupies, across all of its windows (a stop can now
+// carry several dates at the same location, e.g. a book sale running
+// Oct 1, 2, 3).
+function stopDateKeys(stop: { windows: { start_time: string; end_time: string | null }[] }): string[] {
+  const keys = new Set<string>();
+  for (const w of stop.windows) {
+    for (const key of windowDateKeys(w)) keys.add(key);
+  }
+  return [...keys];
 }
 
 // Union of every stop's dates, so a grouped listing gets a dot on any day
@@ -57,6 +68,16 @@ function listingDateKeys(listing: GroupedListing): string[] {
 // different dates, so the day panel only shows what's really on that day.
 function stopsOnDay(listing: GroupedListing, dayKey: string): ListingStop[] {
   return listing.stops.filter((stop) => stopDateKeys(stop).includes(dayKey));
+}
+
+// Within one stop, only the window(s) actually happening on the given
+// day - so picking Oct 2 on a book sale running Oct 1-3 at one library
+// shows just that day's hours, not all three dates again.
+function windowsOnDay(
+  stop: { windows: { start_time: string; end_time: string | null }[] },
+  dayKey: string
+): { start_time: string; end_time: string | null }[] {
+  return stop.windows.filter((w) => windowDateKeys(w).includes(dayKey));
 }
 
 function getMonthWeeks(year: number, month: number): (string | null)[][] {
@@ -178,7 +199,8 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                 ) : (
                   <ul className="cal-day-list">
                     {selectedListings.map((listing) => {
-                      const stops = selectedKey ? stopsOnDay(listing, selectedKey) : listing.stops;
+                      const dayKey = selectedKey as string;
+                      const stops = stopsOnDay(listing, dayKey);
                       return (
                         <li className="cal-day-item" key={listing.id}>
                           <span className="tag cat" style={{ color: CATEGORY_COLOR[listing.category] }}>
@@ -191,9 +213,11 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                             <div className="cal-day-item-stops">
                               {stops.map((stop, i) => (
                                 <div className="cal-day-item-stop" key={i}>
-                                  <div className="cal-day-item-meta">
-                                    {formatTimeRange(stop.start_time, stop.end_time)} &middot; {stop.neighbourhood}
-                                  </div>
+                                  {windowsOnDay(stop, dayKey).map((w, wi) => (
+                                    <div className="cal-day-item-meta" key={wi}>
+                                      {formatTimeRange(w.start_time, w.end_time)} &middot; {stop.neighbourhood}
+                                    </div>
+                                  ))}
                                   <a href={directionsUrlForStop(stop)} target="_blank" rel="noopener" className="directions-link">
                                     &#128205; Get directions
                                   </a>
@@ -202,9 +226,11 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                             </div>
                           ) : (
                             <>
-                              <div className="cal-day-item-meta">
-                                {formatTimeRange(stops[0].start_time, stops[0].end_time)} &middot; {stops[0].neighbourhood}
-                              </div>
+                              {windowsOnDay(stops[0], dayKey).map((w, wi) => (
+                                <div className="cal-day-item-meta" key={wi}>
+                                  {formatTimeRange(w.start_time, w.end_time)} &middot; {stops[0].neighbourhood}
+                                </div>
+                              ))}
                               <a href={directionsUrlForStop(stops[0])} target="_blank" rel="noopener" className="directions-link">
                                 &#128205; Get directions
                               </a>

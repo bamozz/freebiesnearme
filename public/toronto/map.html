@@ -388,7 +388,9 @@ function stripFreeWord(text){
 function buildPopup(ev, stop){
   const address = stop ? stop.address : ev.address;
   const neighbourhood = stop ? stop.neighbourhood : ev.location;
-  const timeText = stop ? stop.timeWindow : ev.timeWindows.join(' &middot; ');
+  const timeText = stop
+    ? stop.windows.map(w => formatTimeRange(w.start_time, w.end_time)).join(' &middot; ')
+    : ev.timeWindows.join(' &middot; ');
   const lat = stop ? stop.lat : ev.lat;
   const lng = stop ? stop.lng : ev.lng;
   const directionsQuery = address
@@ -560,29 +562,29 @@ function referenceRow(rows){
 function transformGroup(rows){
   const primary = rows[0];
   const ref = referenceRow(rows);
-  // One stop per row: covers both the "same location, several time windows"
-  // case (explicit group_id) and the "same brand, different addresses
-  // and/or dates" case (grouped by brand name above) with the same shape.
-  // Deduped on address/time - two rows that are accidental exact
-  // duplicates (same brand, same what, same spot, same window) would
-  // otherwise render as two identical stops (and two identical pins)
-  // instead of one.
-  const seenStops = new Set();
-  const stops = [];
+  // One stop per distinct location (lat/lng), not per row - so the same
+  // spot running on several dates (e.g. a book sale open Oct 1, 2, 3)
+  // collapses into one pin listing every date, instead of one identical
+  // pin per date. A "same brand, different addresses" promo still gets
+  // one stop (and one pin) per real place.
+  const stopsByLocation = new Map();
+  const stopOrder = [];
   rows.forEach(r => {
-    const key = r.lat.toFixed(4) + '|' + r.lng.toFixed(4) + '|' + r.start_time + '|' + r.end_time;
-    if (seenStops.has(key)) return;
-    seenStops.add(key);
-    stops.push({
-      address: r.address,
-      neighbourhood: r.neighbourhood,
-      lat: r.lat,
-      lng: r.lng,
-      timeWindow: formatTimeRange(r.start_time, r.end_time),
-      startTime: r.start_time,
-      endTime: r.end_time,
-    });
+    const locationKey = r.lat.toFixed(4) + '|' + r.lng.toFixed(4);
+    let stop = stopsByLocation.get(locationKey);
+    if (!stop){
+      stop = { address: r.address, neighbourhood: r.neighbourhood, lat: r.lat, lng: r.lng, windows: [] };
+      stopsByLocation.set(locationKey, stop);
+      stopOrder.push(locationKey);
+    }
+    // Guards against a literal duplicate row (same place, same window)
+    // adding the same date twice.
+    const windowKey = r.start_time + '|' + r.end_time;
+    if (!stop.windows.some(w => w.start_time + '|' + w.end_time === windowKey)){
+      stop.windows.push({ start_time: r.start_time, end_time: r.end_time });
+    }
   });
+  const stops = stopOrder.map(k => stopsByLocation.get(k));
   return {
     id: primary.id,
     brand: primary.brand,
@@ -634,7 +636,7 @@ function renderMarkers(){
   filtered.forEach(ev=>{
     const now = new Date();
     const todayKey = torontoDateKey(now);
-    const liveStops = ev.stops.filter(s => isRowLiveToday({start_time: s.startTime, end_time: s.endTime}, todayKey, now));
+    const liveStops = ev.stops.filter(s => s.windows.some(w => isRowLiveToday(w, todayKey, now)));
     const stopsToShow = activeLocations.length === 0
       ? liveStops
       : liveStops.filter(s => activeLocations.includes(s.neighbourhood));

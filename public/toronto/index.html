@@ -798,7 +798,9 @@ function buildImageAlt(ev){
 // stops at different addresses.
 function buildPopup(ev, stop){
   const place = stop ? placeLabel(stop.address, stop.neighbourhood) : ev.location;
-  const timeText = stop ? stop.timeWindow : ev.timeWindows.join(' &middot; ');
+  const timeText = stop
+    ? stop.windows.map(w => formatTimeRange(w.start_time, w.end_time)).join(' &middot; ')
+    : ev.timeWindows.join(' &middot; ');
   const dirUrl = stop ? directionsUrl({address: stop.address, location: stop.neighbourhood, lat: stop.lat, lng: stop.lng}) : directionsUrl(ev);
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
@@ -864,11 +866,16 @@ function placeLabel(address, neighbourhood){
 
 function renderMetaTimes(ev){
   // Multiple distinct addresses (a touring brand with several stops) get one
-  // line per stop pairing that stop's place with its own time window, since
-  // showing one address followed by every time window across all stops
-  // would misleadingly suggest they're all at the same place.
+  // line per stop pairing that stop's place with its own time window(s),
+  // since showing one address followed by every time window across all
+  // stops would misleadingly suggest they're all at the same place. A stop
+  // running on several dates (e.g. a book sale open Oct 1, 2, 3) lists all
+  // of them after its place, on the same line.
   if (ev.stops.length > 1 && ev.locations.length > 1){
-    return ev.stops.map(s => `<span>&#128205; ${placeLabel(s.address, s.neighbourhood)} &middot; ${s.timeWindow}</span>`).join('');
+    return ev.stops.map(s => {
+      const times = s.windows.map(w => formatTimeRange(w.start_time, w.end_time)).join(' &middot; ');
+      return `<span>&#128205; ${placeLabel(s.address, s.neighbourhood)} &middot; ${times}</span>`;
+    }).join('');
   }
   return `<span>${placeLabel(ev.address, ev.location)}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
 }
@@ -1768,26 +1775,29 @@ function referenceRow(rows){
 function transformGroup(rows){
   const primary = rows[0];
   const ref = referenceRow(rows);
-  // One stop per row: covers both the "same location, several time windows"
-  // case (explicit group_id) and the "same brand, different addresses
-  // and/or dates" case (grouped by brand name above) with the same shape.
-  // Deduped on address/time - two rows that are accidental exact
-  // duplicates (same brand, same what, same spot, same window) would
-  // otherwise render as two identical stops instead of one.
-  const seenStops = new Set();
-  const stops = [];
+  // One stop per distinct location (lat/lng), not per row - so the same
+  // spot running on several dates (e.g. a book sale open Oct 1, 2, 3)
+  // collapses into one pin listing every date, instead of one identical
+  // pin per date. A "same brand, different addresses" promo still gets
+  // one stop per real place.
+  const stopsByLocation = new Map();
+  const stopOrder = [];
   rows.forEach(r => {
-    const key = r.lat.toFixed(4) + '|' + r.lng.toFixed(4) + '|' + r.start_time + '|' + r.end_time;
-    if (seenStops.has(key)) return;
-    seenStops.add(key);
-    stops.push({
-      address: r.address,
-      neighbourhood: r.neighbourhood,
-      lat: r.lat,
-      lng: r.lng,
-      timeWindow: formatTimeRange(r.start_time, r.end_time),
-    });
+    const locationKey = r.lat.toFixed(4) + '|' + r.lng.toFixed(4);
+    let stop = stopsByLocation.get(locationKey);
+    if (!stop){
+      stop = { address: r.address, neighbourhood: r.neighbourhood, lat: r.lat, lng: r.lng, windows: [] };
+      stopsByLocation.set(locationKey, stop);
+      stopOrder.push(locationKey);
+    }
+    // Guards against a literal duplicate row (same place, same window)
+    // adding the same date twice.
+    const windowKey = r.start_time + '|' + r.end_time;
+    if (!stop.windows.some(w => w.start_time + '|' + w.end_time === windowKey)){
+      stop.windows.push({ start_time: r.start_time, end_time: r.end_time });
+    }
   });
+  const stops = stopOrder.map(k => stopsByLocation.get(k));
   return {
     id: primary.id,
     brand: primary.brand,

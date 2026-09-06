@@ -247,6 +247,17 @@
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
     {
+      date: 'September 6, 2026',
+      emoji: '\u{1F4CD}',
+      title: 'Multi-date listings at the same spot now share one pin',
+      blurb: "A listing running on several dates at the exact same location - like a book sale open Friday through Sunday - was showing one identical pin per date instead of a single pin listing every date. Now it's one pin (and one line on the card) with all its dates together; a promo running at genuinely different addresses still gets a pin per location as before.",
+      sections: [
+        { heading: 'Fixed', tone: 'fixed', emoji: '\u{1F41B}', items: [
+          { label: 'Repeated pins', text: 'Same-location, multi-date listings now show one map pin listing every date, instead of a duplicate pin per date.' },
+        ]},
+      ],
+    },
+    {
       date: 'August 25, 2026',
       emoji: '\u{1F41B}',
       title: 'Timed listings now wrap up on time',
