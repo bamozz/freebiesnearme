@@ -291,6 +291,7 @@ export default async function HubPage({ params }: Props) {
                     <div className="card-what">{stripFreeWord(listing.what)}</div>
                     <div className="card-brand">{listing.brand}</div>
                   </div>
+                  {listing.description && <div className="card-description">{listing.description}</div>}
                   {listing.stops.length > 1 && (
                     <div className="card-stops">
                       {listing.stops.map((stop, i) => (
@@ -316,7 +317,6 @@ export default async function HubPage({ params }: Props) {
                     </div>
                   )}
                   <div className="card-meta">
-                    {listing.description && <span>{listing.description}</span>}
                     {listing.stops.length <= 1 && (
                       <span>
                         {formatTimeRange(listing.start_time, listing.end_time)} &middot; {listing.neighbourhood}

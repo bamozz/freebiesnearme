@@ -208,7 +208,7 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                           </span>
                           <div className="cal-day-item-what">{stripFreeWord(listing.what)}</div>
                           <div className="cal-day-item-brand">{listing.brand}</div>
-                          {listing.description && <div className="cal-day-item-meta">{listing.description}</div>}
+                          {listing.description && <div className="card-description">{listing.description}</div>}
 
                           {stops.length > 1 ? (
                             <div className="cal-day-item-stops">
