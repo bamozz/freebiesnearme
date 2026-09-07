@@ -316,6 +316,7 @@ export default async function HubPage({ params }: Props) {
                     </div>
                   )}
                   <div className="card-meta">
+                    {listing.description && <span>{listing.description}</span>}
                     {listing.stops.length <= 1 && (
                       <span>
                         {formatTimeRange(listing.start_time, listing.end_time)} &middot; {listing.neighbourhood}

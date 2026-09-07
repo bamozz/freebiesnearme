@@ -388,9 +388,9 @@ function stripFreeWord(text){
 function buildPopup(ev, stop){
   const address = stop ? stop.address : ev.address;
   const neighbourhood = stop ? stop.neighbourhood : ev.location;
-  const timeText = stop
-    ? stop.windows.map(w => formatTimeRange(w.start_time, w.end_time)).join(' &middot; ')
-    : ev.timeWindows.join(' &middot; ');
+  const dateLines = stop
+    ? stop.windows.map(w => formatTimeRange(w.start_time, w.end_time))
+    : ev.timeWindows;
   const lat = stop ? stop.lat : ev.lat;
   const lng = stop ? stop.lng : ev.lng;
   const directionsQuery = address
@@ -399,7 +399,9 @@ function buildPopup(ev, stop){
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${stripFreeWord(ev.what)}</div>
-  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${timeText} &middot; ${neighbourhood}</div>
+  ${ev.description ? `<div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.description}</div>` : ''}
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${neighbourhood}</div>
+  <div style="font-size:11.5px;color:#6B7280;">${dateLines.map(d => `<div>${d}</div>`).join('')}</div>
   <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
@@ -596,6 +598,7 @@ function transformGroup(rows){
     lng: primary.lng,
     stops,
     what: primary.what,
+    description: primary.description,
     timeWindows: rows.map(r => formatTimeRange(r.start_time, r.end_time)),
     startTime: ref.start_time,
     sponsored: primary.sponsored,

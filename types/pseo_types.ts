@@ -34,6 +34,7 @@ export interface Listing {
   lat: number;
   lng: number;
   what: string;
+  description: string | null;
   start_time: string; // ISO timestamptz
   end_time: string | null; // ISO timestamptz
   claimed_count: number;

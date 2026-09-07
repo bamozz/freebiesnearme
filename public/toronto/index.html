@@ -798,14 +798,16 @@ function buildImageAlt(ev){
 // stops at different addresses.
 function buildPopup(ev, stop){
   const place = stop ? placeLabel(stop.address, stop.neighbourhood) : ev.location;
-  const timeText = stop
-    ? stop.windows.map(w => formatTimeRange(w.start_time, w.end_time)).join(' &middot; ')
-    : ev.timeWindows.join(' &middot; ');
+  const dateLines = stop
+    ? stop.windows.map(w => formatTimeRange(w.start_time, w.end_time))
+    : ev.timeWindows;
   const dirUrl = stop ? directionsUrl({address: stop.address, location: stop.neighbourhood, lat: stop.lat, lng: stop.lng}) : directionsUrl(ev);
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
   <div style="font-size:12.5px;max-width:190px;">${stripFreeWord(ev.what)}</div>
-  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${timeText} &middot; ${place}</div>
+  ${ev.description ? `<div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.description}</div>` : ''}
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${place}</div>
+  <div style="font-size:11.5px;color:#6B7280;">${dateLines.map(d => `<div>${d}</div>`).join('')}</div>
   <a class="popup-btn" href="${dirUrl}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
@@ -865,16 +867,17 @@ function placeLabel(address, neighbourhood){
 }
 
 function renderMetaTimes(ev){
-  // Multiple distinct addresses (a touring brand with several stops) get one
-  // line per stop pairing that stop's place with its own time window(s),
-  // since showing one address followed by every time window across all
-  // stops would misleadingly suggest they're all at the same place. A stop
-  // running on several dates (e.g. a book sale open Oct 1, 2, 3) lists all
-  // of them after its place, on the same line.
+  // Multiple distinct addresses (a touring brand with several stops) get
+  // that stop's place on its own line, then each of its dates on its own
+  // line below it (.card-meta is a flex column, so each <span> here is
+  // already a separate row) - showing one address followed by every date
+  // across all stops crammed onto one line would be hard to read for a
+  // stop running on several dates (e.g. a book sale open Oct 1, 2, 3).
   if (ev.stops.length > 1 && ev.locations.length > 1){
     return ev.stops.map(s => {
-      const times = s.windows.map(w => formatTimeRange(w.start_time, w.end_time)).join(' &middot; ');
-      return `<span>&#128205; ${placeLabel(s.address, s.neighbourhood)} &middot; ${times}</span>`;
+      const place = `<span>&#128205; ${placeLabel(s.address, s.neighbourhood)}</span>`;
+      const dates = s.windows.map(w => `<span>${formatTimeRange(w.start_time, w.end_time)}</span>`).join('');
+      return place + dates;
     }).join('');
   }
   return `<span>${placeLabel(ev.address, ev.location)}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
@@ -1368,6 +1371,7 @@ function renderList(){
       </div>
       ${renderStars(ev)}
       <div class="card-meta">
+        ${ev.description ? `<span>${ev.description}</span>` : ''}
         ${renderMetaTimes(ev)}
         ${a ? `<span class="avail ${a.cls}">${a.text}</span>` : ''}
         ${ev.signup_url ? `<a href="${ev.signup_url}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">&#128221; Register</a>` : ''}
@@ -1809,6 +1813,7 @@ function transformGroup(rows){
     lng: primary.lng,
     stops,
     what: primary.what,
+    description: primary.description,
     timeWindows: rows.map(r => formatTimeRange(r.start_time, r.end_time)),
     time: formatTimeRange(ref.start_time, ref.end_time),
     startTime: ref.start_time,
