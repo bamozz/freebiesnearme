@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import BottomTabbar from '@/app/components/BottomTabbar';
 import InstallBanner from '@/app/components/InstallBanner';
 import './globals.css';
@@ -23,6 +24,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759"
+          crossOrigin="anonymous"
+          strategy="beforeInteractive"
+        />
         {/* Rendered as plain <link> tags (matching how the static
             public/toronto/*.html pages load these same fonts) rather than
             next/font, so Next.js-rendered pages stay visually identical to
