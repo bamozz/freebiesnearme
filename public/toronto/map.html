@@ -187,6 +187,15 @@
     .map-legend.collapsed .legend-toggle{transform:rotate(180deg);}
   }
 
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;font-size:13px;font-weight:600;
+    padding:11px 18px;border-radius:24px;box-shadow:0 6px 20px rgba(21,27,33,0.25);
+    z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;
+    max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.err{background:var(--coral);}
   .maplibregl-popup-content{border-radius:10px;border:1px solid var(--line);font-family:'Inter',sans-serif;padding:12px 14px;}
   .popup-cat{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;}
   .popup-brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;margin:3px 0 4px;}
@@ -334,6 +343,21 @@ let markers = [];
 let activeCats = [];       // empty = all categories
 let activeLocations = [];  // empty = all locations
 
+let toastTimer = null;
+function showToast(message, isError){
+  let el = document.getElementById('toast');
+  if (!el){
+    el = document.createElement('div');
+    el.id = 'toast';
+    el.className = 'toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = message;
+  el.className = 'toast show' + (isError ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.classList.remove('show'); }, 3000);
+}
+
 const map = new maplibregl.Map({
   style: 'https://tiles.openfreemap.org/styles/liberty',
   center: [-79.3832, 43.6532],
@@ -344,6 +368,27 @@ const map = new maplibregl.Map({
   attributionControl: false,
 });
 map.addControl(new maplibregl.NavigationControl(), 'top-left');
+// The browser only asks for location permission when the visitor taps this
+// button, and the position never leaves their device.
+const geolocate = new maplibregl.GeolocateControl({
+  positionOptions: {enableHighAccuracy: true},
+  trackUserLocation: true,
+  showUserLocation: true,
+  fitBoundsOptions: {maxZoom: 15},
+});
+map.addControl(geolocate, 'top-left');
+let toldOutsideToronto = false;
+geolocate.on('geolocate', (e) => {
+  const {longitude, latitude} = e.coords;
+  const inToronto = longitude >= -79.75 && longitude <= -79.05 && latitude >= 43.53 && latitude <= 43.90;
+  if (inToronto || toldOutsideToronto) return;
+  toldOutsideToronto = true;
+  map.jumpTo({center: [-79.3832, 43.6532], zoom: 12.2});
+  showToast("You're outside Toronto, so your location isn't shown on this map.");
+});
+geolocate.on('error', (e) => {
+  if (e.code === 1) showToast('Location is blocked. Allow it in your browser settings to see where you are.', true);
+});
 map.addControl(new maplibregl.AttributionControl({compact: true}));
 // The compact attribution control auto-expands itself the first time actual
 // attribution text is set (once tiles load), regardless of the compact

@@ -737,6 +737,27 @@ const map = new maplibregl.Map({
   attributionControl: false,
 });
 map.addControl(new maplibregl.NavigationControl(), 'top-left');
+// The browser only asks for location permission when the visitor taps this
+// button, and the position never leaves their device.
+const geolocate = new maplibregl.GeolocateControl({
+  positionOptions: {enableHighAccuracy: true},
+  trackUserLocation: true,
+  showUserLocation: true,
+  fitBoundsOptions: {maxZoom: 15},
+});
+map.addControl(geolocate, 'top-left');
+let toldOutsideToronto = false;
+geolocate.on('geolocate', (e) => {
+  const {longitude, latitude} = e.coords;
+  const inToronto = longitude >= -79.75 && longitude <= -79.05 && latitude >= 43.53 && latitude <= 43.90;
+  if (inToronto || toldOutsideToronto) return;
+  toldOutsideToronto = true;
+  map.jumpTo({center: [-79.3832, 43.6532], zoom: 12.2});
+  showToast("You're outside Toronto, so your location isn't shown on this map.");
+});
+geolocate.on('error', (e) => {
+  if (e.code === 1) showToast('Location is blocked. Allow it in your browser settings to see where you are.', true);
+});
 map.addControl(new maplibregl.AttributionControl({compact: true}));
 // The compact attribution control auto-expands itself the first time actual
 // attribution text is set (once tiles load), regardless of the compact
