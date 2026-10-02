@@ -746,18 +746,28 @@ const geolocate = new maplibregl.GeolocateControl({
   fitBoundsOptions: {maxZoom: 15},
 });
 map.addControl(geolocate, 'top-left');
+let autoLocating = true;
 let toldOutsideToronto = false;
-geolocate.on('geolocate', (e) => {
-  const {longitude, latitude} = e.coords;
-  const inToronto = longitude >= -79.75 && longitude <= -79.05 && latitude >= 43.53 && latitude <= 43.90;
-  if (inToronto || toldOutsideToronto) return;
+map.getContainer().addEventListener('click', (e) => {
+  if (e.target.closest('.maplibregl-ctrl-geolocate')) autoLocating = false;
+}, true);
+geolocate.on('outofmaxbounds', () => {
+  if (toldOutsideToronto) return;
   toldOutsideToronto = true;
-  map.jumpTo({center: [-79.3832, 43.6532], zoom: 12.2});
   showToast("You're outside Toronto, so your location isn't shown on this map.");
 });
 geolocate.on('error', (e) => {
-  if (e.code === 1) showToast('Location is blocked. Allow it in your browser settings to see where you are.', true);
+  if (e.code === 1 && !autoLocating) showToast('Location is blocked. Allow it in your browser settings to see where you are.', true);
 });
+// Locate on load unless the visitor has already blocked location; the
+// browser still asks for permission itself the first time.
+if (navigator.permissions && navigator.permissions.query){
+  navigator.permissions.query({name: 'geolocation'}).then((p) => {
+    if (p.state === 'denied') return;
+    if (map.loaded()) geolocate.trigger();
+    else map.once('load', () => geolocate.trigger());
+  }).catch(() => {});
+}
 map.addControl(new maplibregl.AttributionControl({compact: true}));
 // The compact attribution control auto-expands itself the first time actual
 // attribution text is set (once tiles load), regardless of the compact
