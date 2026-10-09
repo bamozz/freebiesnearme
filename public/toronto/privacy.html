@@ -122,13 +122,23 @@
   .legal li{font-size:14.5px;line-height:1.65;color:var(--ink);margin-bottom:6px;}
   .legal a{color:var(--teal);text-decoration:none;font-weight:600;}
   .legal a:hover{text-decoration:underline;}
+  /* ===== Toronto flag colours: blue, red, white ===== */
+  :root{--flag-blue:#274490;--flag-blue-dark:#1C3270;}
+  nav{box-shadow:inset 0 3px 0 var(--flag-blue);}
+  footer{box-shadow:inset 0 3px 0 var(--flag-blue);}
+  .nav-links .on{color:var(--flag-blue);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;}
+  .tab-item.on{color:var(--flag-blue);}
+  .btn-solid{background:var(--flag-blue);}
+  .btn-solid:hover{background:var(--flag-blue-dark);}
+  .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--flag-blue);}
+  ::selection{background:rgba(39,68,144,0.18);}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <a class="logo" href="/toronto">Freebies Near Me</a>
+    <a class="logo" href="/toronto">Freebies Near Me <span class="logo-city">Toronto</span></a>
     <a class="btn-solid" href="/toronto">Back to map</a>
   </div>
 </nav>
@@ -220,7 +230,7 @@
 
 <footer>
   <div class="footer-inner">
-    <a class="logo" href="/toronto">Freebies Near Me</a>
+    <a class="logo" href="/toronto">Freebies Near Me <span class="logo-city">Toronto</span></a>
     <div class="footer-links">
       <a class="feedback-link" href="/toronto/advertise">Advertise</a>
       <a class="feedback-link" href="/toronto/feedback">Feedback</a>

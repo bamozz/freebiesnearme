@@ -54,7 +54,7 @@ export default async function CalendarPage() {
     <div className="hub-wrap">
       <div className="hub-hero-row">
         <div>
-          <h1 className="hub-title display">Free stuff and free things to do in Toronto, by date</h1>
+          <h1 className="hub-title display">Free stuff and free things to do in <span className="city-name">Toronto</span>, by date</h1>
           <p className="hub-sub">
             Browse what&apos;s on by date.
           </p>

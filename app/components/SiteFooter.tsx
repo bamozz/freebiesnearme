@@ -12,7 +12,7 @@ export default function SiteFooter({
   return (
     <footer>
       <div className="footer-inner">
-        <a className="logo" href="/toronto">Freebies Near Me</a>
+        <a className="logo" href="/toronto">Freebies Near Me <span className="logo-city">Toronto</span></a>
         <div className="footer-links">
           <a className="feedback-link" href="/toronto/advertise">Advertise</a>
           <a className="feedback-link" href="/toronto/feedback">Feedback</a>
