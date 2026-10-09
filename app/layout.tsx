@@ -128,7 +128,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lightboxInstaBadge.classList.remove('show');
     }
     document.addEventListener('click', function(e){
-      var thumb = e.target.closest && e.target.closest('.card-thumb');
+      var thumb = e.target.closest && e.target.closest('.card-thumb, .card-media');
       if (thumb && thumb.dataset.image){
         e.stopPropagation();
         openLightbox(thumb.dataset.image, thumb.dataset.insta || null);

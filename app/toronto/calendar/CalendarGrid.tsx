@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { TORONTO_TZ, hasClockTime, torontoDateKey, formatTimeRange } from '@/lib/datetime';
 import { CATEGORY_COLOR, CATEGORY_LABEL } from '@/lib/categories';
-import { stripFreeWord, directionsUrlForStop } from '@/lib/listing-display';
+import { stripFreeWord, directionsUrlForStop, buildImageAlt } from '@/lib/listing-display';
 import type { GroupedListing, ListingStop } from '@/lib/group-listings';
 
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -203,11 +203,28 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                       const stops = stopsOnDay(listing, dayKey);
                       return (
                         <li className="cal-day-item" key={listing.id}>
-                          <span className="tag cat" style={{ color: CATEGORY_COLOR[listing.category] }}>
-                            {CATEGORY_LABEL[listing.category]}
-                          </span>
-                          <div className="cal-day-item-what">{stripFreeWord(listing.what)}</div>
-                          <div className="cal-day-item-brand">{listing.brand}</div>
+                          <div className={`card-main${listing.image_url ? '' : ' no-media'}`}>
+                            {listing.image_url && (
+                              <div
+                                className="card-media"
+                                data-image={listing.image_url}
+                                data-insta={listing.insta_url ?? ''}
+                                data-image-source={listing.image_source ?? ''}
+                                data-fit={listing.image_fit ?? ''}
+                                style={listing.image_fit === 'contain' ? { background: `${CATEGORY_COLOR[listing.category]}1F` } : undefined}
+                              >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={listing.image_url} alt={buildImageAlt(listing)} loading="lazy" />
+                              </div>
+                            )}
+                            <div className="card-content">
+                              <span className="tag cat" style={{ color: CATEGORY_COLOR[listing.category] }}>
+                                {CATEGORY_LABEL[listing.category]}
+                              </span>
+                              <div className="cal-day-item-what">{stripFreeWord(listing.what)}</div>
+                              <div className="cal-day-item-brand">{listing.brand}</div>
+                            </div>
+                          </div>
                           {listing.description && <div className="card-description">{listing.description}</div>}
 
                           {stops.length > 1 ? (

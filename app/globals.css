@@ -185,6 +185,18 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
 .card-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
 .card-thumb[data-fit="contain"] img{object-fit:contain;}
 .card-thumb[data-fit="left"] img{object-position:left center;}
+/* Image slot used on the calendar day panel: the picture sits left of the
+   category, title and brand. Same rules as the home page card. */
+.card-main{display:grid;grid-template-columns:clamp(84px,34%,130px) minmax(0,1fr);gap:12px;align-items:start;margin-bottom:8px;}
+.card-main.no-media{grid-template-columns:minmax(0,1fr);}
+.card-media{
+  aspect-ratio:1/1;width:100%;border-radius:10px;overflow:hidden;
+  border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.card-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.card-media[data-fit="contain"] img{object-fit:contain;}
+.card-media[data-fit="left"] img{object-position:left center;}
+.card-content{min-width:0;}
 .card-meta{
   display:flex;flex-direction:column;gap:4px;
   border-top:1.5px dashed #D6D1BF;padding-top:8px;margin-top:8px;
