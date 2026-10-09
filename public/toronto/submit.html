@@ -458,7 +458,7 @@
   const photoFieldWrap = document.getElementById('photoFieldWrap');
   function renderPhotoField(){
     if (pendingPhoto){
-      photoFieldWrap.innerHTML = `<div class="photo-preview"><img src="${pendingPhoto.previewUrl}"><span class="photo-remove" id="photoRemoveBtn">Remove</span></div>`;
+      photoFieldWrap.innerHTML = `<div class="photo-preview"><img src="${pendingPhoto.previewUrl}" alt="Preview of your photo for freebiesnearme"><span class="photo-remove" id="photoRemoveBtn">Remove</span></div>`;
       document.getElementById('photoRemoveBtn').onclick = () => {
         URL.revokeObjectURL(pendingPhoto.previewUrl);
         pendingPhoto = null;

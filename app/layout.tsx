@@ -65,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="lightbox" id="lightbox">
           <span className="lightbox-close" id="lightboxClose">&times;</span>
           <div className="lightbox-frame">
-            <img id="lightboxImg" src="" alt="Photo shared by a user" />
+            <img id="lightboxImg" src="" alt="Event photo on freebiesnearme" />
             <a
               className="lightbox-insta-badge"
               id="lightboxInstaBadge"

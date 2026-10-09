@@ -45,6 +45,8 @@ export interface Listing {
   moderation_status: ModerationStatus;
   created_at: string; // ISO timestamptz
   image_url: string | null;
+  // page the image was sourced from (credit); null for user-uploaded images
+  image_source: string | null;
   insta_url: string | null;
   group_id: string | null;
   signup_url: string | null;

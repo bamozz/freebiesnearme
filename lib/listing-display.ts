@@ -20,7 +20,7 @@ export function stripFreeWord(text: string | null | undefined): string {
 
 export function buildImageAlt(listing: Listing): string {
   const what = stripFreeWord(listing.what);
-  return `${listing.brand} - ${what} in ${listing.neighbourhood}, Toronto | Freebies Near Me`;
+  return `${listing.brand} - ${what} in ${listing.neighbourhood}, Toronto | freebiesnearme`;
 }
 
 function directionsUrlFor(address: string | null, neighbourhood: string, lat: number, lng: number): string {
