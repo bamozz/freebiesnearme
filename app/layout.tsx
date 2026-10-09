@@ -56,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <InstallBanner />
         {children}
 
-        {/* Shared lightbox for any .card-thumb rendered by a page (e.g. the
+        {/* Shared lightbox for any .card-media rendered by a page (e.g. the
             pSEO hub page's listing cards). Ported from public/toronto/
             index.html's lightbox - lives here in the root layout, driven by
             a plain delegated-click script below, so individual pages (which
@@ -128,7 +128,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lightboxInstaBadge.classList.remove('show');
     }
     document.addEventListener('click', function(e){
-      var thumb = e.target.closest && e.target.closest('.card-thumb, .card-media');
+      var thumb = e.target.closest && e.target.closest('.card-media');
       if (thumb && thumb.dataset.image){
         e.stopPropagation();
         openLightbox(thumb.dataset.image, thumb.dataset.insta || null);

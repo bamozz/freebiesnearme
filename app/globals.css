@@ -177,16 +177,9 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
 .card-what{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;line-height:1.3;}
 .card-brand{font-size:13px;color:var(--muted);font-weight:600;margin:0 0 8px;line-height:1.35;}
 .card-description{font-size:12.5px;font-weight:500;color:var(--muted);line-height:1.4;margin:8px 0;}
-.card.has-thumb .card-text{margin-right:66px;min-height:56px;}
-.card-thumb{
-  position:absolute;top:44px;right:16px;width:56px;height:56px;
-  border-radius:8px;overflow:hidden;border:1px solid var(--line);cursor:pointer;
-}
-.card-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.card-thumb[data-fit="contain"] img{object-fit:contain;}
-.card-thumb[data-fit="left"] img{object-position:left center;}
-/* Image slot used on the calendar day panel: the picture sits left of the
-   category, title and brand. Same rules as the home page card. */
+/* Image slot: the picture sits left of the category, status, title and
+   brand (hub cards and the calendar day panel). Same rules as the home page
+   card. */
 .card-main{display:grid;grid-template-columns:clamp(84px,34%,130px) minmax(0,1fr);gap:12px;align-items:start;margin-bottom:8px;}
 .card-main.no-media{grid-template-columns:minmax(0,1fr);}
 .card-media{
@@ -197,6 +190,8 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
 .card-media[data-fit="contain"] img{object-fit:contain;}
 .card-media[data-fit="left"] img{object-position:left center;}
 .card-content{min-width:0;}
+.card-content .card-top{flex-wrap:wrap;}
+.card-content .card-brand{margin:0 0 6px;}
 .card-meta{
   display:flex;flex-direction:column;gap:4px;
   border-top:1.5px dashed #D6D1BF;padding-top:8px;margin-top:8px;

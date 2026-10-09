@@ -268,30 +268,41 @@ export default async function HubPage({ params }: Props) {
               return (
                 <li
                   key={listing.id}
-                  className={`card${listing.sponsored ? ' sponsored' : ''}${listing.image_url ? ' has-thumb' : ''}`}
+                  className={`card${listing.sponsored ? ' sponsored' : ''}`}
                   style={listing.sponsored ? undefined : { borderLeftColor: CATEGORY_COLOR[listing.category] }}
                 >
                   {listing.sponsored && <div className="sponsored-flag">Sponsored</div>}
-                  <div className="card-top">
-                    <div className="tag-row">
-                      <span className="tag cat" style={{ color: CATEGORY_COLOR[listing.category] }}>
-                        {CATEGORY_LABEL[listing.category]}
-                      </span>
+                  <div className={`card-main${listing.image_url ? '' : ' no-media'}`}>
+                    {listing.image_url && (
+                      <div
+                        className="card-media"
+                        data-image={listing.image_url}
+                        data-insta={listing.insta_url ?? ''}
+                        data-image-source={listing.image_source ?? ''}
+                        data-fit={listing.image_fit ?? ''}
+                        style={listing.image_fit === 'contain' ? { background: `${CATEGORY_COLOR[listing.category]}1F` } : undefined}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={listing.image_url} alt={buildImageAlt(listing)} loading="lazy" />
+                      </div>
+                    )}
+                    <div className="card-content">
+                      <div className="card-top">
+                        <div className="tag-row">
+                          <span className="tag cat" style={{ color: CATEGORY_COLOR[listing.category] }}>
+                            {CATEGORY_LABEL[listing.category]}
+                          </span>
+                        </div>
+                        <span className={`status-badge ${status}`}>
+                          {status !== 'ended' && <span className="dot" />}
+                          {statusLabel(status, listing.start_time)}
+                        </span>
+                      </div>
+                      <div className="card-text">
+                        <div className="card-what">{stripFreeWord(listing.what)}</div>
+                        <div className="card-brand">{listing.brand}</div>
+                      </div>
                     </div>
-                    <span className={`status-badge ${status}`}>
-                      {status !== 'ended' && <span className="dot" />}
-                      {statusLabel(status, listing.start_time)}
-                    </span>
-                  </div>
-                  {listing.image_url && (
-                    <div className="card-thumb" data-image={listing.image_url} data-insta={listing.insta_url ?? ''} data-image-source={listing.image_source ?? ''} data-fit={listing.image_fit ?? ''}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={listing.image_url} alt={buildImageAlt(listing)} loading="lazy" />
-                    </div>
-                  )}
-                  <div className="card-text">
-                    <div className="card-what">{stripFreeWord(listing.what)}</div>
-                    <div className="card-brand">{listing.brand}</div>
                   </div>
                   {listing.description && <div className="card-description">{listing.description}</div>}
                   {listing.stops.length > 1 && (
