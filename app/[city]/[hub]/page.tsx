@@ -284,7 +284,7 @@ export default async function HubPage({ params }: Props) {
                     </span>
                   </div>
                   {listing.image_url && (
-                    <div className="card-thumb" data-image={listing.image_url} data-insta={listing.insta_url ?? ''} data-image-source={listing.image_source ?? ''}>
+                    <div className="card-thumb" data-image={listing.image_url} data-insta={listing.insta_url ?? ''} data-image-source={listing.image_source ?? ''} data-fit={listing.image_fit ?? ''}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={listing.image_url} alt={buildImageAlt(listing)} loading="lazy" />
                     </div>
