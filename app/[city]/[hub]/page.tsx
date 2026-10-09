@@ -240,9 +240,11 @@ export default async function HubPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <div className="hub-wrap">
         <h1 className="hub-title display">
-          {resolved.type === 'category'
-            ? `Free ${hubLabel} Pop-ups, Giveaways & Samples in ${cityLabel}`
-            : `Free Pop-ups, Giveaways & Samples at ${hubLabel}, ${cityLabel}`}
+          {resolved.type === 'category' ? (
+            <>Free {hubLabel} Pop-ups, Giveaways &amp; Samples in <span className="city-name">{cityLabel}</span></>
+          ) : (
+            <>Free Pop-ups, Giveaways &amp; Samples at {hubLabel}, <span className="city-name">{cityLabel}</span></>
+          )}
         </h1>
         <div className="hub-badges">
           <span className="hub-freshness-badge">&#10003; Verified active today: {currentFullDate()}</span>

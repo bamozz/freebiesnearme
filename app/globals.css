@@ -354,4 +354,5 @@ footer{box-shadow:inset 0 3px 0 var(--flag-blue);}
 .tab-item.on{color:var(--flag-blue);}
 .btn-solid{background:var(--flag-blue);}
 .btn-solid:hover{background:var(--flag-blue-dark);}
+.city-name{color:var(--flag-blue);}
 ::selection{background:rgba(39,68,144,0.18);}
