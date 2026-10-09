@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <nav>
           <div className="nav-inner">
-            <a className="logo" href="/toronto">Freebies Near Me</a>
+            <a className="logo" href="/toronto">Freebies Near Me <span className="logo-city">Toronto</span></a>
             <div className="nav-links">
               <a href="/toronto">Explore</a>
               <a href="/toronto/map">Map</a>
