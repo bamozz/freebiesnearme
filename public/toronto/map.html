@@ -138,7 +138,7 @@
     border:1px solid var(--line);cursor:pointer;white-space:nowrap;background:#fff;color:var(--muted);
     flex-shrink:0;display:flex;align-items:center;gap:6px;
   }
-  .cat-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .cat-chip.active{background:var(--flag-blue);color:#fff;border-color:var(--flag-blue);}
   .cat-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);}
   .cat-chip.active .pulse{background:#5FE3C4;}
 
@@ -316,7 +316,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const categories = [
-  {id:'all', label:'All categories', color:'#151B21'},
+  {id:'all', label:'All categories', color:'#274490'},
   {id:'food', label:'Food & Drink', color:'#EF5B4E'},
   {id:'beauty', label:'Beauty', color:'#D6579A'},
   {id:'fashion', label:'Fashion', color:'#3E6FA8'},

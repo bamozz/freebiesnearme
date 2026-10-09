@@ -181,7 +181,7 @@
     font-size:13px;font-weight:600;padding:7px 13px;border-radius:16px;
     border:1px solid var(--line);cursor:pointer;background:#fff;display:flex;align-items:center;gap:6px;
   }
-  .status-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .status-chip.active{background:var(--flag-blue);color:#fff;border-color:var(--flag-blue);}
   .status-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);}
   .status-chip.active .pulse{background:#5FE3C4;}
   .chip-row{
@@ -199,7 +199,7 @@
     border:1px solid var(--line);cursor:pointer;color:var(--muted);background:#fff;
   }
   .cat-chip.active{color:#fff;border-color:transparent;}
-  .cat-chip.location.active{background:var(--ink);}
+  .cat-chip.location.active{background:var(--flag-blue);}
 
   /* ===== Layout ===== */
   .layout{
@@ -622,7 +622,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const categories = [
-  {id:'all', label:'All categories', color:'#151B21'},
+  {id:'all', label:'All categories', color:'#274490'},
   {id:'food', label:'Food & Drink', color:'#EF5B4E'},
   {id:'beauty', label:'Beauty', color:'#D6579A'},
   {id:'fashion', label:'Fashion', color:'#3E6FA8'},
