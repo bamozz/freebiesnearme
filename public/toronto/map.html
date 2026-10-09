@@ -220,6 +220,23 @@
   .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--flag-blue);}
   .logo{align-items:baseline;gap:0.25em;}
   ::selection{background:rgba(39,68,144,0.18);}
+  /* ===== Collapsible filters (mobile) ===== */
+  .filters-toggle-wrap{display:none;border-bottom:1px solid var(--line);background:#fff;flex-shrink:0;z-index:400;padding:9px 16px;}
+  .filters-toggle{
+    width:100%;display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;
+    font-size:13.5px;font-weight:600;color:var(--ink);background:#fff;
+    border:1px solid var(--line);border-radius:10px;padding:9px 14px;cursor:pointer;text-align:left;
+  }
+  .filters-toggle-label{flex:1;}
+  .filters-toggle-count{min-width:20px;height:20px;border-radius:10px;background:var(--flag-blue);color:#fff;font-size:12px;line-height:20px;text-align:center;padding:0 6px;}
+  .filters-toggle-chevron{width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin-top:-3px;transition:transform .15s ease;}
+  .filters-toggle[aria-expanded="true"] .filters-toggle-chevron{transform:rotate(-135deg);margin-top:3px;}
+  .filters-panel{flex-shrink:0;}
+  @media (max-width:760px){
+    .filters-toggle-wrap{display:block;}
+    .filters-panel{display:none;}
+    .filters-panel.open{display:block;}
+  }
 </style>
 </head>
 <body>
@@ -299,8 +316,18 @@
   <a href="/toronto/calendar" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M18.438 4.954H16.5V3.546c0-.262-.23-.512-.5-.5a.51.51 0 0 0-.5.5v1.408h-7V3.546c0-.262-.23-.512-.5-.5a.51.51 0 0 0-.5.5v1.408H5.562a2.503 2.503 0 0 0-2.5 2.5v11c0 1.379 1.122 2.5 2.5 2.5h12.875c1.379 0 2.5-1.121 2.5-2.5v-11a2.5 2.5 0 0 0-2.499-2.5m-12.876 1H7.5v.592c0 .262.23.512.5.5c.271-.012.5-.22.5-.5v-.592h7v.592c0 .262.23.512.5.5c.271-.012.5-.22.5-.5v-.592h1.937c.827 0 1.5.673 1.5 1.5v1.584H4.062V7.454c0-.827.673-1.5 1.5-1.5m12.876 14H5.562c-.827 0-1.5-.673-1.5-1.5v-8.416h15.875v8.416a1.5 1.5 0 0 1-1.499 1.5"/></svg></span>Calendar</a>
 </nav>
 
-<div class="filter-bar" id="catFilters"></div>
-<div class="filter-bar" id="locationFilters"></div>
+<div class="filters-toggle-wrap">
+  <button type="button" class="filters-toggle" id="filtersToggle" aria-expanded="false" aria-controls="filtersPanel">
+    <span class="filters-toggle-label">Filters</span>
+    <span class="filters-toggle-count" id="filtersCount" hidden>0</span>
+    <span class="filters-toggle-chevron" aria-hidden="true"></span>
+  </button>
+</div>
+
+<div class="filters-panel" id="filtersPanel">
+  <div class="filter-bar" id="catFilters"></div>
+  <div class="filter-bar" id="locationFilters"></div>
+</div>
 
 <div class="map-wrap">
   <div id="map"></div>
@@ -679,7 +706,21 @@ function transformGroup(rows){
 // from their true position. Toronto Happy Hour's map (a similar Toronto
 // listings map) takes the same approach: overlapping pins just render on
 // top of each other, and zooming in naturally separates them.
+function updateFiltersCount(){
+  const n = activeLocations.length + activeCats.length;
+  const el = document.getElementById('filtersCount');
+  el.hidden = n === 0;
+  el.textContent = n;
+}
+document.getElementById('filtersToggle').addEventListener('click', () => {
+  const panel = document.getElementById('filtersPanel');
+  const open = panel.classList.toggle('open');
+  document.getElementById('filtersToggle').setAttribute('aria-expanded', open ? 'true' : 'false');
+  setTimeout(() => map.resize(), 0);
+});
+
 function renderMarkers(){
+  updateFiltersCount();
   markers.forEach(m => m.remove());
   markers = [];
   // Pins only ever show currently-live events - the map is meant to answer
