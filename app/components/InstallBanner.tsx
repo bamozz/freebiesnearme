@@ -1,5 +1,3 @@
-const PROD_HOSTS = ['freebiesnearme.app', 'www.freebiesnearme.app'];
-
 export default function InstallBanner() {
   return (
     <div className="install-banner" id="installBanner">
@@ -17,8 +15,6 @@ export default function InstallBanner() {
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: `(function(){
-  var PROD_HOSTS = ${JSON.stringify(PROD_HOSTS)};
-  if (PROD_HOSTS.indexOf(location.hostname) !== -1) return;
   if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(function(){}); }
   var isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
   if (isStandalone) return;
@@ -28,10 +24,12 @@ export default function InstallBanner() {
   var btnEl = document.getElementById('installBannerBtn');
   var closeEl = document.getElementById('installBannerClose');
   if (!banner) return;
+  try { if (localStorage.getItem('installBannerDismissed')) return; } catch(e){}
 
   function show(){ banner.classList.add('show'); }
   function dismiss(){
     banner.classList.remove('show');
+    try { localStorage.setItem('installBannerDismissed', '1'); } catch(e){}
   }
 
   var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);

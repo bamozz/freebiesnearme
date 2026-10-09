@@ -168,8 +168,6 @@
 </div>
 <script>
 (function(){
-  var PROD_HOSTS = ['freebiesnearme.app','www.freebiesnearme.app'];
-  if (PROD_HOSTS.indexOf(location.hostname) !== -1) return;
   if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(function(){}); }
   var isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
   if (isStandalone) return;
@@ -179,10 +177,12 @@
   var btnEl = document.getElementById('installBannerBtn');
   var closeEl = document.getElementById('installBannerClose');
   if (!banner) return;
+  try { if (localStorage.getItem('installBannerDismissed')) return; } catch(e){}
 
   function show(){ banner.classList.add('show'); }
   function dismiss(){
     banner.classList.remove('show');
+    try { localStorage.setItem('installBannerDismissed', '1'); } catch(e){}
   }
 
   var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -246,6 +246,17 @@
   // Newest first. Add a new object to the top of this array whenever you
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
+    {
+      date: 'October 9, 2026',
+      emoji: '\u{1F4F2}',
+      title: 'Add Freebies Near Me to your home screen',
+      blurb: "You'll now see a small prompt offering to install Freebies Near Me on your phone's home screen, so the freebies are one tap away. On iPhone it shows how to add it from the Share menu. Close it once and it stays closed.",
+      sections: [
+        { heading: 'New', tone: 'new', emoji: '\u{1F389}', items: [
+          { label: 'Install prompt', text: 'A one-tap install prompt on Android and a how-to on iPhone, shown on every page until you dismiss it.' },
+        ]},
+      ],
+    },
     {
       date: 'October 2, 2026',
       emoji: '\u{1F4CD}',
