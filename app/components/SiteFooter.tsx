@@ -1,3 +1,5 @@
+import { getCity } from '@/lib/cities';
+
 type CrosslinkItem = { slug: string; label: string };
 
 export default function SiteFooter({
@@ -9,17 +11,19 @@ export default function SiteFooter({
   categories: CrosslinkItem[];
   neighbourhoods: CrosslinkItem[];
 }) {
+  const cityName = getCity(city)?.name ?? 'Toronto';
+  const base = `/${getCity(city)?.slug ?? 'toronto'}`;
   return (
     <footer>
       <div className="footer-inner">
-        <a className="logo" href="/toronto">Freebies Near Me <span className="logo-city">Toronto</span></a>
+        <a className="logo" href={base}>Freebies Near Me <span className="logo-city">{cityName}</span></a>
         <div className="footer-links">
-          <a className="feedback-link" href="/toronto/advertise">Advertise</a>
-          <a className="feedback-link" href="/toronto/feedback">Feedback</a>
-          <a className="feedback-link" href="/toronto/changelog">Changelog</a>
-          <a className="feedback-link" href="/toronto/about">About</a>
-          <a className="feedback-link" href="/toronto/privacy">Privacy</a>
-          <a className="feedback-link" href="/toronto/terms">Terms</a>
+          <a className="feedback-link" href={`${base}/advertise`}>Advertise</a>
+          <a className="feedback-link" href={`${base}/feedback`}>Feedback</a>
+          <a className="feedback-link" href={`${base}/changelog`}>Changelog</a>
+          <a className="feedback-link" href={`${base}/about`}>About</a>
+          <a className="feedback-link" href={`${base}/privacy`}>Privacy</a>
+          <a className="feedback-link" href={`${base}/terms`}>Terms</a>
         </div>
         <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
         <div className="footer-hubs">

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import BottomTabbar from '@/app/components/BottomTabbar';
+import SiteHeader from '@/app/components/SiteHeader';
 import InstallBanner from '@/app/components/InstallBanner';
 import './globals.css';
 
@@ -39,19 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap"
           rel="stylesheet"
         />
-        <nav>
-          <div className="nav-inner">
-            <a className="logo" href="/toronto">Freebies Near Me <span className="logo-city">Toronto</span></a>
-            <div className="nav-links">
-              <a href="/toronto">Explore</a>
-              <a href="/toronto/map">Map</a>
-              <a href="/toronto/calendar">Calendar</a>
-            </div>
-            <div className="nav-right">
-              <a className="btn-solid" href="/toronto/submit">Submit an event</a>
-            </div>
-          </div>
-        </nav>
+        <SiteHeader />
         <BottomTabbar />
         <InstallBanner />
         {children}

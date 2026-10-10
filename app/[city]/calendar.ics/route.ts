@@ -1,4 +1,5 @@
 import { createServerClient } from '@/lib/supabase';
+import { getCity } from '@/lib/cities';
 import { buildFeedIcs, computeListingStatus } from '@/lib/listing-display';
 import type { Listing } from '@/types/pseo_types';
 
@@ -13,12 +14,14 @@ import type { Listing } from '@/types/pseo_types';
 // to serving stale data if we did.
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(_request: Request, { params }: { params: Promise<{ city: string }> }) {
+  const city = getCity((await params).city);
+  if (!city) return new Response('Not found', { status: 404 });
   const supabase = createServerClient();
   const { data: listings } = await supabase
     .from('listings')
     .select('*')
-    .eq('city_slug', 'toronto')
+    .eq('city_slug', city.slug)
     .eq('is_active', true)
     .eq('moderation_status', 'approved')
     .order('start_time', { ascending: true })
@@ -28,13 +31,13 @@ export async function GET() {
     (listing) => computeListingStatus(listing.start_time, listing.end_time) !== 'ended'
   );
 
-  const ics = buildFeedIcs(items);
+  const ics = buildFeedIcs(items, city);
 
   return new Response(ics, {
     status: 200,
     headers: {
       'Content-Type': 'text/calendar; charset=utf-8',
-      'Content-Disposition': 'inline; filename="freebiesnearme-toronto.ics"',
+      'Content-Disposition': `inline; filename="freebiesnearme-${city.slug}.ics"`,
       'Cache-Control': 'public, max-age=1800',
     },
   });

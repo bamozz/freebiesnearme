@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from 'react';
 import { TORONTO_TZ, hasClockTime, torontoDateKey, formatTimeRange } from '@/lib/datetime';
 import { CATEGORY_COLOR, CATEGORY_LABEL } from '@/lib/categories';
 import { stripFreeWord, directionsUrlForStop, buildImageAlt } from '@/lib/listing-display';
+import { cityForListing } from '@/lib/cities';
 import type { GroupedListing, ListingStop } from '@/lib/group-listings';
 
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -236,7 +237,7 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                                       {formatTimeRange(w.start_time, w.end_time)} &middot; {stop.neighbourhood}
                                     </div>
                                   ))}
-                                  <a href={directionsUrlForStop(stop)} target="_blank" rel="noopener" className="directions-link">
+                                  <a href={directionsUrlForStop(stop, cityForListing(listing))} target="_blank" rel="noopener" className="directions-link">
                                     &#128205; Get directions
                                   </a>
                                 </div>
@@ -249,7 +250,7 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                                   {formatTimeRange(w.start_time, w.end_time)} &middot; {stops[0].neighbourhood}
                                 </div>
                               ))}
-                              <a href={directionsUrlForStop(stops[0])} target="_blank" rel="noopener" className="directions-link">
+                              <a href={directionsUrlForStop(stops[0], cityForListing(listing))} target="_blank" rel="noopener" className="directions-link">
                                 &#128205; Get directions
                               </a>
                             </>

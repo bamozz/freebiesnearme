@@ -11,6 +11,9 @@ function countUrls(text) {
   return ((text || '').match(urlPattern) || []).length;
 }
 
+// Cities the site runs in (keep in sync with lib/cities.ts).
+const ALLOWED_CITY_SLUGS = ['toronto', 'new-york'];
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -107,6 +110,10 @@ export default async function handler(req, res) {
     insta_url: p.insta_url || null,
     signup_url: p.signup_url || null,
     group_id: p.group_id || null,
+    // Which city's pages the listing belongs to. Anything not on the
+    // allowlist falls back to the column default (toronto) rather than
+    // trusting free text from the client.
+    city_slug: ALLOWED_CITY_SLUGS.includes(p.city_slug) ? p.city_slug : 'toronto',
   }));
 
   const insertRes = await fetch(`${process.env.SUPABASE_URL}/rest/v1/listings`, {

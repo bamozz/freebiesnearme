@@ -1,4 +1,5 @@
 import type { Listing } from '@/types/pseo_types';
+import { cityForListing, CITIES, type CityConfig } from '@/lib/cities';
 import { assumedEndIso, hasClockTime, torontoDateKey } from '@/lib/datetime';
 
 // Ported from the stripFreeWord/buildImageAlt/directionsUrl/availInfo/
@@ -20,24 +21,33 @@ export function stripFreeWord(text: string | null | undefined): string {
 
 export function buildImageAlt(listing: Listing): string {
   const what = stripFreeWord(listing.what);
-  return `${listing.brand} - ${what} in ${listing.neighbourhood}, Toronto | freebiesnearme`;
+  return `${listing.brand} - ${what} in ${listing.neighbourhood}, ${cityForListing(listing).name} | freebiesnearme`;
 }
 
-function directionsUrlFor(address: string | null, neighbourhood: string, lat: number, lng: number): string {
+// "Toronto, ON" / "New York, NY" - the city + region tail used in postal-style
+// addresses so a search lands in the right city.
+function placeSuffix(city: CityConfig): string {
+  return `${city.name}, ${city.region}`;
+}
+
+function directionsUrlFor(address: string | null, neighbourhood: string, lat: number, lng: number, city: CityConfig): string {
   const query = address
-    ? encodeURIComponent(`${address}, ${neighbourhood}, Toronto, ON`)
+    ? encodeURIComponent(`${address}, ${neighbourhood}, ${placeSuffix(city)}`)
     : `${lat},${lng}`;
   return `https://www.google.com/maps/search/?api=1&query=${query}`;
 }
 
 export function directionsUrl(listing: Listing): string {
-  return directionsUrlFor(listing.address, listing.neighbourhood, listing.lat, listing.lng);
+  return directionsUrlFor(listing.address, listing.neighbourhood, listing.lat, listing.lng, cityForListing(listing));
 }
 
 // Same as directionsUrl(), but for one stop of a multi-location grouped
 // listing (see lib/group-listings.ts) rather than a whole Listing row.
-export function directionsUrlForStop(stop: { address: string | null; neighbourhood: string; lat: number; lng: number }): string {
-  return directionsUrlFor(stop.address, stop.neighbourhood, stop.lat, stop.lng);
+export function directionsUrlForStop(
+  stop: { address: string | null; neighbourhood: string; lat: number; lng: number },
+  city: CityConfig = CITIES.toronto
+): string {
+  return directionsUrlFor(stop.address, stop.neighbourhood, stop.lat, stop.lng, city);
 }
 
 export function availInfo(listing: Listing): { cls: 'low' | 'ok'; text: string } | null {
@@ -131,9 +141,10 @@ export function buildGoogleCalendarUrl(listing: Listing): string {
   const start = toIcsUtc(listing.start_time);
   const end = toIcsUtc(listing.end_time || assumedEndIso(listing.start_time));
   const what = stripFreeWord(listing.what);
+  const suffix = placeSuffix(cityForListing(listing));
   const location = listing.address
-    ? `${listing.address}, ${listing.neighbourhood}, Toronto, ON`
-    : `${listing.neighbourhood}, Toronto, ON`;
+    ? `${listing.address}, ${listing.neighbourhood}, ${suffix}`
+    : `${listing.neighbourhood}, ${suffix}`;
   const params = new URLSearchParams({
     action: 'TEMPLATE',
     text: `${listing.brand} - ${what}`,
@@ -162,8 +173,9 @@ function buildVevent(listing: Listing, stamp: string): string {
   const what = stripFreeWord(listing.what);
   const summary = icsEscape(`${listing.brand} - ${what}`);
   const description = icsEscape(`${what} - free, hosted by ${listing.brand}, in ${listing.neighbourhood}.`);
+  const suffix = placeSuffix(cityForListing(listing));
   const location = icsEscape(
-    listing.address ? `${listing.address}, ${listing.neighbourhood}, Toronto, ON` : `${listing.neighbourhood}, Toronto, ON`
+    listing.address ? `${listing.address}, ${listing.neighbourhood}, ${suffix}` : `${listing.neighbourhood}, ${suffix}`
   );
 
   // A listing with no known clock time (the site's date-only convention -
@@ -195,10 +207,10 @@ function buildVevent(listing: Listing, stamp: string): string {
   ].join('\r\n');
 }
 
-// The full-site subscribable feed (app/toronto/calendar.ics/route.ts) -
+// The full-site subscribable feed (app/[city]/calendar.ics/route.ts) -
 // every currently active, not-yet-ended listing as one VEVENT each, so a
 // calendar app can sync the whole site rather than one listing at a time.
-export function buildFeedIcs(listings: Listing[]): string {
+export function buildFeedIcs(listings: Listing[], city: CityConfig = CITIES.toronto): string {
   const stamp = toIcsUtc(new Date().toISOString());
   const vevents = listings.map((listing) => buildVevent(listing, stamp));
   return [
@@ -207,8 +219,8 @@ export function buildFeedIcs(listings: Listing[]): string {
     'PRODID:-//Freebies Near Me//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:Freebies Near Me - Toronto',
-    'X-WR-CALDESC:Free giveaways, samples, and pop up events happening in Toronto.',
+    `X-WR-CALNAME:Freebies Near Me - ${city.name}`,
+    `X-WR-CALDESC:Free giveaways, samples, and pop up events happening in ${city.name}.`,
     'REFRESH-INTERVAL;VALUE=DURATION:PT6H',
     ...vevents,
     'END:VCALENDAR',

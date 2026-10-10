@@ -1,16 +1,18 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { cityFromPathname } from '@/lib/cities';
 
 export default function BottomTabbar() {
   const pathname = usePathname();
-  const isMap = pathname === '/toronto/map';
-  const isCalendar = pathname.startsWith('/toronto/calendar');
+  const base = `/${cityFromPathname(pathname).slug}`;
+  const isMap = pathname === `${base}/map`;
+  const isCalendar = pathname.startsWith(`${base}/calendar`);
   const isExplore = !isMap && !isCalendar;
 
   return (
     <nav className="bottom-tabbar">
-      <a href="/toronto" className={`tab-item${isExplore ? ' on' : ''}`}>
+      <a href={base} className={`tab-item${isExplore ? ' on' : ''}`}>
         <span className="tab-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
             <path d="M0 0h24v24H0z" fill="none" />
@@ -22,7 +24,7 @@ export default function BottomTabbar() {
         </span>
         Explore
       </a>
-      <a href="/toronto/map" className={`tab-item${isMap ? ' on' : ''}`}>
+      <a href={`${base}/map`} className={`tab-item${isMap ? ' on' : ''}`}>
         <span className="tab-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
             <path d="M0 0h24v24H0z" fill="none" />
@@ -34,7 +36,7 @@ export default function BottomTabbar() {
         </span>
         Map
       </a>
-      <a href="/toronto/calendar" className={`tab-item${isCalendar ? ' on' : ''}`}>
+      <a href={`${base}/calendar`} className={`tab-item${isCalendar ? ' on' : ''}`}>
         <span className="tab-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
             <path d="M0 0h24v24H0z" fill="none" />

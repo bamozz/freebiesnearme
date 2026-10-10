@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { createServerClient } from '@/lib/supabase';
+import { CITIES } from '@/lib/cities';
 import type { PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
 const BASE_URL = 'https://www.freebiesnearme.app';
@@ -10,20 +11,20 @@ export const revalidate = 3600;
 
 // Core static pages use their real live paths (/toronto, /toronto/map,
 // /toronto/submit) - bare /map and /submit 404 on this site, and / only
-// 302-redirects to /toronto, so listing it directly is the correct
-// canonical entry for a sitemap rather than the redirecting root.
+// 302-redirects to /toronto, so listing the city homes directly is the
+// correct canonical entry for a sitemap rather than the redirecting root.
 function staticRoutes(): MetadataRoute.Sitemap {
-  return [
-    { url: `${BASE_URL}/toronto`, changeFrequency: 'daily', priority: 1.0 },
-    { url: `${BASE_URL}/toronto/map`, changeFrequency: 'daily', priority: 0.8 },
-    { url: `${BASE_URL}/toronto/calendar`, changeFrequency: 'daily', priority: 0.7 },
-    { url: `${BASE_URL}/toronto/submit`, changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${BASE_URL}/toronto/advertise`, changeFrequency: 'monthly', priority: 0.4 },
-    { url: `${BASE_URL}/toronto/about`, changeFrequency: 'monthly', priority: 0.4 },
-    { url: `${BASE_URL}/toronto/changelog`, changeFrequency: 'weekly', priority: 0.3 },
-    { url: `${BASE_URL}/toronto/privacy`, changeFrequency: 'yearly', priority: 0.2 },
-    { url: `${BASE_URL}/toronto/terms`, changeFrequency: 'yearly', priority: 0.2 },
-  ];
+  return Object.keys(CITIES).flatMap((slug) => [
+    { url: `${BASE_URL}/${slug}`, changeFrequency: 'daily' as const, priority: 1.0 },
+    { url: `${BASE_URL}/${slug}/map`, changeFrequency: 'daily' as const, priority: 0.8 },
+    { url: `${BASE_URL}/${slug}/calendar`, changeFrequency: 'daily' as const, priority: 0.7 },
+    { url: `${BASE_URL}/${slug}/submit`, changeFrequency: 'monthly' as const, priority: 0.5 },
+    { url: `${BASE_URL}/${slug}/advertise`, changeFrequency: 'monthly' as const, priority: 0.4 },
+    { url: `${BASE_URL}/${slug}/about`, changeFrequency: 'monthly' as const, priority: 0.4 },
+    { url: `${BASE_URL}/${slug}/changelog`, changeFrequency: 'weekly' as const, priority: 0.3 },
+    { url: `${BASE_URL}/${slug}/privacy`, changeFrequency: 'yearly' as const, priority: 0.2 },
+    { url: `${BASE_URL}/${slug}/terms`, changeFrequency: 'yearly' as const, priority: 0.2 },
+  ]);
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

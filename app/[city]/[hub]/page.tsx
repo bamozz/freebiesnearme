@@ -5,7 +5,7 @@ import { createServerClient } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
 import { formatTimeRange, hasClockTime, TORONTO_TZ } from '@/lib/datetime';
 import { CATEGORIES, CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
-import { NEIGHBOURHOODS, NEIGHBOURHOOD_SLUG_LABEL } from '@/lib/neighbourhoods';
+import { getCity, neighbourhoodLabels, popularNeighbourhoods, type CityConfig } from '@/lib/cities';
 import SiteFooter from '@/app/components/SiteFooter';
 import {
   stripFreeWord,
@@ -20,20 +20,6 @@ import {
 import { groupListings } from '@/lib/group-listings';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
-// Curated subset of NEIGHBOURHOODS for the cross-link footer on every hub
-// page - linking to all ~39 would be link-heavy/spammy-looking rather than
-// useful, so this sticks to well-known, high-signal destinations.
-const POPULAR_NEIGHBOURHOOD_SLUGS = [
-  'the-well',
-  'yorkville',
-  'liberty-village',
-  'distillery-district',
-  'kensington-market',
-  'harbourfront',
-  'king-west',
-  'the-junction',
-];
-const POPULAR_NEIGHBOURHOODS = NEIGHBOURHOODS.filter((n) => POPULAR_NEIGHBOURHOOD_SLUGS.includes(n.slug));
 
 // Starter dynamic route for both category hubs (/toronto/free-coffee) and
 // neighbourhood hubs (/toronto/kensington-market) under one [hub] segment.
@@ -54,14 +40,14 @@ function titleCase(slug: string): string {
   return slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function hubDisplayLabel(hub: string, type: 'category' | 'neighbourhood'): string {
+function hubDisplayLabel(hub: string, type: 'category' | 'neighbourhood', city: CityConfig): string {
   if (type === 'category') return CATEGORY_SLUG_LABEL[hub] ?? titleCase(hub);
   // Prefer NEIGHBOURHOOD_SLUG_LABEL's proper casing/punctuation (e.g. "St.
   // Lawrence Market", "Church-Wellesley Village") over titleCase(), which
   // can't reconstruct those - titleCase() only stays as a fallback for a
   // neighbourhood with real listings that hasn't been added to the curated
   // list yet.
-  return NEIGHBOURHOOD_SLUG_LABEL[hub] ?? titleCase(hub);
+  return neighbourhoodLabels(city)[hub] ?? titleCase(hub);
 }
 
 // "Today" freshness signal for the <title> tag - computed fresh per
@@ -95,6 +81,8 @@ function buildMapUrl(city: string, hub: string, type: 'category' | 'neighbourhoo
 type Props = { params: Promise<{ city: string; hub: string }> };
 
 async function getHub(city: string, hub: string) {
+  const cityConfig = getCity(city);
+  if (!cityConfig) return null;
   const supabase = createServerClient();
 
   const { data: categoryStats } = await supabase
@@ -124,7 +112,7 @@ async function getHub(city: string, hub: string) {
   // 404s the moment it briefly has zero - even though CATEGORIES (a fixed,
   // known list, unlike neighbourhoods which are free-text) says it's a
   // real page. Synthesize an empty result instead of 404ing.
-  if (city === 'toronto' && CATEGORIES.some((c) => c.slug === hub)) {
+  if (CATEGORIES.some((c) => c.slug === hub)) {
     return {
       type: 'category' as const,
       stats: {
@@ -142,7 +130,7 @@ async function getHub(city: string, hub: string) {
   // allowlist of real places (mirrors the homepage's own filter-chip
   // list), so only those get an empty-state page instead of 404. An
   // arbitrary/mistyped slug not on that list still correctly 404s.
-  if (city === 'toronto' && NEIGHBOURHOODS.some((n) => n.slug === hub)) {
+  if (cityConfig.neighbourhoods.some((n) => n.slug === hub)) {
     return {
       type: 'neighbourhood' as const,
       stats: {
@@ -163,8 +151,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolved = await getHub(city, hub);
   if (!resolved) return {};
 
-  const label = hubDisplayLabel(hub, resolved.type);
-  const cityLabel = titleCase(city);
+  const cityConfig = getCity(city) as CityConfig;
+  const label = hubDisplayLabel(hub, resolved.type, cityConfig);
+  const cityLabel = cityConfig.name;
   const monthYear = currentMonthYear();
   const title =
     resolved.type === 'category'
@@ -229,8 +218,9 @@ export default async function HubPage({ params }: Props) {
   // guaranteed-blank filtered map, so it only shows when there's actually
   // something live to see there.
   const hasLiveListing = items.some((listing) => listing.groupStatus === 'live');
-  const hubLabel = hubDisplayLabel(hub, resolved.type);
-  const cityLabel = titleCase(city);
+  const cityConfig = getCity(city) as CityConfig;
+  const hubLabel = hubDisplayLabel(hub, resolved.type, cityConfig);
+  const cityLabel = cityConfig.name;
   const hubUrl = `https://freebiesnearme.app/${city}/${hub}`;
   const jsonLd = buildHubItemList(items, hubLabel, hubUrl);
 
@@ -318,7 +308,7 @@ export default async function HubPage({ params }: Props) {
                             ))}
                           </div>
                           <a
-                            href={directionsUrlForStop(stop)}
+                            href={directionsUrlForStop(stop, cityConfig)}
                             target="_blank"
                             rel="noopener"
                             className="directions-link"
@@ -370,7 +360,7 @@ export default async function HubPage({ params }: Props) {
                     )}
                     {listing.stops.length <= 1 && (
                       <a
-                        href={directionsUrlForStop(listing.stops[0])}
+                        href={directionsUrlForStop(listing.stops[0], cityConfig)}
                         target="_blank"
                         rel="noopener"
                         className="directions-link"
@@ -400,7 +390,7 @@ export default async function HubPage({ params }: Props) {
       <SiteFooter
         city={city}
         categories={CATEGORIES.filter((c) => c.slug !== hub)}
-        neighbourhoods={POPULAR_NEIGHBOURHOODS.filter((n) => n.slug !== hub)}
+        neighbourhoods={popularNeighbourhoods(cityConfig).filter((n) => n.slug !== hub)}
       />
     </>
   );

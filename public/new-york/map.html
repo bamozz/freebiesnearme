@@ -21,24 +21,24 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <!-- Vercel Speed Insights -->
 <script defer src="/_vercel/speed-insights/script.js"></script>
-<title>Map of Free Giveaways and Events in Toronto | Freebies Near Me</title>
-<meta name="description" content="See every free giveaway and pop up event happening in Toronto on one interactive map, updated as new listings come in.">
-<link rel="icon" type="image/svg+xml" href="/toronto/assets/favicon.svg">
-<link rel="icon" type="image/png" sizes="192x192" href="/toronto/assets/favicon-192.png">
+<title>Map of Free Giveaways and Events in New York | Freebies Near Me</title>
+<meta name="description" content="See every free giveaway and pop up event happening in New York on one interactive map, updated as new listings come in.">
+<link rel="icon" type="image/svg+xml" href="/new-york/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="/new-york/assets/favicon-192.png">
 <link rel="manifest" href="/manifest.json">
-<link rel="canonical" href="https://freebiesnearme.app/toronto/map">
+<link rel="canonical" href="https://freebiesnearme.app/new-york/map">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Freebies Near Me">
-<meta property="og:url" content="https://freebiesnearme.app/toronto/map">
-<meta property="og:title" content="Map of Free Giveaways and Events in Toronto">
-<meta property="og:description" content="See every free giveaway and pop up event happening in Toronto on one interactive map, updated as new listings come in.">
-<meta property="og:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
+<meta property="og:url" content="https://freebiesnearme.app/new-york/map">
+<meta property="og:title" content="Map of Free Giveaways and Events in New York">
+<meta property="og:description" content="See every free giveaway and pop up event happening in New York on one interactive map, updated as new listings come in.">
+<meta property="og:image" content="https://freebiesnearme.app/new-york/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Map of Free Giveaways and Events in Toronto">
-<meta name="twitter:description" content="See every free giveaway and pop up event happening in Toronto on one interactive map, updated as new listings come in.">
-<meta name="twitter:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
+<meta name="twitter:title" content="Map of Free Giveaways and Events in New York">
+<meta name="twitter:description" content="See every free giveaway and pop up event happening in New York on one interactive map, updated as new listings come in.">
+<meta name="twitter:image" content="https://freebiesnearme.app/new-york/assets/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
@@ -208,8 +208,8 @@
     border:2px solid #fff;box-shadow:0 1px 4px rgba(21,27,33,0.4);
   }
   .pin.sponsored{background:var(--amber) !important;}
-  /* ===== Toronto flag colours: blue, red, white ===== */
-  :root{--flag-blue:#274490;--flag-blue-dark:#1C3270;}
+  /* ===== New York flag colours: blue, orange, white ===== */
+  :root{--flag-blue:#1F3F93;--flag-blue-dark:#162F6E;}
   nav{box-shadow:inset 0 3px 0 var(--flag-blue);}
   footer{box-shadow:inset 0 3px 0 var(--flag-blue);}
   .nav-links .on{color:var(--flag-blue);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;}
@@ -244,10 +244,10 @@
 
 <nav>
   <div class="nav-inner">
-    <a class="logo" href="/toronto">Freebies Near Me <span class="logo-city">Toronto</span></a>
-    <div class="nav-links"><a href="/toronto">Explore</a><span class="on">Map</span><a href="/toronto/calendar">Calendar</a></div>
+    <a class="logo" href="/new-york">Freebies Near Me <span class="logo-city">New York</span></a>
+    <div class="nav-links"><a href="/new-york">Explore</a><span class="on">Map</span><a href="/new-york/calendar">Calendar</a></div>
     <div class="nav-right">
-      <a class="btn-solid" href="/toronto/submit">Submit an event</a>
+      <a class="btn-solid" href="/new-york/submit">Submit an event</a>
     </div>
   </div>
 </nav>
@@ -312,9 +312,9 @@
 </script>
 
 <nav class="bottom-tabbar">
-  <a href="/toronto" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m8.154 15.846l5.808-1.884l1.884-5.808l-5.807 1.885zm3.842-2.73q-.467 0-.79-.327q-.321-.327-.321-.793q0-.467.326-.79q.327-.321.793-.321q.467 0 .79.326q.322.327.322.793q0 .467-.327.79q-.327.322-.793.322M12.003 21q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.344 0 5.672-2.328T20 12t-2.328-5.672T12 4T6.328 6.328T4 12t2.328 5.672T12 20m0-8"/></svg></span>Explore</a>
-  <a href="/toronto/map" class="tab-item on"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m15 19.923l-6-2.1l-3.958 1.53q-.384.143-.713-.083T4 18.634V6.404q0-.268.13-.489t.378-.307L9 4.077l6 2.1l3.958-1.53q.384-.143.713.054t.329.588v12.384q0 .287-.159.498q-.158.212-.426.298zm-.5-1.22v-11.7l-5-1.745v11.7zm1 0L19 17.55V5.7l-3.5 1.304zM5 18.3l3.5-1.342v-11.7L5 6.45zM15.5 7.004v11.7zm-7-1.746v11.7z"/></svg></span>Map</a>
-  <a href="/toronto/calendar" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M18.438 4.954H16.5V3.546c0-.262-.23-.512-.5-.5a.51.51 0 0 0-.5.5v1.408h-7V3.546c0-.262-.23-.512-.5-.5a.51.51 0 0 0-.5.5v1.408H5.562a2.503 2.503 0 0 0-2.5 2.5v11c0 1.379 1.122 2.5 2.5 2.5h12.875c1.379 0 2.5-1.121 2.5-2.5v-11a2.5 2.5 0 0 0-2.499-2.5m-12.876 1H7.5v.592c0 .262.23.512.5.5c.271-.012.5-.22.5-.5v-.592h7v.592c0 .262.23.512.5.5c.271-.012.5-.22.5-.5v-.592h1.937c.827 0 1.5.673 1.5 1.5v1.584H4.062V7.454c0-.827.673-1.5 1.5-1.5m12.876 14H5.562c-.827 0-1.5-.673-1.5-1.5v-8.416h15.875v8.416a1.5 1.5 0 0 1-1.499 1.5"/></svg></span>Calendar</a>
+  <a href="/new-york" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m8.154 15.846l5.808-1.884l1.884-5.808l-5.807 1.885zm3.842-2.73q-.467 0-.79-.327q-.321-.327-.321-.793q0-.467.326-.79q.327-.321.793-.321q.467 0 .79.326q.322.327.322.793q0 .467-.327.79q-.327.322-.793.322M12.003 21q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.344 0 5.672-2.328T20 12t-2.328-5.672T12 4T6.328 6.328T4 12t2.328 5.672T12 20m0-8"/></svg></span>Explore</a>
+  <a href="/new-york/map" class="tab-item on"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m15 19.923l-6-2.1l-3.958 1.53q-.384.143-.713-.083T4 18.634V6.404q0-.268.13-.489t.378-.307L9 4.077l6 2.1l3.958-1.53q.384-.143.713.054t.329.588v12.384q0 .287-.159.498q-.158.212-.426.298zm-.5-1.22v-11.7l-5-1.745v11.7zm1 0L19 17.55V5.7l-3.5 1.304zM5 18.3l3.5-1.342v-11.7L5 6.45zM15.5 7.004v11.7zm-7-1.746v11.7z"/></svg></span>Map</a>
+  <a href="/new-york/calendar" class="tab-item"><span class="tab-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M18.438 4.954H16.5V3.546c0-.262-.23-.512-.5-.5a.51.51 0 0 0-.5.5v1.408h-7V3.546c0-.262-.23-.512-.5-.5a.51.51 0 0 0-.5.5v1.408H5.562a2.503 2.503 0 0 0-2.5 2.5v11c0 1.379 1.122 2.5 2.5 2.5h12.875c1.379 0 2.5-1.121 2.5-2.5v-11a2.5 2.5 0 0 0-2.499-2.5m-12.876 1H7.5v.592c0 .262.23.512.5.5c.271-.012.5-.22.5-.5v-.592h7v.592c0 .262.23.512.5.5c.271-.012.5-.22.5-.5v-.592h1.937c.827 0 1.5.673 1.5 1.5v1.584H4.062V7.454c0-.827.673-1.5 1.5-1.5m12.876 14H5.562c-.827 0-1.5-.673-1.5-1.5v-8.416h15.875v8.416a1.5 1.5 0 0 1-1.499 1.5"/></svg></span>Calendar</a>
 </nav>
 
 <div class="filters-toggle-wrap">
@@ -333,7 +333,7 @@
 
 <div class="map-wrap">
   <div id="map"></div>
-  <div class="map-badge"><span class="pulse"></span><span id="liveCount">0</span> free events live in <span class="city-name">Toronto</span></div>
+  <div class="map-badge"><span class="pulse"></span><span id="liveCount">0</span> free events live in <span class="city-name">New York</span></div>
   <div class="map-legend" id="mapLegend"></div>
   <div class="map-empty-state" id="mapEmptyState"></div>
 </div>
@@ -371,11 +371,14 @@ function slugify(text){
 }
 
 const LOCATIONS = [
-  'The Annex','Bell Manor Park','Biidaasige Park','Cherry Beach','Chinatown','Christie Pits','Church-Wellesley Village','Corktown','Danforth','Distillery District',
-  'CF Eaton Centre','Entertainment District','Evergreen Brick Works','Financial District','Harbord Village',
-  'Harbourfront','The Junction','Kensington Market','King West','Nathan Phillips Square',
-  'Old Science Centre','Old Town','Queen West','Regent Park','Sankofa Square','Sorauren Park','Stackt Market','St. Lawrence Market',
-  'Trillium Park','Union Station','The Well','Yonge and Eglinton','Yorkville',
+  'Battery Park City','Brooklyn Bridge Park','Bryant Park','Central Park','Chelsea','Chelsea Market',
+  'Chinatown','Columbus Circle','Downtown Brooklyn','DUMBO','East Village','Financial District',
+  'Flatiron','Grand Central','Gramercy','Greenpoint','Greenwich Village','Harlem',
+  'Hell’s Kitchen','Herald Square','The High Line','Hudson Yards','Koreatown','Little Italy',
+  'Long Island City','Lower East Side','Madison Square Park','Meatpacking District','Midtown','Murray Hill',
+  'NoHo','Nolita','Park Slope','Rockefeller Center','SoHo','Times Square',
+  'Tribeca','Union Square','Upper East Side','Upper West Side','Washington Square Park','West Village',
+  'Williamsburg',
 ];
 const locationOptions = ['All locations', ...LOCATIONS];
 
@@ -401,10 +404,10 @@ function showToast(message, isError){
 
 const map = new maplibregl.Map({
   style: 'https://tiles.openfreemap.org/styles/liberty',
-  center: [-79.3832, 43.6532],
+  center: [-73.9857, 40.7484],
   zoom: 12.2,
   minZoom: 11,
-  maxBounds: [[-79.75, 43.53], [-79.05, 43.90]],
+  maxBounds: [[-74.30, 40.48], [-73.68, 40.93]],
   container: 'map',
   attributionControl: false,
 });
@@ -419,14 +422,14 @@ const geolocate = new maplibregl.GeolocateControl({
 });
 map.addControl(geolocate, 'top-left');
 let autoLocating = true;
-let toldOutsideToronto = false;
+let toldOutsideCity = false;
 map.getContainer().addEventListener('click', (e) => {
   if (e.target.closest('.maplibregl-ctrl-geolocate')) autoLocating = false;
 }, true);
 geolocate.on('outofmaxbounds', () => {
-  if (toldOutsideToronto) return;
-  toldOutsideToronto = true;
-  showToast("You're outside Toronto, so your location isn't shown on this map.");
+  if (toldOutsideCity) return;
+  toldOutsideCity = true;
+  showToast("You're outside New York, so your location isn't shown on this map.");
 });
 geolocate.on('error', (e) => {
   if (e.code === 1 && !autoLocating) showToast('Location is blocked. Allow it in your browser settings to see where you are.', true);
@@ -490,7 +493,7 @@ function buildPopup(ev, stop){
   const lat = stop ? stop.lat : ev.lat;
   const lng = stop ? stop.lng : ev.lng;
   const directionsQuery = address
-    ? encodeURIComponent(address + ', ' + neighbourhood + ', Toronto, ON')
+    ? encodeURIComponent(address + ', ' + neighbourhood + ', New York, NY')
     : lat + ',' + lng;
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
   <div class="popup-brand">${ev.brand}</div>
@@ -501,9 +504,9 @@ function buildPopup(ev, stop){
   <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
-// Listing times are always displayed as Toronto local time, regardless of
-// the viewer's own device timezone, since every event happens in Toronto.
-const TORONTO_TZ = 'America/Toronto';
+// Listing times are always displayed as New York local time, regardless of
+// the viewer's own device timezone, since every event happens in New York.
+const CITY_TZ = 'America/New_York';
 
 function getTimezoneOffsetMs(timeZone, date){
   const dtf = new Intl.DateTimeFormat('en-US', {
@@ -516,15 +519,15 @@ function getTimezoneOffsetMs(timeZone, date){
   return asUTC - date.getTime();
 }
 
-// When a listing has no end time, assume it wraps up at 9pm Toronto time on
+// When a listing has no end time, assume it wraps up at 9pm New York time on
 // its start date rather than treating it as live indefinitely.
 function assumedEnd(start){
   const s = new Date(start);
   const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: TORONTO_TZ, year:'numeric', month:'2-digit', day:'2-digit',
+    timeZone: CITY_TZ, year:'numeric', month:'2-digit', day:'2-digit',
   }).formatToParts(s).reduce((acc,p) => { acc[p.type] = p.value; return acc; }, {});
   const guess = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), 21, 0);
-  const offset = getTimezoneOffsetMs(TORONTO_TZ, new Date(guess));
+  const offset = getTimezoneOffsetMs(CITY_TZ, new Date(guess));
   return new Date(guess - offset).toISOString();
 }
 
@@ -536,21 +539,21 @@ function statusFromTimes(start, end){
   return 'live';
 }
 
-function torontoParts(d){
+function cityParts(d){
   const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: TORONTO_TZ, hourCycle: 'h23',
+    timeZone: CITY_TZ, hourCycle: 'h23',
     hour: '2-digit', minute: '2-digit',
   }).formatToParts(d).reduce((acc,p) => { acc[p.type] = p.value; return acc; }, {});
   return {hour: Number(parts.hour), minute: Number(parts.minute)};
 }
 
 function hasClockTime(d){
-  const {hour, minute} = torontoParts(d);
+  const {hour, minute} = cityParts(d);
   return hour !== 0 || minute !== 0;
 }
-function formatDay(d){ return d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', timeZone: TORONTO_TZ}); }
-function formatClock(d){ return d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', timeZone: TORONTO_TZ}).toLowerCase().replace(' ',''); }
-function torontoDateKey(d){ return d.toLocaleDateString('en-CA', {timeZone: TORONTO_TZ}); }
+function formatDay(d){ return d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', timeZone: CITY_TZ}); }
+function formatClock(d){ return d.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', timeZone: CITY_TZ}).toLowerCase().replace(' ',''); }
+function cityDateKey(d){ return d.toLocaleDateString('en-CA', {timeZone: CITY_TZ}); }
 
 // Standard format: "Day, Mon Date[ - Day, Mon Date], startTime - endTime"
 // so every listing (single day or spanning several) reads the same way.
@@ -568,7 +571,7 @@ function formatTimeRange(start, end){
   // represents the end of the PREVIOUS day for display purposes, not the
   // start of a new one.
   const e = eHasTime ? rawEnd : new Date(rawEnd.getTime() - 60000);
-  const sameDay = torontoDateKey(s) === torontoDateKey(e);
+  const sameDay = cityDateKey(s) === cityDateKey(e);
   const dayPart = sameDay ? sDay : sDay + ' - ' + formatDay(e);
   if (sHasTime && eHasTime) return dayPart + ', ' + formatClock(s) + ' - ' + formatClock(rawEnd);
   if (sHasTime) return dayPart + ', from ' + formatClock(s);
@@ -600,14 +603,14 @@ function groupRows(rows){
 // doesn't read as "live" on the Wednesday-through-Monday days between
 // sessions just because it's after the first session and before the
 // last.
-// A row's own last calendar date, Toronto-local - the half-open-midnight
+// A row's own last calendar date, New York-local - the half-open-midnight
 // convention (a date-only end landing exactly at midnight represents the
 // end of the previous day) is honoured the same way formatTimeRange() does.
 function rowEndKey(r){
-  const startKey = torontoDateKey(new Date(r.start_time));
+  const startKey = cityDateKey(new Date(r.start_time));
   if (!r.end_time) return startKey;
   const end = new Date(r.end_time);
-  const endKey = hasClockTime(end) ? torontoDateKey(end) : torontoDateKey(new Date(end.getTime() - 60000));
+  const endKey = hasClockTime(end) ? cityDateKey(end) : cityDateKey(new Date(end.getTime() - 60000));
   return endKey < startKey ? startKey : endKey;
 }
 
@@ -628,20 +631,20 @@ function isRowPastExactEnd(r, now){
 // end moment, so they stay live for their whole last calendar day.
 function isRowLiveToday(r, todayKey, now){
   if (isRowPastExactEnd(r, now)) return false;
-  const startKey = torontoDateKey(new Date(r.start_time));
+  const startKey = cityDateKey(new Date(r.start_time));
   return todayKey >= startKey && todayKey <= rowEndKey(r);
 }
 
 function activeWindowRow(rows){
   const now = new Date();
-  const todayKey = torontoDateKey(now);
+  const todayKey = cityDateKey(now);
   return rows.find(r => isRowLiveToday(r, todayKey, now));
 }
 
 function statusFromWindows(rows){
   if (activeWindowRow(rows)) return 'live';
-  const todayKey = torontoDateKey(new Date());
-  const hasUpcoming = rows.some(r => torontoDateKey(new Date(r.start_time)) > todayKey);
+  const todayKey = cityDateKey(new Date());
+  const hasUpcoming = rows.some(r => cityDateKey(new Date(r.start_time)) > todayKey);
   return hasUpcoming ? 'soon' : 'ended';
 }
 
@@ -652,8 +655,8 @@ function statusFromWindows(rows){
 function referenceRow(rows){
   const active = activeWindowRow(rows);
   if (active) return active;
-  const todayKey = torontoDateKey(new Date());
-  const upcoming = rows.filter(r => torontoDateKey(new Date(r.start_time)) > todayKey);
+  const todayKey = cityDateKey(new Date());
+  const upcoming = rows.filter(r => cityDateKey(new Date(r.start_time)) > todayKey);
   return upcoming.length ? upcoming[0] : rows[rows.length - 1];
 }
 
@@ -705,7 +708,7 @@ function transformGroup(rows){
 // Pins render at their real geocoded lat/lng always, with no spread-apart
 // logic - a couple of attempts at nudging overlapping pins into a small
 // ring introduced zoom-timing edge cases that occasionally sent pins far
-// from their true position. Toronto Happy Hour's map (a similar Toronto
+// from their true position. New York Happy Hour's map (a similar New York
 // listings map) takes the same approach: overlapping pins just render on
 // top of each other, and zooming in naturally separates them.
 function updateFiltersCount(){
@@ -748,7 +751,7 @@ function renderMarkers(){
   // confusing.
   filtered.forEach(ev=>{
     const now = new Date();
-    const todayKey = torontoDateKey(now);
+    const todayKey = cityDateKey(now);
     const liveStops = ev.stops.filter(s => s.windows.some(w => isRowLiveToday(w, todayKey, now)));
     const stopsToShow = activeLocations.length === 0
       ? liveStops
@@ -776,7 +779,7 @@ function renderMarkers(){
     const hubSlug = singleLocation ? slugify(singleLocation) : (singleCat ? CATEGORY_SLUGS[singleCat] : null);
     emptyEl.innerHTML = `<div class="map-empty-card">
       <p>No live events in ${label} right now.</p>
-      ${hubSlug ? `<a href="/toronto/${hubSlug}">See upcoming listings for ${label} &rarr;</a>` : ''}
+      ${hubSlug ? `<a href="/new-york/${hubSlug}">See upcoming listings for ${label} &rarr;</a>` : ''}
     </div>`;
     emptyEl.classList.add('show');
   } else {
@@ -852,7 +855,7 @@ function renderLegend(){
 let rawListingRows = [];
 
 async function loadListings(){
-  const { data, error } = await sb.from('listings').select('*').eq('city_slug', 'toronto').eq('moderation_status', 'approved').eq('is_active', true);
+  const { data, error } = await sb.from('listings').select('*').eq('city_slug', 'new-york').eq('moderation_status', 'approved').eq('is_active', true);
   if (error) return;
   rawListingRows = data;
   events = groupRows(rawListingRows).map(transformGroup).filter(ev => ev.status !== 'ended');
@@ -875,7 +878,7 @@ function recomputeEventStatuses(){
 setInterval(recomputeEventStatuses, 60000);
 
 // Lets a pSEO hub page's "View on map" link land here pre-filtered
-// (e.g. /toronto/map?location=The+Well or ?cat=food) instead of a blank
+// (e.g. /new-york/map?location=The+Well or ?cat=food) instead of a blank
 // unfiltered map the user has to re-filter themselves.
 const urlParams = new URLSearchParams(window.location.search);
 const initialLocation = urlParams.get('location');
