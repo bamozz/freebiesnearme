@@ -336,6 +336,8 @@ export default async function HubPage({ params }: Props) {
                       </span>
                     )}
                     {avail && <span className={`avail ${avail.cls}`}>{avail.text}</span>}
+                  </div>
+                  <div className="card-actions">
                     {listing.signup_url && (
                       <a
                         href={listing.signup_url}
@@ -344,16 +346,6 @@ export default async function HubPage({ params }: Props) {
                         className="signup-link"
                       >
                         &#128221; Register
-                      </a>
-                    )}
-                    {listing.stops.length <= 1 && (
-                      <a
-                        href={directionsUrlForStop(listing.stops[0])}
-                        target="_blank"
-                        rel="noopener"
-                        className="directions-link"
-                      >
-                        &#128205; Get directions
                       </a>
                     )}
                     {hasClockTime(new Date(listing.start_time)) && (
@@ -375,6 +367,16 @@ export default async function HubPage({ params }: Props) {
                           &#128197; Add to calendar
                         </a>
                       )
+                    )}
+                    {listing.stops.length <= 1 && (
+                      <a
+                        href={directionsUrlForStop(listing.stops[0])}
+                        target="_blank"
+                        rel="noopener"
+                        className="directions-link"
+                      >
+                        &#128205; Get directions
+                      </a>
                     )}
                   </div>
                 </li>
