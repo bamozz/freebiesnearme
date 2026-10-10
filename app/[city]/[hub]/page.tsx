@@ -378,6 +378,10 @@ export default async function HubPage({ params }: Props) {
                         &#128205; Get directions
                       </a>
                     )}
+                    {/* Invisible stand-ins for any missing action keep the gap the same as a row with all three. */}
+                    {!listing.signup_url && <span className="card-action-ghost" aria-hidden="true">&#128221; Register</span>}
+                    {!hasClockTime(new Date(listing.start_time)) && <span className="card-action-ghost" aria-hidden="true">&#128197; Add to calendar</span>}
+                    {listing.stops.length > 1 && <span className="card-action-ghost" aria-hidden="true">&#128205; Get directions</span>}
                   </div>
                 </li>
               );

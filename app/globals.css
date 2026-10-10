@@ -223,6 +223,12 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
 /* Register, Add to calendar and Get directions share one row (wrapping on narrow cards) */
 .card-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 4px;}
 .card-actions a{white-space:nowrap;padding-left:0;padding-right:0;font-size:11.5px;}
+/* invisible stand-in for a missing action, so the visible links keep the same
+   gap as a row with all three */
+.card-action-ghost{
+  visibility:hidden;display:inline-block;font-size:11.5px;font-weight:700;
+  padding:8px 0;white-space:nowrap;pointer-events:none;user-select:none;
+}
 .signup-link,.directions-link,.calendar-link{
   display:inline-block;font-size:12px;font-weight:700;
   color:var(--teal);text-decoration:none;

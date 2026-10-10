@@ -381,6 +381,13 @@
   /* Register, Add to calendar and Get directions share one row (wrapping on narrow cards) */
   .card-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 4px;}
   .card-actions a{white-space:nowrap;padding-left:0;padding-right:0;font-size:11.5px;}
+  .card-action-ghost{
+    visibility:hidden;display:inline-block;font-size:11.5px;font-weight:700;
+    padding:8px 0;white-space:nowrap;pointer-events:none;user-select:none;
+  }
+  /* stand-in for Get directions, which is only a link below 920px */
+  .card-action-ghost.dir-ghost{display:none;}
+  @media (min-width:921px){ .card-action-ghost.dir-ghost{display:inline-block;} }
   .signup-link,.calendar-link{
     display:inline-block;font-size:12px;font-weight:700;
     color:var(--teal);text-decoration:none;
@@ -956,6 +963,35 @@ function placeLabel(address, neighbourhood){
     : neighbourhood;
 }
 
+// Register / Add to calendar / Get directions share one row. Whatever is
+// available comes first, left aligned; an invisible copy of each missing
+// label follows so the gap between the visible links is the same as when all
+// three are shown.
+function renderCardActions(ev){
+  const reg = '&#128221; Register';
+  const cal = '&#128197; Add to calendar';
+  const dir = '&#128205; Get directions';
+  const links = [];
+  const ghosts = [];
+  if (ev.signup_url){
+    links.push(`<a href="${ev.signup_url}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">${reg}</a>`);
+  } else {
+    ghosts.push(reg);
+  }
+  if (hasClockTime(new Date(ev.startTime))){
+    links.push(isAndroidDevice()
+      ? `<a href="${buildGoogleCalendarUrl(ev)}" target="_blank" rel="noopener" class="calendar-link" onclick="event.stopPropagation()">${cal}</a>`
+      : `<a href="${buildCalendarUrl(ev)}" download="${icsFilename(ev)}" class="calendar-link" onclick="event.stopPropagation()">${cal}</a>`);
+  } else {
+    ghosts.push(cal);
+  }
+  // Directions only appear on the card below 920px; wider screens use the map.
+  links.push(`<a class="mobile-directions-link" href="${directionsUrl(ev)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${dir}</a>`);
+  const ghostHtml = ghosts.map(l => `<span class="card-action-ghost" aria-hidden="true">${l}</span>`).join('')
+    + `<span class="card-action-ghost dir-ghost" aria-hidden="true">${dir}</span>`;
+  return `<div class="card-actions">${links.join('')}${ghostHtml}</div>`;
+}
+
 function renderMetaTimes(ev){
   // Multiple distinct addresses (a touring brand with several stops) get
   // that stop's place on its own line, then each of its dates on its own
@@ -1470,13 +1506,7 @@ function renderList(){
         ${renderMetaTimes(ev)}
         ${a ? `<span class="avail ${a.cls}">${a.text}</span>` : ''}
       </div>
-      <div class="card-actions">
-        ${ev.signup_url ? `<a href="${ev.signup_url}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">&#128221; Register</a>` : ''}
-        ${hasClockTime(new Date(ev.startTime)) ? (isAndroidDevice()
-          ? `<a href="${buildGoogleCalendarUrl(ev)}" target="_blank" rel="noopener" class="calendar-link" onclick="event.stopPropagation()">&#128197; Add to calendar</a>`
-          : `<a href="${buildCalendarUrl(ev)}" download="${icsFilename(ev)}" class="calendar-link" onclick="event.stopPropagation()">&#128197; Add to calendar</a>`) : ''}
-        <a class="mobile-directions-link" href="${directionsUrl(ev)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">&#128205; Get directions</a>
-      </div>
+      ${renderCardActions(ev)}
       ${renderReportSection(ev)}
     `;
     card.onclick = ()=>selectCard(ev.id, true);
