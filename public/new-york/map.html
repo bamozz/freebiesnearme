@@ -371,14 +371,9 @@ function slugify(text){
 }
 
 const LOCATIONS = [
-  'Battery Park City','Brooklyn Bridge Park','Bryant Park','Central Park','Chelsea','Chelsea Market',
-  'Chinatown','Columbus Circle','Downtown Brooklyn','DUMBO','East Village','Financial District',
-  'Flatiron','Grand Central','Gramercy','Greenpoint','Greenwich Village','Harlem',
-  'Hell’s Kitchen','Herald Square','The High Line','Hudson Yards','Koreatown','Little Italy',
-  'Long Island City','Lower East Side','Madison Square Park','Meatpacking District','Midtown','Murray Hill',
-  'NoHo','Nolita','Park Slope','Rockefeller Center','SoHo','Times Square',
-  'Tribeca','Union Square','Upper East Side','Upper West Side','Washington Square Park','West Village',
-  'Williamsburg',
+  'Battery Park City','Chinatown','Civic Center','East Village','Financial District','Greenwich Village',
+  'Hudson Square','Little Italy','Lower East Side','Meatpacking District','NoHo','Nolita',
+  'SoHo','South Street Seaport','Tribeca','Union Square','Washington Square Park','West Village',
 ];
 const locationOptions = ['All locations', ...LOCATIONS];
 
@@ -404,10 +399,10 @@ function showToast(message, isError){
 
 const map = new maplibregl.Map({
   style: 'https://tiles.openfreemap.org/styles/liberty',
-  center: [-73.9857, 40.7484],
-  zoom: 12.2,
-  minZoom: 11,
-  maxBounds: [[-74.30, 40.48], [-73.68, 40.93]],
+  center: [-73.9985, 40.7275],
+  zoom: 13,
+  minZoom: 12,
+  maxBounds: [[-74.04, 40.695], [-73.955, 40.765]],
   container: 'map',
   attributionControl: false,
 });

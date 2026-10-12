@@ -27,55 +27,32 @@ export type CityConfig = {
   primaryText: string;
 };
 
-// Curated New York place list. Same role as lib/neighbourhoods.ts for
-// Toronto: lets a neighbourhood hub resolve (with an empty state) before any
-// listing exists there, while still 404ing an arbitrary or mistyped slug.
-// Slugs follow the same rule the listings trigger uses
+// Curated New York place list. New York covers downtown Manhattan only: the
+// conventional definition of Downtown, south of 14th Street (Lower Manhattan,
+// the Villages, SoHo, Tribeca and the Financial District). Same role as
+// lib/neighbourhoods.ts for Toronto: lets a neighbourhood hub resolve (with an
+// empty state) before any listing exists there, while still 404ing an
+// arbitrary or mistyped slug. Slugs follow the rule the listings trigger uses
 // (lowercase, non-alphanumerics collapsed to "-").
 const NEW_YORK_NEIGHBOURHOODS: Neighbourhood[] = [
   { label: 'Battery Park City', slug: 'battery-park-city' },
-  { label: 'Brooklyn Bridge Park', slug: 'brooklyn-bridge-park' },
-  { label: 'Bryant Park', slug: 'bryant-park' },
-  { label: 'Central Park', slug: 'central-park' },
-  { label: 'Chelsea', slug: 'chelsea' },
-  { label: 'Chelsea Market', slug: 'chelsea-market' },
   { label: 'Chinatown', slug: 'chinatown' },
-  { label: 'Columbus Circle', slug: 'columbus-circle' },
-  { label: 'Downtown Brooklyn', slug: 'downtown-brooklyn' },
-  { label: 'DUMBO', slug: 'dumbo' },
+  { label: 'Civic Center', slug: 'civic-center' },
   { label: 'East Village', slug: 'east-village' },
   { label: 'Financial District', slug: 'financial-district' },
-  { label: 'Flatiron', slug: 'flatiron' },
-  { label: 'Grand Central', slug: 'grand-central' },
-  { label: 'Gramercy', slug: 'gramercy' },
-  { label: 'Greenpoint', slug: 'greenpoint' },
   { label: 'Greenwich Village', slug: 'greenwich-village' },
-  { label: 'Harlem', slug: 'harlem' },
-  { label: 'Hell’s Kitchen', slug: 'hell-s-kitchen' },
-  { label: 'Herald Square', slug: 'herald-square' },
-  { label: 'The High Line', slug: 'the-high-line' },
-  { label: 'Hudson Yards', slug: 'hudson-yards' },
-  { label: 'Koreatown', slug: 'koreatown' },
+  { label: 'Hudson Square', slug: 'hudson-square' },
   { label: 'Little Italy', slug: 'little-italy' },
-  { label: 'Long Island City', slug: 'long-island-city' },
   { label: 'Lower East Side', slug: 'lower-east-side' },
-  { label: 'Madison Square Park', slug: 'madison-square-park' },
   { label: 'Meatpacking District', slug: 'meatpacking-district' },
-  { label: 'Midtown', slug: 'midtown' },
-  { label: 'Murray Hill', slug: 'murray-hill' },
   { label: 'NoHo', slug: 'noho' },
   { label: 'Nolita', slug: 'nolita' },
-  { label: 'Park Slope', slug: 'park-slope' },
-  { label: 'Rockefeller Center', slug: 'rockefeller-center' },
   { label: 'SoHo', slug: 'soho' },
-  { label: 'Times Square', slug: 'times-square' },
+  { label: 'South Street Seaport', slug: 'south-street-seaport' },
   { label: 'Tribeca', slug: 'tribeca' },
   { label: 'Union Square', slug: 'union-square' },
-  { label: 'Upper East Side', slug: 'upper-east-side' },
-  { label: 'Upper West Side', slug: 'upper-west-side' },
   { label: 'Washington Square Park', slug: 'washington-square-park' },
   { label: 'West Village', slug: 'west-village' },
-  { label: 'Williamsburg', slug: 'williamsburg' },
 ];
 
 export const CITIES: Record<string, CityConfig> = {
@@ -108,14 +85,14 @@ export const CITIES: Record<string, CityConfig> = {
     primaryText: '#C24E00',
     neighbourhoods: NEW_YORK_NEIGHBOURHOODS,
     popularSlugs: [
-      'times-square',
       'soho',
-      'chelsea-market',
-      'hudson-yards',
       'east-village',
-      'williamsburg',
-      'dumbo',
-      'bryant-park',
+      'west-village',
+      'greenwich-village',
+      'lower-east-side',
+      'tribeca',
+      'financial-district',
+      'washington-square-park',
     ],
   },
 };
