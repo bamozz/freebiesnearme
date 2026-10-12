@@ -1963,7 +1963,7 @@ function transformGroup(rows){
 let rawListingRows = [];
 
 async function loadListings(){
-  const { data, error } = await sb.from('listings').select('*').eq('moderation_status', 'approved').eq('is_active', true);
+  const { data, error } = await sb.from('listings').select('*').eq('city_slug', 'toronto').eq('moderation_status', 'approved').eq('is_active', true);
   if (error) return false;
   rawListingRows = data;
   events = groupRows(rawListingRows).map(transformGroup);
