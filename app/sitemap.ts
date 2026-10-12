@@ -21,12 +21,16 @@ function staticRoutes(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/${slug}/calendar`, changeFrequency: 'daily' as const, priority: 0.7 },
     { url: `${BASE_URL}/${slug}/submit`, changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: `${BASE_URL}/${slug}/advertise`, changeFrequency: 'monthly' as const, priority: 0.4 },
-    { url: `${BASE_URL}/${slug}/about`, changeFrequency: 'monthly' as const, priority: 0.4 },
     { url: `${BASE_URL}/${slug}/changelog`, changeFrequency: 'weekly' as const, priority: 0.3 },
-    { url: `${BASE_URL}/${slug}/privacy`, changeFrequency: 'yearly' as const, priority: 0.2 },
-    { url: `${BASE_URL}/${slug}/terms`, changeFrequency: 'yearly' as const, priority: 0.2 },
   ]);
-  return [root, ...cities];
+  // Sitewide pages have one address for every city.
+  const sitewide = [
+    { url: `${BASE_URL}/feedback`, changeFrequency: 'yearly' as const, priority: 0.2 },
+    { url: `${BASE_URL}/about`, changeFrequency: 'monthly' as const, priority: 0.4 },
+    { url: `${BASE_URL}/privacy`, changeFrequency: 'yearly' as const, priority: 0.2 },
+    { url: `${BASE_URL}/terms`, changeFrequency: 'yearly' as const, priority: 0.2 },
+  ];
+  return [root, ...cities, ...sitewide];
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

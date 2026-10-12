@@ -22,22 +22,22 @@
 <!-- Vercel Speed Insights -->
 <script defer src="/_vercel/speed-insights/script.js"></script>
 <title>Feedback and Support | Freebies Near Me</title>
-<meta name="description" content="Report an issue with a listing or share an idea to help us improve Freebies Near Me, your guide to free events around Toronto.">
+<meta name="description" content="Report an issue with a listing or share an idea to help us improve Freebies Near Me, your guide to free events in Toronto and New York.">
 <link rel="icon" type="image/svg+xml" href="/toronto/assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="/toronto/assets/favicon-192.png">
-<link rel="manifest" href="/manifest.json">
-<link rel="canonical" href="https://www.freebiesnearme.app/toronto/feedback">
+<link rel="manifest" href="/home.webmanifest">
+<link rel="canonical" href="https://www.freebiesnearme.app/feedback">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Freebies Near Me">
-<meta property="og:url" content="https://www.freebiesnearme.app/toronto/feedback">
+<meta property="og:url" content="https://www.freebiesnearme.app/feedback">
 <meta property="og:title" content="Feedback and Support">
-<meta property="og:description" content="Report an issue with a listing or share an idea to help us improve Freebies Near Me, your guide to free events around Toronto.">
+<meta property="og:description" content="Report an issue with a listing or share an idea to help us improve Freebies Near Me, your guide to free events in Toronto and New York.">
 <meta property="og:image" content="https://www.freebiesnearme.app/toronto/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Feedback and Support">
-<meta name="twitter:description" content="Report an issue with a listing or share an idea to help us improve Freebies Near Me, your guide to free events around Toronto.">
+<meta name="twitter:description" content="Report an issue with a listing or share an idea to help us improve Freebies Near Me, your guide to free events in Toronto and New York.">
 <meta name="twitter:image" content="https://www.freebiesnearme.app/toronto/assets/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -130,7 +130,7 @@
   form{display:flex;flex-direction:column;gap:16px;}
   label{font-size:12.5px;font-weight:700;color:var(--ink);display:flex;flex-direction:column;gap:6px;}
   label.optional::after{content:" (optional)";font-weight:500;color:var(--muted);text-transform:none;}
-  input,textarea{
+  input,textarea,select{
     font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;border-radius:8px;
     border:1px solid var(--line);background:#fff;color:var(--ink);
   }
@@ -153,8 +153,8 @@
   }
   .result.ok{background:var(--teal-dim);color:var(--teal);display:block;}
   .result.err{background:#FDE8E6;color:var(--coral);display:block;}
-  /* ===== Toronto flag colours: blue, red, white ===== */
-  :root{--city-primary:#274490;--city-primary-dark:#1C3270;--city-primary-text:#274490;}
+  /* ===== Brand colours: these pages belong to no single city ===== */
+  :root{--city-primary:#0A7A66;--city-primary-dark:#075E4F;--city-primary-text:#0A7A66;}
   nav{box-shadow:inset 0 3px 0 var(--city-primary);}
   footer{box-shadow:inset 0 3px 0 var(--city-primary);}
   .nav-links .on{color:var(--city-primary-text);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;}
@@ -162,15 +162,15 @@
   .btn-solid{background:var(--city-primary);}
   .btn-solid:hover{background:var(--city-primary-dark);}
   .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--city-primary-text);}
-  ::selection{background:rgba(39,68,144,0.18);}
+  ::selection{background:rgba(14,156,130,0.18);}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <a class="logo" href="/toronto">Freebies Near Me <span class="logo-city">Toronto</span></a>
-    <a class="btn-solid" href="/toronto/submit">Submit an event</a>
+    <a class="logo" href="/">Freebies Near Me</a>
+    <a class="btn-solid" href="/">Find freebies</a>
   </div>
 </nav>
 
@@ -263,6 +263,14 @@
       </label>
     </div>
 
+    <label>Which city is this about?
+      <select id="citySel">
+        <option value="toronto">Toronto</option>
+        <option value="new-york">New York</option>
+        <option value="other">Another city, or the whole site</option>
+      </select>
+    </label>
+
     <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
     <div class="result" id="result"></div>
   </form>
@@ -270,21 +278,16 @@
 
 <footer>
   <div class="footer-inner">
-    <a class="logo" href="/toronto">Freebies Near Me <span class="logo-city">Toronto</span></a>
+    <a class="logo" href="/">Freebies Near Me</a>
     <div class="footer-links">
-      <a class="feedback-link" href="/toronto/advertise">Advertise</a>
-      <a class="feedback-link" href="/toronto/feedback">Feedback</a>
-      <a class="feedback-link" href="/toronto/changelog">Changelog</a>
-      <a class="feedback-link" href="/toronto/about">About</a>
-      <a class="feedback-link" href="/toronto/privacy">Privacy</a>
-      <a class="feedback-link" href="/toronto/terms">Terms</a>
-      <a class="feedback-link" href="/">All cities</a>
+      <a class="feedback-link" href="/toronto">Toronto</a>
+      <a class="feedback-link" href="/new-york">New York</a>
+      <a class="feedback-link" href="/feedback">Feedback</a>
+      <a class="feedback-link" href="/about">About</a>
+      <a class="feedback-link" href="/privacy">Privacy</a>
+      <a class="feedback-link" href="/terms">Terms</a>
     </div>
     <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
-    <div class="footer-hubs">
-      <p><span>Categories:</span> <a href="/toronto/food-drink">Food &amp; Drink</a>, <a href="/toronto/beauty">Beauty</a>, <a href="/toronto/fashion">Fashion</a>, <a href="/toronto/tech">Tech</a>, <a href="/toronto/wellness">Wellness</a>, <a href="/toronto/class-workshop">Class &amp; Workshop</a>, <a href="/toronto/concert-screening">Concert &amp; Screening</a>, <a href="/toronto/tour">Tour</a>, <a href="/toronto/festival">Festival</a>, <a href="/toronto/misc">Misc.</a></p>
-      <p><span>Neighbourhoods:</span> <a href="/toronto/the-well">The Well</a>, <a href="/toronto/yorkville">Yorkville</a>, <a href="/toronto/liberty-village">Liberty Village</a>, <a href="/toronto/distillery-district">Distillery District</a>, <a href="/toronto/kensington-market">Kensington Market</a>, <a href="/toronto/harbourfront">Harbourfront</a>, <a href="/toronto/king-west">King West</a>, <a href="/toronto/the-junction">The Junction</a></p>
-    </div>
   </div>
 </footer>
 
@@ -294,6 +297,30 @@
   const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // The form lives at one address for every city, so it asks which city the
+  // feedback is about, pre-filled from: ?city=, the page the visitor came
+  // from, the last city they opened, then their time zone.
+  const citySel = document.getElementById('citySel');
+  const CITY_SLUGS = ['toronto', 'new-york'];
+  function guessCity(){
+    const q = new URLSearchParams(location.search).get('city');
+    if (q === 'other' || CITY_SLUGS.includes(q)) return q;
+    try {
+      const ref = new URL(document.referrer);
+      const seg = ref.pathname.split('/')[1];
+      if (ref.origin === location.origin && CITY_SLUGS.includes(seg)) return seg;
+    } catch (e) {}
+    try {
+      const last = localStorage.getItem('fnm_last_city');
+      if (CITY_SLUGS.includes(last)) return last;
+    } catch (e) {}
+    try {
+      return { 'America/Toronto': 'toronto', 'America/New_York': 'new-york' }[Intl.DateTimeFormat().resolvedOptions().timeZone] || 'other';
+    } catch (e) {}
+    return 'other';
+  }
+  citySel.value = guessCity();
 
   let mode = 'issue';
   const issueFields = document.getElementById('issueFields');
@@ -356,7 +383,7 @@
       message: message,
       correction: mode === 'issue' ? (document.getElementById('correctInfo').value || null) : null,
       contact: null,
-      city_slug: 'toronto',
+      city_slug: citySel.value,
     };
 
     const { error } = await sb.from('feedback').insert(payload);
@@ -371,8 +398,18 @@
       resultEl.className = 'result ok';
       resultEl.textContent = "Thanks, we've got it.";
       document.getElementById('feedbackForm').reset();
+      citySel.value = guessCity();
     }
   });
+
+  // ?mode=idea opens the "Share an idea" tab (used by the front page's "Suggest a city")
+  if (new URLSearchParams(location.search).get('mode') === 'idea'){
+    const ideaBtn = document.querySelector('.mode-btn[data-mode="idea"]');
+    if (ideaBtn) ideaBtn.click();
+    if (new URLSearchParams(location.search).get('city') === 'other'){
+      ideaInput.placeholder = 'Which city should we add next, and why?';
+    }
+  }
 </script>
 </body>
 </html>

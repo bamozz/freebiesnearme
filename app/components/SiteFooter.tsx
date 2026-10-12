@@ -19,11 +19,11 @@ export default function SiteFooter({
         <a className="logo" href={base}>Freebies Near Me <span className="logo-city">{cityName}</span></a>
         <div className="footer-links">
           <a className="feedback-link" href={`${base}/advertise`}>Advertise</a>
-          <a className="feedback-link" href={`${base}/feedback`}>Feedback</a>
+          <a className="feedback-link" href="/feedback">Feedback</a>
           <a className="feedback-link" href={`${base}/changelog`}>Changelog</a>
-          <a className="feedback-link" href={`${base}/about`}>About</a>
-          <a className="feedback-link" href={`${base}/privacy`}>Privacy</a>
-          <a className="feedback-link" href={`${base}/terms`}>Terms</a>
+          <a className="feedback-link" href="/about">About</a>
+          <a className="feedback-link" href="/privacy">Privacy</a>
+          <a className="feedback-link" href="/terms">Terms</a>
           <a className="feedback-link" href="/">All cities</a>
         </div>
         <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
