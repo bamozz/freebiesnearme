@@ -95,7 +95,7 @@ nav{
 .install-banner-close:hover{color:var(--ink);}
 
 /* ===== Footer ===== */
-footer{margin-top:34px;border-top:1px solid var(--line);background:#fff;}
+footer{margin-top:34px;border-top:1px solid var(--line);background:#F5F2E8;}
 .footer-inner{
   max-width:920px;margin:0 auto;padding:24px 24px 40px;
   display:flex;flex-direction:column;align-items:flex-start;gap:10px;
