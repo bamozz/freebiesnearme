@@ -24,6 +24,7 @@ export default function SiteFooter({
           <a className="feedback-link" href={`${base}/about`}>About</a>
           <a className="feedback-link" href={`${base}/privacy`}>Privacy</a>
           <a className="feedback-link" href={`${base}/terms`}>Terms</a>
+          <a className="feedback-link" href="/">All cities</a>
         </div>
         <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
         <div className="footer-hubs">

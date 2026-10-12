@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759" crossorigin="anonymous"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SRH6EG57P0"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-SRH6EG57P0');
+</script>
+<!-- Vercel Web Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<!-- Vercel Speed Insights -->
+<script defer src="/_vercel/speed-insights/script.js"></script>
+<title>Freebies Near Me | Free giveaways and pop up events in every city</title>
+<meta name="description" content="Find free giveaways, samples, and pop up events happening right now. Pick your city: Toronto and New York, with more cities coming.">
+<link rel="icon" type="image/svg+xml" href="/toronto/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="/toronto/assets/favicon-192.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="https://freebiesnearme.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Freebies Near Me">
+<meta property="og:url" content="https://freebiesnearme.app/">
+<meta property="og:title" content="Freebies Near Me: free giveaways and pop up events in every city">
+<meta property="og:description" content="Find free giveaways, samples, and pop up events happening right now. Pick your city: Toronto and New York, with more cities coming.">
+<meta property="og:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Freebies Near Me: free giveaways and pop up events in every city">
+<meta name="twitter:description" content="Find free giveaways, samples, and pop up events happening right now. Pick your city: Toronto and New York, with more cities coming.">
+<meta name="twitter:image" content="https://freebiesnearme.app/toronto/assets/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ItemList","name":"Freebies Near Me cities","itemListElement":[
+  {"@type":"ListItem","position":1,"name":"Toronto","url":"https://freebiesnearme.app/toronto"},
+  {"@type":"ListItem","position":2,"name":"New York","url":"https://freebiesnearme.app/new-york"}
+]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+<style>
+  .maplibregl-marker{position:absolute !important;}
+  :root{
+    color-scheme:light;
+    --paper:#FEFCF6;
+    --paper-alt:#F5F2E8;
+    --ink:#151B21;
+    --muted:#6B7280;
+    --line:#E4E8E5;
+    --teal:#0E9C82;
+    --space:#0C1626;
+    --space-2:#16263F;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;}
+  a{color:inherit;}
+  .display{font-family:'Space Grotesk',sans-serif;}
+
+  /* ===== Header ===== */
+  .top{
+    max-width:1220px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;text-decoration:none;letter-spacing:-0.01em;}
+  .logo span{color:var(--teal);}
+  .top-link{font-size:14px;font-weight:600;text-decoration:none;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;}
+  .top-link:hover{border-color:var(--ink);}
+
+  /* ===== Hero ===== */
+  .hero{max-width:1220px;margin:0 auto;padding:14px 24px 22px;}
+  .hero h1{font-size:clamp(32px,5.2vw,58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;max-width:760px;}
+  .hero h1 em{font-style:normal;color:var(--teal);}
+  .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:620px;}
+  .welcome{
+    margin-top:18px;display:none;align-items:center;gap:12px;flex-wrap:wrap;
+    background:var(--paper-alt);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;
+  }
+  .welcome a{color:var(--teal);text-decoration:none;font-weight:700;}
+  .welcome a:hover{text-decoration:underline;}
+
+  /* ===== Globe + city list ===== */
+  .stage{max-width:1220px;margin:0 auto;padding:0 24px 40px;display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:22px;align-items:stretch;}
+  .globe-wrap{
+    position:relative;border-radius:22px;overflow:hidden;min-height:560px;
+    background:radial-gradient(120% 120% at 50% 40%,var(--space-2) 0%,var(--space) 70%);
+    border:1px solid #0a1220;
+  }
+  #globe{position:absolute;inset:0;}
+  .globe-hint{
+    position:absolute;left:16px;bottom:14px;z-index:3;color:#B6C4DA;font-size:12.5px;font-weight:500;
+    background:rgba(12,22,38,0.72);padding:7px 11px;border-radius:999px;pointer-events:none;
+  }
+  .globe-btns{position:absolute;right:14px;top:14px;z-index:3;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+  .globe-btn{
+    font:600 12.5px 'Inter',sans-serif;color:#fff;background:rgba(12,22,38,0.72);border:1px solid rgba(255,255,255,0.25);
+    padding:8px 12px;border-radius:999px;cursor:pointer;
+  }
+  .globe-btn:hover{background:rgba(255,255,255,0.18);}
+  .nogl{display:none;position:absolute;inset:0;z-index:2;color:#B6C4DA;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:14px;}
+
+  .cities{display:flex;flex-direction:column;gap:14px;}
+  .city-card{
+    position:relative;display:block;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:16px;
+    padding:18px 20px 18px 24px;transition:box-shadow .15s ease,transform .15s ease,border-color .15s ease;
+    overflow:hidden;
+  }
+  .city-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c);}
+  .city-card:hover,.city-card.active{box-shadow:0 8px 26px rgba(21,27,33,0.10);transform:translateY(-2px);border-color:var(--c);}
+  .city-card h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-0.01em;}
+  .city-card .region{font-size:13px;color:var(--muted);font-weight:500;margin-top:1px;}
+  .city-card .count{margin-top:12px;display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600;}
+  .city-card .dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:0 0 auto;}
+  .city-card .go{margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--c);}
+  .city-card.soon{background:var(--paper-alt);border-style:dashed;}
+  .city-card.soon::before{background:var(--line);}
+  .city-card.soon h2{font-size:19px;}
+  .city-card.soon .go{color:var(--ink);}
+
+  /* ===== Pins ===== */
+  .pin{position:relative;cursor:pointer;}
+  .pin .core{
+    width:18px;height:18px;border-radius:50%;background:var(--c);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.5);
+  }
+  .pin::after{
+    content:"";position:absolute;left:50%;top:9px;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;
+    border:2px solid var(--c);animation:ping 2s ease-out infinite;
+  }
+  .pin .tag{
+    position:absolute;left:26px;top:-6px;white-space:nowrap;background:#fff;color:var(--ink);font:700 13px 'Space Grotesk',sans-serif;
+    padding:5px 10px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,0.35);
+  }
+  .pin .tag.left{left:auto;right:26px;}
+  .pin .tag.right{top:2px;}
+  @media (max-width:520px){.pin .tag{font-size:11.5px;padding:4px 8px;}}
+  @keyframes ping{0%{transform:scale(1);opacity:.9}100%{transform:scale(3);opacity:0}}
+  @media (prefers-reduced-motion: reduce){.pin::after{animation:none;}}
+
+  .maplibregl-popup-content{border-radius:12px;padding:14px 16px;font-family:'Inter',sans-serif;}
+  .pop h3{margin:0 0 2px;font:700 18px 'Space Grotesk',sans-serif;}
+  .pop p{margin:0 0 10px;font-size:13px;color:var(--muted);}
+  .pop a{display:inline-block;background:var(--c);color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;padding:8px 14px;border-radius:999px;}
+
+  /* ===== How it works + footer ===== */
+  .how{max-width:1220px;margin:0 auto;padding:6px 24px 44px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;}
+  .how div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;}
+  .how h3{margin:0 0 4px;font-size:16px;font-family:'Space Grotesk',sans-serif;}
+  .how p{margin:0;font-size:14px;color:var(--muted);}
+  footer{border-top:1px solid var(--line);background:var(--paper-alt);}
+  .foot{max-width:1220px;margin:0 auto;padding:22px 24px 34px;display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;justify-content:space-between;font-size:14px;}
+  .foot nav{display:flex;flex-wrap:wrap;gap:8px 18px;}
+  .foot a{text-decoration:none;font-weight:600;}
+  .foot a:hover{text-decoration:underline;}
+  .foot small{color:var(--muted);flex-basis:100%;}
+
+  @media (max-width:900px){
+    .stage{grid-template-columns:1fr;}
+    .globe-wrap{min-height:420px;}
+    .how{grid-template-columns:1fr;}
+  }
+  @media (max-width:520px){
+    .top{padding:14px 16px;}
+    .hero,.stage,.how{padding-left:16px;padding-right:16px;}
+    .globe-wrap{min-height:360px;border-radius:18px;}
+    .globe-hint{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="logo" href="/">Freebies <span>Near Me</span></a>
+  <a class="top-link" href="/toronto/feedback">Suggest a city</a>
+</header>
+
+<section class="hero">
+  <h1 class="display">Free stuff and free things to do, <em>wherever you are</em>.</h1>
+  <p>A live map of giveaways, samples, classes and pop up events in every city we cover. Pick yours to see what is on right now.</p>
+  <div class="welcome" id="welcome" aria-live="polite"></div>
+</section>
+
+<main>
+<section class="stage" aria-label="Choose a city">
+  <div class="globe-wrap">
+    <div id="globe" role="img" aria-label="A globe with pins on the cities Freebies Near Me covers: Toronto and New York"></div>
+    <div class="globe-btns">
+      <button type="button" class="globe-btn" id="locateBtn">Find my nearest city</button>
+      <button type="button" class="globe-btn" id="resetBtn">Reset view</button>
+    </div>
+    <div class="globe-hint" id="hint">Drag to spin, tap a pin to open a city</div>
+    <div class="nogl" id="nogl">Your browser can't show the globe, so pick a city from the list.</div>
+  </div>
+
+  <div class="cities" id="cities">
+    <a class="city-card" data-city="toronto" href="/toronto" style="--c:#274490">
+      <h2 class="display">Toronto</h2>
+      <div class="region">Ontario, Canada</div>
+      <div class="count"><span class="dot"></span><span class="count-text">Free listings, updated daily</span></div>
+      <span class="go">Explore Toronto &rarr;</span>
+    </a>
+    <a class="city-card" data-city="new-york" href="/new-york" style="--c:#FF6600">
+      <h2 class="display">New York</h2>
+      <div class="region">New York City, USA</div>
+      <div class="count"><span class="dot"></span><span class="count-text">Free listings, updated daily</span></div>
+      <span class="go">Explore New York &rarr;</span>
+    </a>
+    <a class="city-card soon" href="/toronto/feedback">
+      <h2 class="display">Your city next?</h2>
+      <div class="region">More cities are on the way</div>
+      <span class="go">Suggest a city &rarr;</span>
+    </a>
+  </div>
+</section>
+
+<section class="how" aria-label="How it works">
+  <div><h3>Live, not stale</h3><p>Every listing is reviewed and shows whether it is on now, coming up, or already over.</p></div>
+  <div><h3>Free means free</h3><p>Samples, giveaways, free classes and pop ups. If it needs a purchase to get the freebie, it does not make the list.</p></div>
+  <div><h3>Close to you</h3><p>Browse each city by map, calendar or neighbourhood, and add events you spot so everyone benefits.</p></div>
+</section>
+</main>
+
+<footer>
+  <div class="foot">
+    <nav aria-label="Footer">
+      <a href="/toronto">Toronto</a>
+      <a href="/new-york">New York</a>
+      <a href="/toronto/advertise">Advertise</a>
+      <a href="/toronto/feedback">Feedback</a>
+      <a href="/toronto/about">About</a>
+      <a href="/toronto/privacy">Privacy</a>
+      <a href="/toronto/terms">Terms</a>
+    </nav>
+    <small>Listings shown are reviewed and confirmed by the Freebies Near Me team.</small>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---- cities: add a new city here, in vercel.json and in lib/cities.ts ----
+  var CITIES = [
+    { slug:'toronto',  name:'Toronto',  region:'Ontario, Canada',    lng:-79.3832, lat:43.6532, color:'#274490', side:'left' },
+    { slug:'new-york', name:'New York', region:'New York City, USA', lng:-73.9857, lat:40.7484, color:'#FF6600', side:'right' }
+  ];
+  var SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
+  var counts = {};
+
+  function safe(fn){ try { return fn(); } catch (e) { return null; } }
+  function remember(slug){ safe(function(){ localStorage.setItem('fnm_last_city', slug); }); }
+  function cityBySlug(slug){ return CITIES.filter(function(c){ return c.slug === slug; })[0]; }
+
+  // ---- returning visitor shortcut (never an automatic redirect) ----
+  var last = safe(function(){ return localStorage.getItem('fnm_last_city'); });
+  var lastCity = last && cityBySlug(last);
+  if (lastCity){
+    var w = document.getElementById('welcome');
+    w.style.display = 'flex';
+    w.innerHTML = 'Welcome back. <a href="/' + lastCity.slug + '">Continue to ' + lastCity.name + ' &rarr;</a>';
+  }
+  document.querySelectorAll('.city-card[data-city]').forEach(function(a){
+    a.addEventListener('click', function(){ remember(a.getAttribute('data-city')); });
+  });
+
+  // ---- live counts per city (listings on now or coming up) ----
+  function renderCounts(){
+    CITIES.forEach(function(c){
+      var el = document.querySelector('.city-card[data-city="' + c.slug + '"] .count-text');
+      var n = counts[c.slug];
+      if (el && typeof n === 'number'){
+        el.textContent = n === 0 ? 'Be the first to add a listing' : n + ' free ' + (n === 1 ? 'listing' : 'listings') + ' on now or coming up';
+      }
+    });
+  }
+  function loadCounts(){
+    var url = SUPABASE_URL + '/rest/v1/listings?select=city_slug,start_time,end_time&moderation_status=eq.approved&is_active=eq.true&limit=2000';
+    return fetch(url, { headers:{ apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + SUPABASE_ANON_KEY } })
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(rows){
+        var now = Date.now();
+        CITIES.forEach(function(c){ counts[c.slug] = 0; });
+        rows.forEach(function(r){
+          var start = new Date(r.start_time).getTime();
+          // no end time: treat the listing as running for a few hours after it starts
+          var end = r.end_time ? new Date(r.end_time).getTime() : start + 4*3600*1000;
+          if (end >= now && counts[r.city_slug] !== undefined) counts[r.city_slug]++;
+        });
+        renderCounts();
+        refreshTags();
+      })
+      .catch(function(){});
+  }
+
+  // ---- globe ----
+  var map = null, markers = [], spinning = true, interacting = false;
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var HOME = { center:[-62, 36], zoom: window.innerWidth < 700 ? 1.2 : 1.9 };
+
+  function tagText(c){
+    var n = counts[c.slug];
+    return typeof n === 'number' && n > 0 ? c.name + ' · ' + n + ' live' : c.name;
+  }
+  function refreshTags(){
+    markers.forEach(function(m){ m.tag.textContent = tagText(m.city); });
+  }
+  function highlightCard(slug){
+    document.querySelectorAll('.city-card[data-city]').forEach(function(a){
+      a.classList.toggle('active', a.getAttribute('data-city') === slug);
+    });
+  }
+  function flyTo(c){
+    if (!map) return;
+    spinning = false;
+    map.flyTo({ center:[c.lng, c.lat], zoom: window.innerWidth < 700 ? 3.2 : 4.2, duration: 1800, essential: true });
+  }
+  function openPopup(c){
+    var html = '<div class="pop" style="--c:' + c.color + '"><h3>' + c.name + '</h3><p>' + c.region + '</p><a href="/' + c.slug + '">Explore ' + c.name + ' &rarr;</a></div>';
+    new maplibregl.Popup({ offset: 22, closeButton: false, maxWidth: '240px' })
+      .setLngLat([c.lng, c.lat]).setHTML(html).addTo(map);
+    // remember the choice when the popup link is used
+    setTimeout(function(){
+      var a = document.querySelector('.pop a');
+      if (a) a.addEventListener('click', function(){ remember(c.slug); });
+    }, 0);
+  }
+  function spin(){
+    if (!map || !spinning || interacting || reduceMotion || document.hidden) return;
+    var z = map.getZoom();
+    if (z > 3.5) return;
+    var ctr = map.getCenter();
+    ctr.lng -= 360 / 140;            // one turn every ~140 seconds
+    map.easeTo({ center: ctr, duration: 1000, easing: function(n){ return n; } });
+  }
+
+  function initGlobe(){
+    if (!window.maplibregl){
+      document.getElementById('nogl').style.display = 'flex';
+      return;
+    }
+    try {
+      map = new maplibregl.Map({
+        container: 'globe',
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: HOME.center,
+        zoom: HOME.zoom,
+        minZoom: 0.8,
+        maxZoom: 9,
+        attributionControl: { compact: true }
+      });
+    } catch (e) {
+      document.getElementById('nogl').style.display = 'flex';
+      return;
+    }
+    map.on('style.load', function(){
+      try { map.setProjection({ type: 'globe' }); } catch (e) {}
+    });
+    map.on('load', function(){
+      CITIES.forEach(function(c){
+        var el = document.createElement('div');
+        el.className = 'pin';
+        el.style.setProperty('--c', c.color);
+        el.innerHTML = '<div class="core"></div><div class="tag ' + (c.side || 'right') + '"></div>';
+        var tag = el.querySelector('.tag');
+        tag.textContent = tagText(c);
+        el.setAttribute('role', 'button');
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('aria-label', 'Open ' + c.name);
+        function activate(){ highlightCard(c.slug); flyTo(c); openPopup(c); }
+        el.addEventListener('click', function(e){ e.stopPropagation(); activate(); });
+        el.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); } });
+        new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([c.lng, c.lat]).addTo(map);
+        markers.push({ city: c, tag: tag });
+      });
+      refreshTags();
+      map.on('mousedown', function(){ interacting = true; spinning = false; });
+      map.on('touchstart', function(){ interacting = true; spinning = false; });
+      map.on('mouseup', function(){ interacting = false; });
+      map.on('touchend', function(){ interacting = false; });
+      map.on('moveend', spin);
+      spin();
+    });
+    map.on('error', function(){ /* tile errors must not break the page */ });
+  }
+
+  // ---- card hover links to the globe ----
+  document.querySelectorAll('.city-card[data-city]').forEach(function(a){
+    var c = cityBySlug(a.getAttribute('data-city'));
+    a.addEventListener('mouseenter', function(){ highlightCard(c.slug); if (map && !reduceMotion) { spinning = false; map.easeTo({ center:[c.lng, c.lat], zoom: Math.max(map.getZoom(), 2.6), duration: 1200 }); } });
+    a.addEventListener('focus', function(){ highlightCard(c.slug); });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    highlightCard(null);
+    if (!map) return;
+    document.querySelectorAll('.maplibregl-popup').forEach(function(p){ p.remove(); });
+    map.flyTo({ center: HOME.center, zoom: HOME.zoom, duration: 1400 });
+    spinning = true;
+  });
+
+  // nearest city (location stays on the device)
+  function km(a, b){
+    var R = 6371, toRad = Math.PI / 180;
+    var dLat = (b.lat - a.lat) * toRad, dLng = (b.lng - a.lng) * toRad;
+    var h = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(a.lat*toRad)*Math.cos(b.lat*toRad)*Math.sin(dLng/2)*Math.sin(dLng/2);
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+  document.getElementById('locateBtn').addEventListener('click', function(){
+    var hint = document.getElementById('hint');
+    hint.style.display = 'block';
+    if (!navigator.geolocation){ hint.textContent = 'Location is not available in this browser.'; return; }
+    hint.textContent = 'Finding your nearest city...';
+    navigator.geolocation.getCurrentPosition(function(pos){
+      var me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      var best = null;
+      CITIES.forEach(function(c){ var d = km(me, c); if (!best || d < best.d) best = { c: c, d: d }; });
+      if (best.d > 200){
+        hint.textContent = 'No city within reach yet. The nearest is ' + best.c.name + ' (' + Math.round(best.d) + ' km). Suggest yours below.';
+      } else {
+        hint.textContent = 'Nearest city: ' + best.c.name;
+        highlightCard(best.c.slug); flyTo(best.c); openPopup(best.c);
+      }
+    }, function(){
+      hint.textContent = 'Location was blocked. Pick a city from the list.';
+    }, { timeout: 8000 });
+  });
+
+  document.addEventListener('visibilitychange', spin);
+  initGlobe();
+  loadCounts();
+})();
+</script>
+</body>
+</html>
