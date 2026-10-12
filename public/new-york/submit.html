@@ -377,7 +377,7 @@
     <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
     <div class="footer-hubs">
       <p><span>Categories:</span> <a href="/new-york/food-drink">Food &amp; Drink</a>, <a href="/new-york/beauty">Beauty</a>, <a href="/new-york/fashion">Fashion</a>, <a href="/new-york/tech">Tech</a>, <a href="/new-york/wellness">Wellness</a>, <a href="/new-york/class-workshop">Class &amp; Workshop</a>, <a href="/new-york/concert-screening">Concert &amp; Screening</a>, <a href="/new-york/tour">Tour</a>, <a href="/new-york/festival">Festival</a>, <a href="/new-york/misc">Misc.</a></p>
-      <p><span>Neighbourhoods:</span> <a href="/new-york/soho">SoHo</a>, <a href="/new-york/east-village">East Village</a>, <a href="/new-york/west-village">West Village</a>, <a href="/new-york/greenwich-village">Greenwich Village</a>, <a href="/new-york/lower-east-side">Lower East Side</a>, <a href="/new-york/tribeca">Tribeca</a>, <a href="/new-york/financial-district">Financial District</a>, <a href="/new-york/washington-square-park">Washington Square Park</a></p>
+      <p><span>Neighbourhoods:</span> <a href="/new-york/times-square">Times Square</a>, <a href="/new-york/soho">SoHo</a>, <a href="/new-york/chelsea-market">Chelsea Market</a>, <a href="/new-york/hudson-yards">Hudson Yards</a>, <a href="/new-york/east-village">East Village</a>, <a href="/new-york/williamsburg">Williamsburg</a>, <a href="/new-york/dumbo">DUMBO</a>, <a href="/new-york/bryant-park">Bryant Park</a></p>
     </div>
   </div>
 </footer>
@@ -390,9 +390,17 @@
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const LOCATIONS = [
-    'Battery Park City','Chinatown','Civic Center','East Village','Financial District','Greenwich Village',
-    'Hudson Square','Little Italy','Lower East Side','Meatpacking District','NoHo','Nolita',
-    'SoHo','South Street Seaport','Tribeca','Union Square','Washington Square Park','West Village',
+    'Arthur Avenue','Astoria','Battery Park City','Bed-Stuy','Brooklyn Bridge Park','Brooklyn Heights',
+    'Bryant Park','Bushwick','Central Park','Chelsea','Chelsea Market','Chinatown',
+    'Civic Center','Columbus Circle','Coney Island','Downtown Brooklyn','DUMBO','East Village',
+    'Financial District','Flatiron','Flushing','Fordham','Grand Central','Gramercy',
+    'Greenpoint','Greenwich Village','Harlem','Hell’s Kitchen','Herald Square','The High Line',
+    'Hudson Square','Hudson Yards','Jackson Heights','Koreatown','Little Italy','Long Island City',
+    'Lower East Side','Meatpacking District','Midtown','Mott Haven','Murray Hill','NoHo',
+    'Nolita','Park Slope','Pelham Bay Park','Prospect Park','Red Hook','Riverdale',
+    'Rockaway Beach','Rockefeller Center','Snug Harbor','SoHo','South Street Seaport','St. George',
+    'Times Square','Tribeca','Union Square','Upper East Side','Upper West Side','Washington Heights',
+    'Washington Square Park','West Village','Williamsburg',
   ];
 
   function normalizeLocationText(s){
@@ -511,10 +519,10 @@
 
   const map = new maplibregl.Map({
     style: 'https://tiles.openfreemap.org/styles/liberty',
-    center: [-73.9985, 40.7275],
-    zoom: 13,
+    center: [-73.9857, 40.7484],
+    zoom: 12,
     minZoom: 10,
-    maxBounds: [[-74.04, 40.695], [-73.955, 40.765]],
+    maxBounds: [[-74.30, 40.48], [-73.68, 40.93]],
     container: 'pickMap',
   });
   map.addControl(new maplibregl.NavigationControl(), 'top-left');
@@ -648,7 +656,7 @@
         if (entry.suggestAbort) entry.suggestAbort.abort();
         entry.suggestAbort = new AbortController();
         try {
-          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=40.7275&lon=-73.9985&limit=6`;
+          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=40.7484&lon=-73.9857&limit=6`;
           const res = await fetch(url, {signal: entry.suggestAbort.signal});
           const data = await res.json();
           renderSuggestions(data.features || []);

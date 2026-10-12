@@ -371,9 +371,17 @@ function slugify(text){
 }
 
 const LOCATIONS = [
-  'Battery Park City','Chinatown','Civic Center','East Village','Financial District','Greenwich Village',
-  'Hudson Square','Little Italy','Lower East Side','Meatpacking District','NoHo','Nolita',
-  'SoHo','South Street Seaport','Tribeca','Union Square','Washington Square Park','West Village',
+  'Arthur Avenue','Astoria','Battery Park City','Bed-Stuy','Brooklyn Bridge Park','Brooklyn Heights',
+  'Bryant Park','Bushwick','Central Park','Chelsea','Chelsea Market','Chinatown',
+  'Civic Center','Columbus Circle','Coney Island','Downtown Brooklyn','DUMBO','East Village',
+  'Financial District','Flatiron','Flushing','Fordham','Grand Central','Gramercy',
+  'Greenpoint','Greenwich Village','Harlem','Hell’s Kitchen','Herald Square','The High Line',
+  'Hudson Square','Hudson Yards','Jackson Heights','Koreatown','Little Italy','Long Island City',
+  'Lower East Side','Meatpacking District','Midtown','Mott Haven','Murray Hill','NoHo',
+  'Nolita','Park Slope','Pelham Bay Park','Prospect Park','Red Hook','Riverdale',
+  'Rockaway Beach','Rockefeller Center','Snug Harbor','SoHo','South Street Seaport','St. George',
+  'Times Square','Tribeca','Union Square','Upper East Side','Upper West Side','Washington Heights',
+  'Washington Square Park','West Village','Williamsburg',
 ];
 const locationOptions = ['All locations', ...LOCATIONS];
 
@@ -399,10 +407,10 @@ function showToast(message, isError){
 
 const map = new maplibregl.Map({
   style: 'https://tiles.openfreemap.org/styles/liberty',
-  center: [-73.9985, 40.7275],
-  zoom: 13,
-  minZoom: 12,
-  maxBounds: [[-74.04, 40.695], [-73.955, 40.765]],
+  center: [-73.9857, 40.7484],
+  zoom: 12.2,
+  minZoom: 11,
+  maxBounds: [[-74.30, 40.48], [-73.68, 40.93]],
   container: 'map',
   attributionControl: false,
 });

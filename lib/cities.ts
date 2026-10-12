@@ -27,32 +27,78 @@ export type CityConfig = {
   primaryText: string;
 };
 
-// Curated New York place list. New York covers downtown Manhattan only: the
-// conventional definition of Downtown, south of 14th Street (Lower Manhattan,
-// the Villages, SoHo, Tribeca and the Financial District). Same role as
-// lib/neighbourhoods.ts for Toronto: lets a neighbourhood hub resolve (with an
-// empty state) before any listing exists there, while still 404ing an
-// arbitrary or mistyped slug. Slugs follow the rule the listings trigger uses
-// (lowercase, non-alphanumerics collapsed to "-").
+// Curated New York place list. New York means New York City as defined by
+// its five boroughs: Manhattan, Brooklyn, Queens, the Bronx and Staten Island.
+// Nothing outside the five boroughs (New Jersey, Long Island, Westchester) is
+// covered. Same role as lib/neighbourhoods.ts for Toronto: lets a
+// neighbourhood hub resolve (with an empty state) before any listing exists
+// there, while still 404ing an arbitrary or mistyped slug. Slugs follow the
+// rule the listings trigger uses (lowercase, non-alphanumerics collapsed to
+// "-").
 const NEW_YORK_NEIGHBOURHOODS: Neighbourhood[] = [
+  { label: 'Arthur Avenue', slug: 'arthur-avenue' },
+  { label: 'Astoria', slug: 'astoria' },
   { label: 'Battery Park City', slug: 'battery-park-city' },
+  { label: 'Bed-Stuy', slug: 'bed-stuy' },
+  { label: 'Brooklyn Bridge Park', slug: 'brooklyn-bridge-park' },
+  { label: 'Brooklyn Heights', slug: 'brooklyn-heights' },
+  { label: 'Bryant Park', slug: 'bryant-park' },
+  { label: 'Bushwick', slug: 'bushwick' },
+  { label: 'Central Park', slug: 'central-park' },
+  { label: 'Chelsea', slug: 'chelsea' },
+  { label: 'Chelsea Market', slug: 'chelsea-market' },
   { label: 'Chinatown', slug: 'chinatown' },
   { label: 'Civic Center', slug: 'civic-center' },
+  { label: 'Columbus Circle', slug: 'columbus-circle' },
+  { label: 'Coney Island', slug: 'coney-island' },
+  { label: 'Downtown Brooklyn', slug: 'downtown-brooklyn' },
+  { label: 'DUMBO', slug: 'dumbo' },
   { label: 'East Village', slug: 'east-village' },
   { label: 'Financial District', slug: 'financial-district' },
+  { label: 'Flatiron', slug: 'flatiron' },
+  { label: 'Flushing', slug: 'flushing' },
+  { label: 'Fordham', slug: 'fordham' },
+  { label: 'Grand Central', slug: 'grand-central' },
+  { label: 'Gramercy', slug: 'gramercy' },
+  { label: 'Greenpoint', slug: 'greenpoint' },
   { label: 'Greenwich Village', slug: 'greenwich-village' },
+  { label: 'Harlem', slug: 'harlem' },
+  { label: 'Hell\u2019s Kitchen', slug: 'hell-s-kitchen' },
+  { label: 'Herald Square', slug: 'herald-square' },
+  { label: 'The High Line', slug: 'the-high-line' },
   { label: 'Hudson Square', slug: 'hudson-square' },
+  { label: 'Hudson Yards', slug: 'hudson-yards' },
+  { label: 'Jackson Heights', slug: 'jackson-heights' },
+  { label: 'Koreatown', slug: 'koreatown' },
   { label: 'Little Italy', slug: 'little-italy' },
+  { label: 'Long Island City', slug: 'long-island-city' },
   { label: 'Lower East Side', slug: 'lower-east-side' },
   { label: 'Meatpacking District', slug: 'meatpacking-district' },
+  { label: 'Midtown', slug: 'midtown' },
+  { label: 'Mott Haven', slug: 'mott-haven' },
+  { label: 'Murray Hill', slug: 'murray-hill' },
   { label: 'NoHo', slug: 'noho' },
   { label: 'Nolita', slug: 'nolita' },
+  { label: 'Park Slope', slug: 'park-slope' },
+  { label: 'Pelham Bay Park', slug: 'pelham-bay-park' },
+  { label: 'Prospect Park', slug: 'prospect-park' },
+  { label: 'Red Hook', slug: 'red-hook' },
+  { label: 'Riverdale', slug: 'riverdale' },
+  { label: 'Rockaway Beach', slug: 'rockaway-beach' },
+  { label: 'Rockefeller Center', slug: 'rockefeller-center' },
+  { label: 'Snug Harbor', slug: 'snug-harbor' },
   { label: 'SoHo', slug: 'soho' },
   { label: 'South Street Seaport', slug: 'south-street-seaport' },
+  { label: 'St. George', slug: 'st-george' },
+  { label: 'Times Square', slug: 'times-square' },
   { label: 'Tribeca', slug: 'tribeca' },
   { label: 'Union Square', slug: 'union-square' },
+  { label: 'Upper East Side', slug: 'upper-east-side' },
+  { label: 'Upper West Side', slug: 'upper-west-side' },
+  { label: 'Washington Heights', slug: 'washington-heights' },
   { label: 'Washington Square Park', slug: 'washington-square-park' },
   { label: 'West Village', slug: 'west-village' },
+  { label: 'Williamsburg', slug: 'williamsburg' },
 ];
 
 export const CITIES: Record<string, CityConfig> = {
@@ -85,14 +131,14 @@ export const CITIES: Record<string, CityConfig> = {
     primaryText: '#C24E00',
     neighbourhoods: NEW_YORK_NEIGHBOURHOODS,
     popularSlugs: [
+      'times-square',
       'soho',
+      'chelsea-market',
+      'hudson-yards',
       'east-village',
-      'west-village',
-      'greenwich-village',
-      'lower-east-side',
-      'tribeca',
-      'financial-district',
-      'washington-square-park',
+      'williamsburg',
+      'dumbo',
+      'bryant-park',
     ],
   },
 };
