@@ -7,6 +7,12 @@ Toronto free giveaways/events site. Two layers:
 
 Data lives in Supabase. Writes to `listings` only happen through `api/submit-listing.js` (service role key, Turnstile-gated) — the anon key used client-side is read-only by RLS design, so don't try to insert/update via the anon key.
 
+## Environments
+
+- **Production**: `main`, served at www.freebiesnearme.app (and freebiesnearme.app). Only merge here when asked.
+- **Staging**: the `staging` branch, served at https://freebiesnearme.vercel.app (a branch domain, so every push to `staging` updates it automatically; it sits behind Vercel login). Review visual and structural changes here first: merge the feature branch into `staging`, push, then check freebiesnearme.vercel.app.
+- Both environments read and write the **same Supabase database**. Listings for a city that production doesn't serve yet must stay `moderation_status = 'pending'`, because production pages only filter by city once that code is merged.
+
 ## Cities
 
 The site runs in two cities, each under its own URL prefix: `/toronto` and `/new-york`.
