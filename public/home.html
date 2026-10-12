@@ -47,10 +47,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css" rel="stylesheet">
-<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 <style>
-  .maplibregl-marker{position:absolute !important;}
   :root{
     color-scheme:light;
     --paper:#FEFCF6;
@@ -96,78 +93,30 @@
   .hero h1{font-size:clamp(32px,5.2vw,58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;max-width:820px;}
   .hero h1 em{font-style:normal;color:var(--teal);}
   .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:640px;}
-  .hero .fineprint{margin-top:10px;font-size:13.5px;font-weight:600;color:var(--ink);}
-  .welcome{
-    margin-top:18px;display:none;align-items:center;gap:12px;flex-wrap:wrap;
-    background:var(--paper-alt);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;
+  /* ===== City picker ===== */
+  .picks{padding-top:8px;padding-bottom:36px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+  .pick{
+    position:relative;display:flex;flex-direction:column;text-decoration:none;background:#fff;border:1px solid var(--line);
+    border-radius:18px;padding:22px 22px 22px 30px;overflow:hidden;
+    transition:box-shadow .15s ease,transform .15s ease,border-color .15s ease;
   }
-  .welcome a{color:var(--teal-text);text-decoration:none;font-weight:700;}
-  .welcome a:hover{text-decoration:underline;}
-
-  /* ===== Globe + city list ===== */
-  .stage{padding-bottom:36px;display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:22px;align-items:stretch;}
-  .globe-wrap{
-    position:relative;border-radius:22px;overflow:hidden;min-height:520px;
-    background:radial-gradient(120% 120% at 50% 40%,var(--space-2) 0%,var(--space) 70%);
-    border:1px solid #0a1220;
-  }
-  #globe{position:absolute;inset:0;}
-  .globe-hint{
-    position:absolute;left:16px;bottom:14px;z-index:3;color:#B6C4DA;font-size:12.5px;font-weight:500;
-    background:rgba(12,22,38,0.72);padding:7px 11px;border-radius:999px;pointer-events:none;
-  }
-  .globe-btns{position:absolute;right:14px;top:14px;z-index:3;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
-  .globe-btn{
-    font:600 12.5px 'Inter',sans-serif;color:#fff;background:rgba(12,22,38,0.72);border:1px solid rgba(255,255,255,0.25);
-    padding:8px 12px;border-radius:999px;cursor:pointer;
-  }
-  .globe-btn:hover{background:rgba(255,255,255,0.18);}
-  .nogl{display:none;position:absolute;inset:0;z-index:2;color:#B6C4DA;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:14px;}
-
-  .cities{display:flex;flex-direction:column;gap:14px;}
-  .city-card{
-    position:relative;display:block;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:16px;
-    padding:18px 20px 18px 24px;transition:box-shadow .15s ease,transform .15s ease,border-color .15s ease;
-    overflow:hidden;
-  }
-  .city-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c);}
-  .city-card:hover,.city-card.active{box-shadow:0 8px 26px rgba(21,27,33,0.10);transform:translateY(-2px);border-color:var(--c);}
-  .city-card h2{margin:0;font-size:24px;font-weight:700;letter-spacing:-0.01em;}
-  .city-card .region{font-size:13px;color:var(--muted);font-weight:500;margin-top:1px;}
-  .city-card .count{margin-top:12px;display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600;}
-  .city-card .dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:0 0 auto;}
-  .city-card .go{
-    margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;
-    color:#fff;background:var(--c);padding:9px 16px;border-radius:999px;
-  }
-  .city-card.soon{background:var(--paper-alt);border-style:dashed;}
-  .city-card.soon::before{background:var(--line);}
-  .city-card.soon h2{font-size:19px;}
-  .city-card.soon .go{color:var(--ink);background:none;padding:0;}
-
-  /* ===== Pins ===== */
-  .pin{position:relative;cursor:pointer;}
-  .pin .core{
-    width:18px;height:18px;border-radius:50%;background:var(--c);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.5);
-  }
-  .pin::after{
-    content:"";position:absolute;left:50%;top:9px;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;
-    border:2px solid var(--c);animation:ping 2s ease-out infinite;
-  }
-  .pin .tag{
-    position:absolute;left:26px;top:-6px;white-space:nowrap;background:#fff;color:var(--ink);font:700 13px 'Space Grotesk',sans-serif;
-    padding:5px 10px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,0.35);
-  }
-  .pin .tag.left{left:auto;right:26px;}
-  .pin .tag.right{top:2px;}
-  @media (max-width:520px){.pin .tag{font-size:11.5px;padding:4px 8px;}}
-  @keyframes ping{0%{transform:scale(1);opacity:.9}100%{transform:scale(3);opacity:0}}
-  @media (prefers-reduced-motion: reduce){.pin::after{animation:none;}}
-
-  .maplibregl-popup-content{border-radius:12px;padding:14px 16px;font-family:'Inter',sans-serif;}
-  .pop h3{margin:0 0 2px;font:700 18px 'Space Grotesk',sans-serif;}
-  .pop p{margin:0 0 10px;font-size:13px;color:var(--muted);}
-  .pop a{display:inline-block;background:var(--c);color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;padding:8px 14px;border-radius:999px;}
+  .pick::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--c);}
+  .pick:hover,.pick:focus-visible{box-shadow:0 10px 30px rgba(21,27,33,0.12);transform:translateY(-2px);border-color:var(--c);}
+  .pick.you{border-color:var(--c);box-shadow:0 0 0 2px var(--c);}
+  .pick .badge{align-self:flex-start;font-size:12px;font-weight:700;color:#fff;background:var(--c);padding:3px 10px;border-radius:999px;margin-bottom:10px;}
+  .pick .badge[hidden]{display:none;}
+  .pick h2{margin:0;font-size:30px;line-height:1.1;letter-spacing:-0.015em;}
+  .pick .region{font-size:13.5px;color:var(--muted);font-weight:500;margin-top:2px;}
+  .pick .nums{display:flex;gap:28px;margin:18px 0 22px;}
+  .pick .nums b{display:block;font:700 34px 'Space Grotesk',sans-serif;line-height:1;color:var(--c);}
+  .pick .nums span{display:block;margin-top:4px;font-size:13px;color:var(--muted);font-weight:600;}
+  .pick .go{margin-top:auto;align-self:flex-start;font-size:15px;font-weight:700;color:#fff;background:var(--c);padding:11px 20px;border-radius:999px;}
+  .pick.soon{background:var(--paper-alt);border-style:dashed;}
+  .pick.soon::before{background:var(--line);}
+  .pick.soon h2{font-size:22px;}
+  .pick.soon .nums{display:none;}
+  .pick.soon .region{margin-bottom:18px;}
+  .pick.soon .go{color:var(--ink);background:none;padding:0;}
 
   /* ===== Section headings ===== */
   .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;}
@@ -180,7 +129,11 @@
   .tab{
     font:600 13.5px 'Inter',sans-serif;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;
   }
-  .tab[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .tab[aria-pressed="true"]{background:var(--c,var(--ink));color:#fff;border-color:var(--c,var(--ink));}
+  .tab[data-tab]:not([data-tab="all"])::before{
+    content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:7px;vertical-align:1px;
+  }
+  .tab[aria-pressed="true"]::before{background:#fff !important;}
   .live-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;}
   .lcard{
     position:relative;display:flex;flex-direction:column;text-decoration:none;background:#fff;border:1px solid var(--line);
@@ -220,6 +173,9 @@
     background:var(--paper-alt);border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:14.5px;font-weight:600;
   }
   .why-cta .btns{display:flex;gap:8px;flex-wrap:wrap;}
+  .hero .install{margin-top:22px;max-width:820px;}
+  .install-steps{display:block;margin-top:8px;font-size:13.5px;font-weight:600;color:var(--ink);}
+  .install-steps[hidden]{display:none;}
   .install{
     margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
     background:linear-gradient(135deg,var(--teal-dim),#fff);border:1px solid #BFE6DC;border-radius:14px;padding:16px 20px;
@@ -283,15 +239,12 @@
     .brands .wrap{grid-template-columns:1fr;gap:30px;}
   }
   @media (max-width:900px){
-    .stage{grid-template-columns:1fr;}
-    .globe-wrap{min-height:400px;}
+    .picks{grid-template-columns:1fr;}
   }
   @media (max-width:520px){
     .wrap{padding-left:16px;padding-right:16px;}
     .top{padding-top:14px;padding-bottom:14px;}
     .top-link{padding:8px 12px;font-size:13.5px;}
-    .globe-wrap{min-height:340px;border-radius:18px;}
-    .globe-hint{display:none;}
     .why-grid{grid-template-columns:1fr;}
     .live-grid{grid-template-columns:1fr;}
     .lcard:nth-child(n+5){display:none;}
@@ -314,41 +267,38 @@
   <div class="eyebrow"><span class="live-dot" aria-hidden="true"></span><span id="eyebrowText">Free things, updated daily</span></div>
   <h1 class="display">Free stuff is happening near you. <em>Never miss it again.</em></h1>
   <p>Samples, giveaways, free classes and pop ups, checked by our team and mapped with a clock on each one, so you show up while it is still free. Pick your city to see what is on right now.</p>
-  <div class="fineprint">No account, no app store, no cost. Add it to your home screen and it opens like an app.</div>
-  <div class="welcome" id="welcome" aria-live="polite"></div>
+  <div class="install" id="install">
+    <div class="install-text">
+      <strong>Skip the app store. Install it in one tap.</strong>
+      <span>Freebies Near Me is a web app. Put it on your home screen and it opens full screen like any other app, with nothing to download from an app store.</span>
+      <span class="install-steps" id="installSteps" hidden></span>
+    </div>
+    <button type="button" class="btn" id="installBtn" data-ev="install_click" data-loc="hero">Install the app</button>
+  </div>
 </section>
 
 <main>
-<section class="wrap stage" id="cities" aria-label="Choose a city">
-  <div class="globe-wrap">
-    <div id="globe" role="img" aria-label="A globe with pins on the cities Freebies Near Me covers: Toronto and New York"></div>
-    <div class="globe-btns">
-      <button type="button" class="globe-btn" id="locateBtn">Find my nearest city</button>
-      <button type="button" class="globe-btn" id="resetBtn">Reset view</button>
-    </div>
-    <div class="globe-hint" id="hint">Drag to spin, tap a pin to open a city</div>
-    <div class="nogl" id="nogl">Your browser can't show the globe, so pick a city from the list.</div>
-  </div>
-
-  <div class="cities" id="cityList">
-    <a class="city-card" data-city="toronto" data-ev="city_select" data-loc="card" href="/toronto" style="--c:#274490">
-      <h2 class="display">Toronto</h2>
-      <div class="region">Ontario, Canada</div>
-      <div class="count"><span class="dot"></span><span class="count-text">Free listings, updated daily</span></div>
-      <span class="go">Open Toronto &rarr;</span>
-    </a>
-    <a class="city-card" data-city="new-york" data-ev="city_select" data-loc="card" href="/new-york" style="--c:#FF6600">
-      <h2 class="display">New York</h2>
-      <div class="region">New York City, USA</div>
-      <div class="count"><span class="dot"></span><span class="count-text">Free listings, updated daily</span></div>
-      <span class="go">Open New York &rarr;</span>
-    </a>
-    <a class="city-card soon" href="/toronto/feedback" data-ev="suggest_city" data-loc="card">
-      <h2 class="display">Your city next?</h2>
-      <div class="region">More cities are on the way</div>
-      <span class="go">Suggest a city &rarr;</span>
-    </a>
-  </div>
+<section class="wrap picks" id="cities" aria-label="Choose a city">
+  <a class="pick" data-city="toronto" data-ev="city_select" data-loc="card" href="/toronto" style="--c:#274490">
+    <span class="badge" hidden></span>
+    <h2 class="display">Toronto</h2>
+    <div class="region">Ontario, Canada</div>
+    <div class="nums"><div><b class="n-today">-</b><span>happening today</span></div><div><b class="n-soon">-</b><span>coming up</span></div></div>
+    <span class="go">Open Toronto &rarr;</span>
+  </a>
+  <a class="pick" data-city="new-york" data-ev="city_select" data-loc="card" href="/new-york" style="--c:#FF6600">
+    <span class="badge" hidden></span>
+    <h2 class="display">New York</h2>
+    <div class="region">New York City, USA</div>
+    <div class="nums"><div><b class="n-today">-</b><span>happening today</span></div><div><b class="n-soon">-</b><span>coming up</span></div></div>
+    <span class="go">Open New York &rarr;</span>
+  </a>
+  <a class="pick soon" href="/toronto/feedback" data-ev="suggest_city" data-loc="card">
+    <h2 class="display">Your city next?</h2>
+    <div class="region">More cities are on the way</div>
+    <div class="nums"></div>
+    <span class="go">Suggest a city &rarr;</span>
+  </a>
 </section>
 
 <section class="wrap live" id="live" aria-label="Free right now" hidden>
@@ -359,8 +309,8 @@
     </div>
     <div class="tabs" role="group" aria-label="Filter by city" id="liveTabs">
       <button type="button" class="tab" data-tab="all" aria-pressed="true">All cities</button>
-      <button type="button" class="tab" data-tab="toronto" aria-pressed="false">Toronto</button>
-      <button type="button" class="tab" data-tab="new-york" aria-pressed="false">New York</button>
+      <button type="button" class="tab" data-tab="toronto" aria-pressed="false" style="--c:#274490">Toronto</button>
+      <button type="button" class="tab" data-tab="new-york" aria-pressed="false" style="--c:#FF6600">New York</button>
     </div>
   </div>
   <div class="live-grid" id="liveGrid"></div>
@@ -396,13 +346,6 @@
       <p>Rate what was worth the trip and flag when something has run out, so nobody walks to an empty table.</p>
     </div>
   </div>
-  <div class="install" id="install" hidden>
-    <div class="install-text">
-      <strong>Skip the app store. Install it in one tap.</strong>
-      <span id="installHow">Freebies Near Me is a web app. Put it on your home screen and it opens full screen like any other app, with nothing to download from an app store.</span>
-    </div>
-    <button type="button" class="btn" id="installBtn" hidden data-ev="install_click" data-loc="home">Install on this device</button>
-  </div>
   <div class="why-cta">
     <span>Spotted a freebie we missed? Add it and help every hunter in your city.</span>
     <span class="btns">
@@ -421,8 +364,9 @@
 
       <div class="stats" id="stats">
         <div class="stat" id="statHunters" hidden><b id="statHuntersNum"></b><span id="statHuntersLabel">hunters a month</span></div>
-        <div class="stat" id="statLive" hidden><b id="statLiveNum"></b><span>free offers live right now</span></div>
-        <div class="stat" id="statTotal" hidden><b id="statTotalNum"></b><span>offers published to date</span></div>
+        <div class="stat" id="statLive" hidden><b id="statLiveNum"></b><span>free events happening today</span></div>
+        <div class="stat" id="statSoon" hidden><b id="statSoonNum"></b><span>more coming up</span></div>
+        <div class="stat" id="statTotal" hidden><b id="statTotalNum"></b><span>listings published to date</span></div>
         <div class="stat"><b>2</b><span>cities, with more on the way</span></div>
       </div>
 
@@ -505,7 +449,7 @@
   var SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
   var counts = {};
-  var liveRows = [];     // listings on now or coming up, soonest first
+  var events = [];      // grouped events happening today or coming up
   var liveTab = 'all';
   var nf = new Intl.NumberFormat('en-CA');
 
@@ -523,60 +467,107 @@
     track(a.getAttribute('data-ev'), { city: a.getAttribute('data-city') || '', location: a.getAttribute('data-loc') || '' });
   });
 
-  // ---- returning visitor shortcut (never an automatic redirect) ----
+  // ---- which city is probably yours: last city used, else the browser's time zone ----
   var last = safe(function(){ return localStorage.getItem('fnm_last_city'); });
   var lastCity = last && cityBySlug(last);
-  if (lastCity){
-    var w = $('welcome');
-    w.style.display = 'flex';
-    w.innerHTML = 'Welcome back. <a href="/' + lastCity.slug + '" data-ev="city_select" data-city="' + lastCity.slug + '" data-loc="welcome">Continue to ' + lastCity.name + ' &rarr;</a>';
+  var tz = safe(function(){ return Intl.DateTimeFormat().resolvedOptions().timeZone; });
+  var guess = lastCity || cityBySlug({ 'America/Toronto':'toronto', 'America/New_York':'new-york' }[tz]);
+  if (guess){
+    var pick = document.querySelector('.pick[data-city="' + guess.slug + '"]');
+    if (pick){
+      pick.classList.add('you');
+      var bd = pick.querySelector('.badge');
+      bd.textContent = lastCity ? 'Welcome back' : 'Looks like you are here';
+      bd.hidden = false;
+    }
   }
-  document.querySelectorAll('.city-card[data-city]').forEach(function(a){
+  document.querySelectorAll('.pick[data-city]').forEach(function(a){
     a.addEventListener('click', function(){ remember(a.getAttribute('data-city')); });
   });
 
-  // ---- data: live listings per city + totals for the brand pitch ----
+  // ---- data: events per city + totals for the brand pitch ----
+  // Counts follow the city pages' own rules so the numbers match what a visitor
+  // sees after clicking through. An event is one brand + place + offering (its
+  // dated rows are grouped, as on the city pages). It is "today" when today's
+  // date falls inside one of its dates and that date's exact end time has not
+  // passed, and "coming up" when its next date is a later day.
   function sbGet(path){
     return fetch(SUPABASE_URL + '/rest/v1/' + path, { headers:{ apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + SUPABASE_ANON_KEY } })
       .then(function(r){ return r.ok ? r.json() : []; });
   }
-  function endOf(r){
-    var start = new Date(r.start_time).getTime();
-    // no end time: treat the listing as running for a few hours after it starts
-    return r.end_time ? new Date(r.end_time).getTime() : start + 4*3600*1000;
+  function ms(t){ return new Date(t).getTime(); }
+  function dayKey(t, tz){ return new Intl.DateTimeFormat('en-CA', { timeZone:tz, year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date(t)); }
+  function hasClock(t, tz){
+    var h = 0, m = 0;
+    new Intl.DateTimeFormat('en-US', { timeZone:tz, hourCycle:'h23', hour:'2-digit', minute:'2-digit' }).formatToParts(new Date(t)).forEach(function(x){
+      if (x.type === 'hour') h = +x.value;
+      if (x.type === 'minute') m = +x.value;
+    });
+    return h !== 0 || m !== 0;
+  }
+  // a row's last calendar date (a date-only end at midnight means the previous day)
+  function rowEndKey(r, tz){
+    var sk = dayKey(ms(r.start_time), tz);
+    if (!r.end_time) return sk;
+    var e = ms(r.end_time);
+    var ek = hasClock(e, tz) ? dayKey(e, tz) : dayKey(e - 60000, tz);
+    return ek < sk ? sk : ek;
+  }
+  function rowIsToday(r, tz, now, todayKey){
+    if (r.end_time){ var e = ms(r.end_time); if (hasClock(e, tz) && now > e) return false; }
+    return todayKey >= dayKey(ms(r.start_time), tz) && todayKey <= rowEndKey(r, tz);
+  }
+  function buildEvents(rows){
+    var now = Date.now(), groups = {}, order = [], out = [];
+    rows.forEach(function(r){
+      if (!cityBySlug(r.city_slug)) return;
+      var k = r.group_id || (r.city_slug + '|' + r.brand + '|' + r.neighbourhood + '|' + r.what);
+      if (!groups[k]){ groups[k] = []; order.push(k); }
+      groups[k].push(r);
+    });
+    order.forEach(function(k){
+      var rs = groups[k].sort(function(a, b){ return ms(a.start_time) - ms(b.start_time); });
+      var first = rs[0], c = cityBySlug(first.city_slug), todayKey = dayKey(now, c.tz);
+      var ref = null, status = '';
+      for (var i = 0; i < rs.length; i++){ if (rowIsToday(rs[i], c.tz, now, todayKey)){ ref = rs[i]; status = 'today'; break; } }
+      if (!ref){
+        for (var j = 0; j < rs.length; j++){ if (dayKey(ms(rs[j].start_time), c.tz) > todayKey){ ref = rs[j]; status = 'soon'; break; } }
+      }
+      if (!ref) return;
+      out.push({ status:status, ref:ref, city:c, brand:first.brand, what:first.what, neighbourhood:first.neighbourhood,
+                 image_url:first.image_url, image_fit:first.image_fit, sponsored:first.sponsored });
+    });
+    return out;
   }
   function renderCounts(){
+    var today = 0, soon = 0, known = false;
     CITIES.forEach(function(c){
-      var el = document.querySelector('.city-card[data-city="' + c.slug + '"] .count-text');
-      var n = counts[c.slug];
-      if (el && typeof n === 'number'){
-        el.textContent = n === 0 ? 'Be the first to add a listing' : n + ' free ' + (n === 1 ? 'thing' : 'things') + ' on now or coming up';
-      }
+      var st = counts[c.slug];
+      var box = document.querySelector('.pick[data-city="' + c.slug + '"]');
+      if (!st || !box) return;
+      known = true; today += st.today; soon += st.soon;
+      box.querySelector('.n-today').textContent = st.today;
+      box.querySelector('.n-soon').textContent = st.soon;
     });
-    var total = 0, known = false;
-    CITIES.forEach(function(c){ if (typeof counts[c.slug] === 'number'){ total += counts[c.slug]; known = true; } });
-    if (known && total > 0){
-      $('eyebrowText').textContent = nf.format(total) + ' free ' + (total === 1 ? 'thing' : 'things') + ' on now or coming up';
-      $('statLiveNum').textContent = nf.format(total);
-      $('statLive').hidden = false;
-    }
+    if (!known) return;
+    var line = today ? nf.format(today) + ' free ' + (today === 1 ? 'thing' : 'things') + ' happening today'
+      : soon ? nf.format(soon) + ' free ' + (soon === 1 ? 'thing' : 'things') + ' coming up' : '';
+    if (line) $('eyebrowText').textContent = line;
+    if (today){ $('statLiveNum').textContent = nf.format(today); $('statLive').hidden = false; }
+    if (soon){ $('statSoonNum').textContent = nf.format(soon); $('statSoon').hidden = false; }
   }
   function loadUpcoming(){
-    var since = new Date(Date.now() - 12*3600*1000).toISOString();
-    var q = 'listings?select=id,brand,what,neighbourhood,city_slug,start_time,end_time,image_url,image_fit,sponsored'
-      + '&moderation_status=eq.approved&is_active=eq.true&start_time=gte.' + encodeURIComponent(since)
-      + '&order=start_time.asc&limit=1000';
+    // rows from yesterday on: enough to cover anything running today or later
+    var since = new Date(Date.now() - 24*3600*1000).toISOString();
+    var q = 'listings?select=id,group_id,brand,what,neighbourhood,city_slug,start_time,end_time,image_url,image_fit,sponsored'
+      + '&moderation_status=eq.approved&is_active=eq.true'
+      + '&or=' + encodeURIComponent('(start_time.gte.' + since + ',end_time.gte.' + since + ')')
+      + '&order=start_time.asc&limit=2000';
     return sbGet(q).then(function(rows){
-      var now = Date.now();
-      CITIES.forEach(function(c){ counts[c.slug] = 0; });
-      liveRows = [];
-      rows.forEach(function(r){
-        if (endOf(r) < now || counts[r.city_slug] === undefined) return;
-        counts[r.city_slug]++;
-        liveRows.push(r);
-      });
+      events = buildEvents(rows);
+      CITIES.forEach(function(c){ counts[c.slug] = { today:0, soon:0 }; });
+      events.forEach(function(ev){ counts[ev.city.slug][ev.status]++; });
       renderCounts();
-      refreshTags();
       renderLive();
     }).catch(function(){});
   }
@@ -590,61 +581,70 @@
   }
 
   // ---- "free right now" strip ----
-  function whenLabel(r, tz){
-    var now = Date.now(), s = new Date(r.start_time).getTime(), e = endOf(r);
-    if (s <= now && e >= now) return { text:'On now', now:true };
-    var dayKey = function(ms){ return new Intl.DateTimeFormat('en-CA', { timeZone:tz, year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date(ms)); };
-    var time = new Intl.DateTimeFormat('en-US', { timeZone:tz, hour:'numeric', minute:'2-digit' }).format(new Date(s));
-    var sk = dayKey(s), tk = dayKey(now), mk = dayKey(now + 24*3600*1000);
-    if (sk === tk) return { text:'Today ' + time };
-    if (sk === mk) return { text:'Tomorrow ' + time };
-    return { text:new Intl.DateTimeFormat('en-US', { timeZone:tz, weekday:'short', month:'short', day:'numeric' }).format(new Date(s)) };
+  function whenLabel(ev){
+    var tz = ev.city.tz, r = ev.ref, now = Date.now(), s = ms(r.start_time);
+    var clock = hasClock(s, tz) ? new Intl.DateTimeFormat('en-US', { timeZone:tz, hour:'numeric', minute:'2-digit' }).format(new Date(s)) : '';
+    if (ev.status === 'today'){
+      var e = r.end_time ? ms(r.end_time) : s + 4*3600*1000;
+      if (s <= now && now <= e) return { text:'On now', now:true };
+      return { text: clock ? 'Today ' + clock : 'Today', now:false };
+    }
+    var sk = dayKey(s, tz), mk = dayKey(now + 24*3600*1000, tz);
+    var day = sk === mk ? 'Tomorrow'
+      : new Intl.DateTimeFormat('en-US', { timeZone:tz, weekday:'short', month:'short', day:'numeric' }).format(new Date(s));
+    return { text: clock ? day + ' ' + clock : day, now:false };
   }
   function pickLive(slug){
-    var pool = liveRows.filter(function(r){ return slug === 'all' || r.city_slug === slug; });
-    var now = Date.now();
-    var horizon = now + 7*24*3600*1000;
-    pool = pool.filter(function(r){ return new Date(r.start_time).getTime() <= horizon; });
-    // one card per brand and day-part keeps the strip varied (per-day rows of one event collapse to the next one)
-    var seen = {}, out = [];
-    pool.sort(function(a, b){
-      var an = new Date(a.start_time).getTime() <= now ? 0 : 1, bn = new Date(b.start_time).getTime() <= now ? 0 : 1;
-      if (an !== bn) return an - bn;
-      if (!!a.sponsored !== !!b.sponsored) return a.sponsored ? -1 : 1;
-      return new Date(a.start_time) - new Date(b.start_time);
+    var now = Date.now(), horizon = now + 7*24*3600*1000;
+    function rank(ev){
+      var s = ms(ev.ref.start_time);
+      if (ev.status === 'today') return s <= now ? 0 : 1;   // on now, then later today
+      return 2;
+    }
+    var pool = events.filter(function(ev){
+      if (slug !== 'all' && ev.city.slug !== slug) return false;
+      return ev.status === 'today' || ms(ev.ref.start_time) <= horizon;
     });
-    pool.forEach(function(r){
-      var k = r.city_slug + '|' + r.brand;
+    pool.sort(function(a, b){
+      var d = rank(a) - rank(b);
+      if (d) return d;
+      if (!!a.sponsored !== !!b.sponsored) return a.sponsored ? -1 : 1;
+      return ms(a.ref.start_time) - ms(b.ref.start_time);
+    });
+    // one card per brand and city keeps the strip varied
+    var seen = {}, out = [];
+    pool.forEach(function(ev){
+      var k = ev.city.slug + '|' + ev.brand;
       if (seen[k]) return;
       seen[k] = true;
-      out.push(r);
+      out.push(ev);
     });
     if (slug !== 'all') return out.slice(0, 8);
     // all cities: alternate so neither city crowds the other out
-    var by = {}; CITIES.forEach(function(c){ by[c.slug] = out.filter(function(r){ return r.city_slug === c.slug; }); });
+    var by = {}; CITIES.forEach(function(c){ by[c.slug] = out.filter(function(ev){ return ev.city.slug === c.slug; }); });
     var mixed = [];
     for (var i = 0; i < 4; i++) CITIES.forEach(function(c){ if (by[c.slug][i]) mixed.push(by[c.slug][i]); });
     return mixed.slice(0, 8);
   }
   function renderLive(){
     var sec = $('live'), grid = $('liveGrid'), more = $('liveMore');
-    if (!liveRows.length){ sec.hidden = true; return; }
+    if (!events.length){ sec.hidden = true; return; }
     sec.hidden = false;
     var items = pickLive(liveTab);
     if (!items.length){
       grid.innerHTML = '<div class="live-empty">Nothing in the next week for this city yet. Check back soon, or add one you know about.</div>';
     } else {
-      grid.innerHTML = items.map(function(r){
-        var c = cityBySlug(r.city_slug), wl = whenLabel(r, c.tz);
-        var img = r.image_url
-          ? '<div class="img' + (r.image_fit === 'contain' ? ' contain' : '') + '"><img src="' + esc(r.image_url) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"></div>'
+      grid.innerHTML = items.map(function(ev){
+        var c = ev.city, wl = whenLabel(ev);
+        var img = ev.image_url
+          ? '<div class="img' + (ev.image_fit === 'contain' ? ' contain' : '') + '"><img src="' + esc(ev.image_url) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"></div>'
           : '';
-        var where = c.name + (r.neighbourhood ? ' · ' + esc(r.neighbourhood) : '');
+        var where = c.name + (ev.neighbourhood ? ' · ' + esc(ev.neighbourhood) : '');
         return '<a class="lcard" style="--c:' + c.color + '" href="/' + c.slug + '" data-ev="live_card_click" data-city="' + c.slug + '" data-loc="live">'
           + '<div class="band"></div>' + img
           + '<div class="body"><span class="when' + (wl.now ? ' now' : '') + '">' + esc(wl.text) + '</span>'
-          + '<div class="brand">' + esc(r.brand) + '</div>'
-          + '<div class="what">' + esc(r.what) + '</div>'
+          + '<div class="brand">' + esc(ev.brand) + '</div>'
+          + '<div class="what">' + esc(ev.what) + '</div>'
           + '<div class="where">' + where + '</div></div></a>';
       }).join('');
     }
@@ -675,172 +675,35 @@
   var standalone = !!(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
   safe(function(){ if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function(){}); });
   if (standalone){
+    $('install').hidden = true;
     // Launched from the home screen (no referrer): go straight to the city the
     // hunter used last. Following an "All cities" link inside the app has a
-    // referrer, so it still shows the globe. Browser visits are never redirected.
+    // referrer, so it still shows the picker. Browser visits are never redirected.
     if (lastCity && !document.referrer){ location.replace('/' + lastCity.slug); return; }
   } else {
-    var installBox = $('install'), installBtn = $('installBtn'), installHow = $('installHow'), deferredInstall = null;
+    var installBtn = $('installBtn'), installSteps = $('installSteps'), deferredInstall = null;
     var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    installBox.hidden = false;
-    if (isIOS){
-      installHow.textContent = 'On iPhone and iPad: tap the Share icon in Safari, then choose Add to Home Screen. It opens full screen like any other app, with nothing to download from an app store.';
-    }
-    window.addEventListener('beforeinstallprompt', function(e){
-      e.preventDefault();
-      deferredInstall = e;
-      installBtn.hidden = false;
-    });
+    window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferredInstall = e; });
     installBtn.addEventListener('click', function(){
-      if (!deferredInstall) return;
-      deferredInstall.prompt();
-      deferredInstall.userChoice.then(function(c){
-        track('install_choice', { outcome: c && c.outcome || '', location: 'home' });
-      }).finally(function(){ deferredInstall = null; installBtn.hidden = true; });
+      if (deferredInstall){
+        deferredInstall.prompt();
+        deferredInstall.userChoice.then(function(c){
+          track('install_choice', { outcome: c && c.outcome || '', location: 'hero' });
+        }).finally(function(){ deferredInstall = null; });
+        return;
+      }
+      // No one-tap prompt here (iPhone, or the browser has not offered it yet): show the steps.
+      installSteps.hidden = false;
+      installSteps.textContent = isIOS
+        ? 'On iPhone and iPad: tap the Share icon in Safari, then choose Add to Home Screen.'
+        : 'Open your browser menu and choose Install app or Add to Home screen. On a computer, look for the install icon in the address bar.';
     });
     window.addEventListener('appinstalled', function(){
-      track('app_installed', { location: 'home' });
-      installBox.hidden = true;
+      track('app_installed', { location: 'hero' });
+      $('install').hidden = true;
     });
   }
 
-  // ---- globe ----
-  var map = null, markers = [], spinning = true, interacting = false;
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var HOME = { center:[-62, 36], zoom: window.innerWidth < 700 ? 1.2 : 1.9 };
-
-  function tagText(c){
-    var n = counts[c.slug];
-    return typeof n === 'number' && n > 0 ? c.name + ' · ' + n + ' live' : c.name;
-  }
-  function refreshTags(){
-    markers.forEach(function(m){ m.tag.textContent = tagText(m.city); });
-  }
-  function highlightCard(slug){
-    document.querySelectorAll('.city-card[data-city]').forEach(function(a){
-      a.classList.toggle('active', a.getAttribute('data-city') === slug);
-    });
-  }
-  function flyTo(c){
-    if (!map) return;
-    spinning = false;
-    map.flyTo({ center:[c.lng, c.lat], zoom: window.innerWidth < 700 ? 3.2 : 4.2, duration: 1800, essential: true });
-  }
-  function openPopup(c){
-    var n = counts[c.slug];
-    var blurb = typeof n === 'number' && n > 0 ? n + ' free ' + (n === 1 ? 'thing' : 'things') + ' on now or coming up' : c.region;
-    var html = '<div class="pop" style="--c:' + c.color + '"><h3>' + c.name + '</h3><p>' + blurb + '</p><a href="/' + c.slug + '" data-ev="city_select" data-city="' + c.slug + '" data-loc="globe">Open ' + c.name + ' &rarr;</a></div>';
-    new maplibregl.Popup({ offset: 22, closeButton: false, maxWidth: '240px' })
-      .setLngLat([c.lng, c.lat]).setHTML(html).addTo(map);
-    // remember the choice when the popup link is used
-    setTimeout(function(){
-      var a = document.querySelector('.pop a');
-      if (a) a.addEventListener('click', function(){ remember(c.slug); });
-    }, 0);
-  }
-  function spin(){
-    if (!map || !spinning || interacting || reduceMotion || document.hidden) return;
-    var z = map.getZoom();
-    if (z > 3.5) return;
-    var ctr = map.getCenter();
-    ctr.lng -= 360 / 140;            // one turn every ~140 seconds
-    map.easeTo({ center: ctr, duration: 1000, easing: function(n){ return n; } });
-  }
-
-  function initGlobe(){
-    if (!window.maplibregl){
-      $('nogl').style.display = 'flex';
-      return;
-    }
-    try {
-      map = new maplibregl.Map({
-        container: 'globe',
-        style: 'https://tiles.openfreemap.org/styles/liberty',
-        center: HOME.center,
-        zoom: HOME.zoom,
-        minZoom: 0.8,
-        maxZoom: 9,
-        attributionControl: { compact: true }
-      });
-    } catch (e) {
-      $('nogl').style.display = 'flex';
-      return;
-    }
-    map.on('style.load', function(){
-      try { map.setProjection({ type: 'globe' }); } catch (e) {}
-    });
-    map.on('load', function(){
-      CITIES.forEach(function(c){
-        var el = document.createElement('div');
-        el.className = 'pin';
-        el.style.setProperty('--c', c.color);
-        el.innerHTML = '<div class="core"></div><div class="tag ' + (c.side || 'right') + '"></div>';
-        var tag = el.querySelector('.tag');
-        tag.textContent = tagText(c);
-        el.setAttribute('role', 'button');
-        el.setAttribute('tabindex', '0');
-        el.setAttribute('aria-label', 'Open ' + c.name);
-        function activate(){ highlightCard(c.slug); flyTo(c); openPopup(c); }
-        el.addEventListener('click', function(e){ e.stopPropagation(); activate(); });
-        el.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); } });
-        new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([c.lng, c.lat]).addTo(map);
-        markers.push({ city: c, tag: tag });
-      });
-      refreshTags();
-      map.on('mousedown', function(){ interacting = true; spinning = false; });
-      map.on('touchstart', function(){ interacting = true; spinning = false; });
-      map.on('mouseup', function(){ interacting = false; });
-      map.on('touchend', function(){ interacting = false; });
-      map.on('moveend', spin);
-      spin();
-    });
-    map.on('error', function(){ /* tile errors must not break the page */ });
-  }
-
-  // ---- card hover links to the globe ----
-  document.querySelectorAll('.city-card[data-city]').forEach(function(a){
-    var c = cityBySlug(a.getAttribute('data-city'));
-    a.addEventListener('mouseenter', function(){ highlightCard(c.slug); if (map && !reduceMotion) { spinning = false; map.easeTo({ center:[c.lng, c.lat], zoom: Math.max(map.getZoom(), 2.6), duration: 1200 }); } });
-    a.addEventListener('focus', function(){ highlightCard(c.slug); });
-  });
-
-  $('resetBtn').addEventListener('click', function(){
-    highlightCard(null);
-    if (!map) return;
-    document.querySelectorAll('.maplibregl-popup').forEach(function(p){ p.remove(); });
-    map.flyTo({ center: HOME.center, zoom: HOME.zoom, duration: 1400 });
-    spinning = true;
-  });
-
-  // nearest city (location stays on the device)
-  function km(a, b){
-    var R = 6371, toRad = Math.PI / 180;
-    var dLat = (b.lat - a.lat) * toRad, dLng = (b.lng - a.lng) * toRad;
-    var h = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(a.lat*toRad)*Math.cos(b.lat*toRad)*Math.sin(dLng/2)*Math.sin(dLng/2);
-    return 2 * R * Math.asin(Math.sqrt(h));
-  }
-  $('locateBtn').addEventListener('click', function(){
-    var hint = $('hint');
-    hint.style.display = 'block';
-    if (!navigator.geolocation){ hint.textContent = 'Location is not available in this browser.'; return; }
-    hint.textContent = 'Finding your nearest city...';
-    navigator.geolocation.getCurrentPosition(function(pos){
-      var me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-      var best = null;
-      CITIES.forEach(function(c){ var d = km(me, c); if (!best || d < best.d) best = { c: c, d: d }; });
-      if (best.d > 200){
-        hint.textContent = 'No city within reach yet. The nearest is ' + best.c.name + ' (' + Math.round(best.d) + ' km). Suggest yours below.';
-      } else {
-        hint.textContent = 'Nearest city: ' + best.c.name;
-        highlightCard(best.c.slug); flyTo(best.c); openPopup(best.c);
-      }
-    }, function(){
-      hint.textContent = 'Location was blocked. Pick a city from the list.';
-    }, { timeout: 8000 });
-  });
-
-  document.addEventListener('visibilitychange', spin);
-  initGlobe();
   loadUpcoming();
   loadTotals();
 })();
