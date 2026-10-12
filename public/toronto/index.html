@@ -148,8 +148,10 @@
     display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;
   }
   .hero h1{
-    font-size:clamp(30px,4.2vw,46px);line-height:1.08;margin:0 0 10px;font-weight:700;max-width:640px;
+    font-size:clamp(30px,3.7vw,42px);line-height:1.08;margin:0 0 10px;font-weight:700;
   }
+  /* the city name never splits across lines */
+  .hero h1 .city-name{white-space:nowrap;}
   .hero p{font-size:15.5px;line-height:1.5rem;color:var(--muted);max-width:480px;margin:0;}
   .hero-stat{
     background:var(--paper-alt);border:1px solid var(--line);border-left:1.5px dashed #C9C2A6;border-radius:10px;
@@ -589,7 +591,7 @@
 
 <div class="hero">
   <div>
-    <h1 class="display">Free stuff and free things to do, happening around <span class="city-name">Toronto</span> right now.</h1>
+    <h1 class="display">Free stuff and free things to do,<br> happening around <span class="city-name">Toronto</span> right now.</h1>
     <p>A live map of giveaways, samples, classes, and events, from pop up activations to concerts and workshops, so you know exactly where to go and what is on.</p>
   </div>
   <div class="hero-stat">
