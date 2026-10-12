@@ -82,9 +82,12 @@
   .hero h1 em{font-style:normal;color:var(--teal);}
   .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:640px;}
   /* ===== Globe + city cards ===== */
-  .stage{padding-top:8px;padding-bottom:64px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:22px;align-items:stretch;}
+  .explore{padding-top:8px;padding-bottom:72px;}
+  .explore .sec-head{margin-bottom:22px;}
+  .explore-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:22px;align-items:stretch;}
+  .explore-panel{display:flex;flex-direction:column;gap:14px;min-width:0;}
   .globe-wrap{
-    position:relative;border-radius:22px;overflow:hidden;min-height:440px;
+    position:relative;border-radius:22px;overflow:hidden;min-height:500px;
     background:radial-gradient(120% 120% at 50% 40%,var(--space-2) 0%,var(--space) 70%);
     border:1px solid #0a1220;
   }
@@ -102,29 +105,25 @@
   .nogl{display:none;position:absolute;inset:0;z-index:2;color:#B6C4DA;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:14px;}
 
 
-  .picks{display:flex;flex-direction:column;gap:14px;}
-  .pick{
-    position:relative;display:flex;flex-direction:column;text-decoration:none;background:#fff;border:1px solid var(--line);
-    border-radius:16px;padding:14px 18px 14px 26px;overflow:hidden;
-    transition:box-shadow .15s ease,transform .15s ease,border-color .15s ease;
+  /* city tabs: they pick the city for the globe and the list at once */
+  .city-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+  .city-tab{
+    position:relative;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px 12px 18px;
+    cursor:pointer;font-family:'Inter',sans-serif;color:var(--ink);overflow:hidden;transition:box-shadow .15s ease,border-color .15s ease;
   }
-  .pick::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--c);}
-  .pick:hover,.pick:focus-visible,.pick.active{box-shadow:0 8px 24px rgba(21,27,33,0.12);transform:translateY(-2px);border-color:var(--c);}
-  .pick.you{border-color:var(--c);box-shadow:0 0 0 2px var(--c);}
-  .pick .badge{align-self:flex-start;font-size:11.5px;font-weight:700;color:#fff;background:var(--c);padding:2px 9px;border-radius:999px;margin-bottom:6px;}
-  .pick .badge[hidden]{display:none;}
-  .pick-head{display:flex;align-items:baseline;justify-content:space-between;gap:4px 14px;flex-wrap:wrap;}
-  .pick h2{margin:0;font-size:25px;line-height:1.15;letter-spacing:-0.015em;}
-  .pick .region{font-size:13px;color:var(--muted);font-weight:500;margin-top:1px;}
-  .pick .nums{display:flex;gap:26px;margin:10px 0 0;}
-  .pick .nums b{display:block;font:700 28px 'Space Grotesk',sans-serif;line-height:1;color:var(--c);}
-  .pick .nums span{display:block;margin-top:3px;font-size:12.5px;color:var(--muted);font-weight:600;}
-  .pick .go{font-size:14.5px;font-weight:700;color:var(--t,var(--c));white-space:nowrap;}
-  .pick:hover .go{text-decoration:underline;}
-  .pick.soon{background:transparent;border-style:dashed;}
-  .pick.soon::before{background:var(--line);}
-  .pick.soon h2{font-size:20px;}
-  .pick.soon .go{color:var(--ink);}
+  .city-tab::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c,var(--ink));}
+  .city-tab:hover{box-shadow:0 6px 18px rgba(21,27,33,0.10);}
+  .city-tab[aria-pressed="true"]{border-color:var(--c,var(--ink));box-shadow:0 0 0 2px var(--c,var(--ink));}
+  .ct-name{display:block;font:700 18px 'Space Grotesk',sans-serif;letter-spacing:-0.01em;}
+  .ct-sub{display:block;margin-top:2px;font-size:12.5px;line-height:1.35;font-weight:600;color:var(--muted);}
+  .ct-you{position:absolute;top:9px;right:10px;font-size:10.5px;font-weight:700;color:#fff;background:var(--c,var(--ink));padding:2px 8px;border-radius:999px;}
+  .ct-you[hidden]{display:none;}
+  .go-row{display:flex;flex-wrap:wrap;gap:6px 24px;align-items:baseline;}
+  .go-link{font-size:17px;font-weight:700;text-decoration:none;color:var(--t,var(--c));}
+  .go-link:hover{text-decoration:underline;}
+  .suggest-row{margin-top:auto;font-size:13.5px;color:var(--muted);text-decoration:none;}
+  .suggest-row b{color:var(--ink);}
+  .suggest-row:hover b{text-decoration:underline;}
 
   /* ===== Pins ===== */
   .pin{position:relative;cursor:pointer;}
@@ -156,39 +155,27 @@
   .sec-head p{margin:6px 0 0;font-size:15px;color:var(--muted);max-width:560px;}
   .why .sec-head p{max-width:none;}
 
-  /* ===== Live now strip ===== */
-  .live{padding-bottom:72px;}
-  .tabs{display:flex;gap:8px;flex-wrap:wrap;}
-  .tab{
-    font:600 13.5px 'Inter',sans-serif;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;
-  }
-  .tab[aria-pressed="true"]{background:var(--c,var(--ink));color:#fff;border-color:var(--c,var(--ink));}
-  .tab[data-tab]:not([data-tab="all"])::before{
-    content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);margin-right:7px;vertical-align:1px;
-  }
-  .tab[aria-pressed="true"]::before{background:#fff !important;}
-  .live-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;}
+  /* ===== Free right now (right-hand panel) ===== */
+  .live-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
   .lcard{
-    position:relative;display:flex;flex-direction:column;text-decoration:none;background:#fff;border:1px solid var(--line);
-    border-radius:14px;overflow:hidden;transition:box-shadow .15s ease,transform .15s ease;
+    position:relative;display:flex;flex-direction:row;align-items:stretch;text-decoration:none;background:#fff;
+    border:1px solid var(--line);border-left:4px solid var(--c);border-radius:12px;overflow:hidden;
+    transition:box-shadow .15s ease,transform .15s ease;
   }
   .lcard:hover{box-shadow:0 8px 24px rgba(21,27,33,0.10);transform:translateY(-2px);}
-  .lcard .band{height:5px;background:var(--c);}
-  .lcard .img{position:relative;height:130px;background:var(--paper-alt);overflow:hidden;}
-  .lcard .img img{position:relative;width:100%;height:100%;object-fit:cover;display:block;}
+  .lcard .img{position:relative;flex:0 0 96px;min-height:96px;background:var(--paper-alt);overflow:hidden;}
+  .lcard .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
   /* portrait posters and logos: the whole image, sat on a soft blurred copy of itself so there are no bare bars */
   .lcard .img::before{content:"";position:absolute;inset:-24px;background:var(--bg) center/cover no-repeat;filter:blur(20px) saturate(1.15);opacity:0;}
   .lcard .img.contain::before{opacity:.9;}
   .lcard .img.contain img{object-fit:contain;}
-  .lcard .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1;}
-  .lcard .when{
-    align-self:flex-start;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--paper-alt);color:var(--ink);
-  }
+  .lcard .body{padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+  .lcard .when{align-self:flex-start;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--paper-alt);color:var(--ink);}
   .lcard .when.now{background:var(--teal-dim);color:var(--teal-text);}
-  .lcard .brand{font:700 15px 'Space Grotesk',sans-serif;margin-top:4px;}
-  .lcard .what{font-size:13.5px;color:var(--muted);}
-  .lcard .where{margin-top:auto;padding-top:8px;font-size:12.5px;font-weight:600;color:var(--c);}
-  .live-empty{padding:26px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:14px;background:#fff;}
+  .lcard .brand{font:700 14.5px 'Space Grotesk',sans-serif;margin-top:4px;line-height:1.25;}
+  .lcard .what{font-size:12.5px;color:var(--muted);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .lcard .where{margin-top:auto;padding-top:5px;font-size:11.5px;font-weight:600;color:var(--c);}
+  .live-empty{grid-column:1 / -1;padding:26px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:14px;background:#fff;}
 
   /* ===== Why hunters rely on it ===== */
   /* its own band: a soft tint and extra air, quieter than the dark brands section below */
@@ -357,7 +344,7 @@
     .brands .wrap{grid-template-columns:1fr;gap:30px;}
   }
   @media (max-width:900px){
-    .stage{grid-template-columns:1fr;}
+    .explore-grid{grid-template-columns:1fr;}
     .globe-wrap{min-height:380px;}
   }
   @media (max-width:520px){
@@ -365,18 +352,18 @@
     .top{padding-top:14px;padding-bottom:14px;}
     .globe-wrap{min-height:340px;border-radius:18px;}
     .globe-hint{display:none;}
+    .city-tabs{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .city-tab[data-tab="all"]{grid-column:1 / -1;}
+    .live-grid{grid-template-columns:1fr;}
     .why-grid{grid-template-columns:1fr;}
     .why-body{padding:20px;gap:16px;}
     .why-visual{padding:16px;min-height:0;}
     .cc .card-main{grid-template-columns:clamp(92px,30%,130px) minmax(0,1fr);}
     .why-grid .ico{width:44px;height:44px;}
     .why-grid .ico svg{width:22px;height:22px;}
-    .live-grid{grid-template-columns:1fr;}
-    .lcard:nth-child(n+5){display:none;}
     .brands{padding:60px 0 64px;}
     .why-band{padding:56px 0 60px;}
-    .stage{padding-bottom:48px;}
-    .live{padding-bottom:56px;}
+    .explore{padding-bottom:56px;}
     .btn-city{flex:1 1 100%;justify-content:center;}
     .stats{grid-template-columns:1fr;gap:10px;}
     .stat{display:flex;align-items:baseline;gap:14px;padding:12px 16px;}
@@ -410,50 +397,35 @@
 </section>
 
 <main>
-<section class="wrap stage" id="cities" aria-label="Choose a city">
-  <div class="globe-wrap">
-    <div id="globe" role="img" aria-label="A globe with pins on the cities Freebies Near Me covers: Toronto and New York"></div>
-    <div class="globe-btns">
-      <button type="button" class="globe-btn" id="locateBtn">Find my nearest city</button>
-      <button type="button" class="globe-btn" id="resetBtn">Reset view</button>
-    </div>
-    <div class="globe-hint" id="hint">Drag to spin, tap a pin to open a city</div>
-    <div class="nogl" id="nogl">Your browser can't show the globe, so pick a city from the list.</div>
-  </div>
-
-  <div class="picks">
-  <a class="pick" data-city="toronto" data-ev="city_select" data-loc="card" href="/toronto" style="--c:#274490;--t:#274490">
-    <span class="badge" hidden></span>
-    <div class="pick-head"><h2 class="display">Toronto</h2><span class="go">Explore Toronto freebies &rarr;</span></div>
-    <div class="region">Ontario, Canada</div>
-    <div class="nums"><div class="num-today"><b class="n-today">-</b><span>happening today</span></div><div class="num-soon"><b class="n-soon">-</b><span class="l-soon">coming up</span></div><div class="num-none" hidden>New free listings are added every day</div></div>
-  </a>
-  <a class="pick" data-city="new-york" data-ev="city_select" data-loc="card" href="/new-york" style="--c:#FF6600;--t:#C24E00">
-    <span class="badge" hidden></span>
-    <div class="pick-head"><h2 class="display">New York</h2><span class="go">Explore New York freebies &rarr;</span></div>
-    <div class="region">New York City, USA</div>
-    <div class="nums"><div class="num-today"><b class="n-today">-</b><span>happening today</span></div><div class="num-soon"><b class="n-soon">-</b><span class="l-soon">coming up</span></div><div class="num-none" hidden>New free listings are added every day</div></div>
-  </a>
-  <a class="pick soon" href="/feedback?city=other&amp;mode=idea" data-ev="suggest_city" data-loc="card">
-    <div class="pick-head"><h2 class="display">Your city next?</h2><span class="go">Suggest a city &rarr;</span></div>
-    <div class="region">More cities are on the way</div>
-  </a>
-  </div>
-</section>
-
-<section class="wrap live" id="live" aria-label="Free right now" hidden>
+<section class="wrap explore" id="cities" aria-label="Free right now, by city">
   <div class="sec-head">
     <div>
       <h2 class="display">Free right now, and coming up</h2>
-      <p>A live look at what hunters can grab today.</p>
-    </div>
-    <div class="tabs" role="group" aria-label="Filter by city" id="liveTabs">
-      <button type="button" class="tab" data-tab="all" aria-pressed="true">All cities</button>
-      <button type="button" class="tab" data-tab="toronto" aria-pressed="false" style="--c:#274490">Toronto</button>
-      <button type="button" class="tab" data-tab="new-york" aria-pressed="false" style="--c:#FF6600">New York</button>
+      <p>Pick a city on the globe or below to see what hunters can grab today.</p>
     </div>
   </div>
-  <div class="live-grid" id="liveGrid"></div>
+  <div class="explore-grid">
+    <div class="globe-wrap">
+      <div id="globe" role="img" aria-label="A globe with pins on the cities Freebies Near Me covers: Toronto and New York"></div>
+      <div class="globe-btns">
+        <button type="button" class="globe-btn" id="locateBtn">Find my nearest city</button>
+        <button type="button" class="globe-btn" id="resetBtn">Reset view</button>
+      </div>
+      <div class="globe-hint" id="hint">Drag to spin, tap a pin to pick a city</div>
+      <div class="nogl" id="nogl">Your browser can't show the globe, so pick a city from the tabs.</div>
+    </div>
+
+    <div class="explore-panel" id="live">
+      <div class="city-tabs" role="group" aria-label="Choose a city" id="cityTabs">
+        <button type="button" class="city-tab" data-tab="all" aria-pressed="true"><span class="ct-name">All cities</span><span class="ct-sub"></span></button>
+        <button type="button" class="city-tab" data-tab="toronto" aria-pressed="false" style="--c:#274490;--t:#274490"><span class="ct-name">Toronto</span><span class="ct-sub"></span><span class="ct-you" hidden></span></button>
+        <button type="button" class="city-tab" data-tab="new-york" aria-pressed="false" style="--c:#FF6600;--t:#C24E00"><span class="ct-name">New York</span><span class="ct-sub"></span><span class="ct-you" hidden></span></button>
+      </div>
+      <div class="go-row" id="goRow"></div>
+      <div class="live-grid" id="liveGrid"></div>
+      <a class="suggest-row" href="/feedback?city=other&amp;mode=idea" data-ev="suggest_city" data-loc="explore">Your city next? <b>Suggest a city &rarr;</b></a>
+    </div>
+  </div>
 </section>
 
 <section class="why-band" aria-label="Why hunters use Freebies Near Me">
@@ -461,7 +433,7 @@
   <div class="sec-head">
     <div>
       <div class="kicker">For hunters</div>
-      <h2 class="display">Why hunters keep it open</h2>
+      <h2 class="display">Why hunters keep coming back</h2>
       <p>Built so you spend ten seconds checking and the rest of the day enjoying the freebie.</p>
     </div>
   </div>
@@ -625,16 +597,17 @@
   var tz = safe(function(){ return Intl.DateTimeFormat().resolvedOptions().timeZone; });
   var guess = lastCity || cityBySlug({ 'America/Toronto':'toronto', 'America/New_York':'new-york' }[tz]);
   if (guess){
-    var pick = document.querySelector('.pick[data-city="' + guess.slug + '"]');
-    if (pick){
-      pick.classList.add('you');
-      var bd = pick.querySelector('.badge');
-      bd.textContent = lastCity ? 'Welcome back' : 'Looks like you are here';
-      bd.hidden = false;
-    }
+    liveTab = guess.slug;
+    var you = document.querySelector('.city-tab[data-tab="' + guess.slug + '"] .ct-you');
+    if (you){ you.textContent = lastCity ? 'Welcome back' : 'Near you'; you.hidden = false; }
+    document.querySelectorAll('#cityTabs .city-tab').forEach(function(t){
+      t.setAttribute('aria-pressed', t.getAttribute('data-tab') === guess.slug ? 'true' : 'false');
+    });
   }
-  document.querySelectorAll('.pick[data-city], .top-city[data-city]').forEach(function(a){
-    a.addEventListener('click', function(){ remember(a.getAttribute('data-city')); });
+  // any link that opens a city remembers it for next time
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[data-city]') : null;
+    if (a) remember(a.getAttribute('data-city'));
   });
 
   // ---- data: events per city + totals for the brand pitch ----
@@ -698,18 +671,18 @@
     var today = 0, soon = 0, known = false;
     CITIES.forEach(function(c){
       var st = counts[c.slug];
-      var box = document.querySelector('.pick[data-city="' + c.slug + '"]');
-      if (!st || !box) return;
+      var sub = document.querySelector('.city-tab[data-tab="' + c.slug + '"] .ct-sub');
+      if (!st || !sub) return;
       known = true; today += st.today; soon += st.soon;
       // a zero reads badly, so only the counts that exist are shown
-      box.querySelector('.n-today').textContent = st.today;
-      box.querySelector('.n-soon').textContent = st.soon;
-      box.querySelector('.num-today').hidden = st.today === 0;
-      box.querySelector('.num-soon').hidden = st.soon === 0;
-      box.querySelector('.l-soon').textContent = st.today === 0 ? 'free events coming up' : 'coming up';
-      box.querySelector('.num-none').hidden = !(st.today === 0 && st.soon === 0);
+      var bits = [];
+      if (st.today) bits.push(st.today + ' today');
+      if (st.soon) bits.push(st.soon + ' coming up');
+      sub.textContent = bits.length ? bits.join(' · ') : 'New listings added daily';
     });
     if (!known) return;
+    var allSub = document.querySelector('.city-tab[data-tab="all"] .ct-sub');
+    if (allSub && today + soon) allSub.textContent = nf.format(today + soon) + ' free events';
     if (today + soon){ $('statLiveNum').textContent = nf.format(today + soon); $('statLive').hidden = false; }
   }
   function loadUpcoming(){
@@ -936,42 +909,67 @@
     for (var i = 0; i < 4; i++) CITIES.forEach(function(c){ if (by[c.slug][i]) mixed.push(by[c.slug][i]); });
     return mixed.slice(0, 8);
   }
+  function renderGo(){
+    var links = [];
+    CITIES.forEach(function(c){
+      if (liveTab === 'all' || liveTab === c.slug){
+        links.push('<a class="go-link" style="--c:' + c.color + ';--t:' + (c.slug === 'new-york' ? '#C24E00' : c.color) + '" href="/' + c.slug
+          + '" data-ev="city_select" data-city="' + c.slug + '" data-loc="explore">Explore ' + c.name + ' freebies &rarr;</a>');
+      }
+    });
+    $('goRow').innerHTML = links.join('');
+  }
   function renderLive(){
-    var sec = $('live'), grid = $('liveGrid');
-    if (!events.length){ sec.hidden = true; return; }
-    sec.hidden = false;
+    var grid = $('liveGrid');
+    renderGo();
+    if (!events.length){
+      grid.innerHTML = '';
+      return;
+    }
     var items = pickLive(liveTab);
     if (!items.length){
       grid.innerHTML = '<div class="live-empty">Nothing in the next week for this city yet. Check back soon, or add one you know about.</div>';
-    } else {
-      grid.innerHTML = items.map(function(ev){
-        var c = ev.city, wl = whenLabel(ev);
-        var img = ev.image_url
-          ? '<div class="img' + (ev.image_fit === 'contain' ? ' contain' : '') + '"><img src="' + esc(ev.image_url) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"></div>'
-          : '';
-        var where = c.name + (ev.neighbourhood ? ' · ' + esc(ev.neighbourhood) : '');
-        return '<a class="lcard" style="--c:' + c.color + '" href="/' + c.slug + '" data-ev="live_card_click" data-city="' + c.slug + '" data-loc="live">'
-          + '<div class="band"></div>' + img
-          + '<div class="body"><span class="when' + (wl.now ? ' now' : '') + '">' + esc(wl.text) + '</span>'
-          + '<div class="brand">' + esc(ev.brand) + '</div>'
-          + '<div class="what">' + esc(ev.what) + '</div>'
-          + '<div class="where">' + where + '</div></div></a>';
-      }).join('');
-      // give each image its blurred backdrop, and switch tall images to "whole image" mode
-      grid.querySelectorAll('.img img').forEach(function(im){
-        var box = im.parentNode;
-        box.style.setProperty('--bg', 'url("' + im.getAttribute('src').replace(/"/g, '%22') + '")');
-        function check(){ if (im.naturalHeight > im.naturalWidth * 1.05) box.classList.add('contain'); }
-        if (im.complete && im.naturalWidth) check(); else im.addEventListener('load', check);
-      });
+      return;
     }
+    grid.innerHTML = items.map(function(ev){
+      var c = ev.city, wl = whenLabel(ev);
+      var img = ev.image_url
+        ? '<div class="img' + (ev.image_fit === 'contain' ? ' contain' : '') + '"><img src="' + esc(ev.image_url) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"></div>'
+        : '';
+      var where = c.name + (ev.neighbourhood ? ' · ' + esc(ev.neighbourhood) : '');
+      return '<a class="lcard" style="--c:' + c.color + '" href="/' + c.slug + '" data-ev="live_card_click" data-city="' + c.slug + '" data-loc="explore">'
+        + img
+        + '<div class="body"><span class="when' + (wl.now ? ' now' : '') + '">' + esc(wl.text) + '</span>'
+        + '<div class="brand">' + esc(ev.brand) + '</div>'
+        + '<div class="what">' + esc(ev.what) + '</div>'
+        + '<div class="where">' + where + '</div></div></a>';
+    }).join('');
+    // give each image its blurred backdrop, and switch tall images to "whole image" mode
+    grid.querySelectorAll('.img img').forEach(function(im){
+      var box = im.parentNode;
+      box.style.setProperty('--bg', 'url("' + im.getAttribute('src').replace(/"/g, '%22') + '")');
+      function check(){ if (im.naturalHeight > im.naturalWidth * 1.05) box.classList.add('contain'); }
+      if (im.complete && im.naturalWidth) check(); else im.addEventListener('load', check);
+    });
   }
-  $('liveTabs').addEventListener('click', function(e){
-    var b = e.target.closest ? e.target.closest('.tab') : null;
-    if (!b) return;
-    liveTab = b.getAttribute('data-tab');
-    document.querySelectorAll('#liveTabs .tab').forEach(function(t){ t.setAttribute('aria-pressed', t === b ? 'true' : 'false'); });
+  // one place decides the city: tabs, list, links and globe all follow it
+  function selectCity(slug, fromGlobe){
+    liveTab = slug;
+    document.querySelectorAll('#cityTabs .city-tab').forEach(function(t){
+      t.setAttribute('aria-pressed', t.getAttribute('data-tab') === slug ? 'true' : 'false');
+    });
     renderLive();
+    var c = cityBySlug(slug);
+    if (!map){ return; }
+    if (c){ flyTo(c); }
+    else if (!fromGlobe){ map.flyTo({ center: HOME.center, zoom: HOME.zoom, duration: 1400 }); spinning = true; }
+  }
+  $('cityTabs').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.city-tab') : null;
+    if (!b) return;
+    var slug = b.getAttribute('data-tab');
+    track('city_preview', { city: slug === 'all' ? '' : slug, location: 'tabs' });
+    selectCity(slug);
   });
 
   // ---- audience tile (only shows a number you have supplied) ----
@@ -1034,29 +1032,10 @@
   function refreshTags(){
     markers.forEach(function(m){ m.tag.textContent = tagText(m.city); });
   }
-  function highlightCard(slug){
-    document.querySelectorAll('.pick[data-city]').forEach(function(a){
-      a.classList.toggle('active', a.getAttribute('data-city') === slug);
-    });
-  }
   function flyTo(c){
     if (!map) return;
     spinning = false;
     map.flyTo({ center:[c.lng, c.lat], zoom: window.innerWidth < 700 ? 3.2 : 4.2, duration: 1800, essential: true });
-  }
-  function openPopup(c){
-    var n = counts[c.slug], bits = [];
-    if (n && n.today) bits.push(n.today + ' happening today');
-    if (n && n.soon) bits.push(n.soon + ' coming up');
-    var blurb = bits.length ? bits.join(' · ') : c.region;
-    var html = '<div class="pop" style="--c:' + c.color + '"><h3>' + c.name + '</h3><p>' + blurb + '</p><a href="/' + c.slug + '" data-ev="city_select" data-city="' + c.slug + '" data-loc="globe">Open ' + c.name + ' &rarr;</a></div>';
-    new maplibregl.Popup({ offset: 22, closeButton: false, maxWidth: '240px' })
-      .setLngLat([c.lng, c.lat]).setHTML(html).addTo(map);
-    // remember the choice when the popup link is used
-    setTimeout(function(){
-      var a = document.querySelector('.pop a');
-      if (a) a.addEventListener('click', function(){ remember(c.slug); });
-    }, 0);
   }
   function spin(){
     if (!map || !spinning || interacting || reduceMotion || document.hidden) return;
@@ -1111,7 +1090,7 @@
         el.setAttribute('role', 'button');
         el.setAttribute('tabindex', '0');
         el.setAttribute('aria-label', 'Open ' + c.name);
-        function activate(){ highlightCard(c.slug); flyTo(c); openPopup(c); }
+        function activate(){ track('city_preview', { city: c.slug, location: 'globe' }); selectCity(c.slug, true); }
         el.addEventListener('click', function(e){ e.stopPropagation(); activate(); });
         el.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(); } });
         new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([c.lng, c.lat]).addTo(map);
@@ -1128,19 +1107,8 @@
     map.on('error', function(){ /* tile errors must not break the page */ });
   }
 
-  // ---- card hover links to the globe ----
-  document.querySelectorAll('.pick[data-city]').forEach(function(a){
-    var c = cityBySlug(a.getAttribute('data-city'));
-    a.addEventListener('mouseenter', function(){ highlightCard(c.slug); if (map && !reduceMotion) { spinning = false; map.easeTo({ center:[c.lng, c.lat], zoom: Math.max(map.getZoom(), 2.6), duration: 1200 }); } });
-    a.addEventListener('focus', function(){ highlightCard(c.slug); });
-  });
-
   $('resetBtn').addEventListener('click', function(){
-    highlightCard(null);
-    if (!map) return;
-    document.querySelectorAll('.maplibregl-popup').forEach(function(p){ p.remove(); });
-    map.flyTo({ center: HOME.center, zoom: HOME.zoom, duration: 1400 });
-    spinning = true;
+    selectCity('all');
   });
 
   // nearest city (location stays on the device)
@@ -1163,7 +1131,7 @@
         hint.textContent = 'No city within reach yet. The nearest is ' + best.c.name + ' (' + Math.round(best.d) + ' km). Suggest yours below.';
       } else {
         hint.textContent = 'Nearest city: ' + best.c.name;
-        highlightCard(best.c.slug); flyTo(best.c); openPopup(best.c);
+        selectCity(best.c.slug);
       }
     }, function(){
       hint.textContent = 'Location was blocked. Pick a city from the list.';
