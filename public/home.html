@@ -46,7 +46,7 @@
 ]}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     color-scheme:light;
@@ -260,6 +260,7 @@
   .cc .rating-label{font-size:11px;font-weight:700;color:var(--ink);margin-right:2px;}
   .cc .rating-stars{display:inline-flex;align-items:center;white-space:nowrap;}
   .cc .rating-count{font-size:11px;color:var(--muted);}
+  .cc .undo-link{font-size:11px;color:var(--coral);text-decoration:underline;font-weight:600;margin-left:4px;}
   .cc .card-meta{display:flex;flex-direction:column;gap:4px;border-top:1.5px dashed #D6D1BF;padding-top:8px;margin-top:2px;font-size:11.5px;color:var(--muted);}
   .cc .avail{font-weight:700;}
   .cc .avail.low{color:var(--coral);}
@@ -276,6 +277,19 @@
   .cc .pin{width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(21,27,33,0.4);}
   .cc .pin::after{display:none;}
   .cc .live-note{font-size:11.5px;color:var(--muted);padding:0 2px;}
+  .cc .card.sponsored{background:linear-gradient(180deg,var(--amber-dim),#fff 60%);border-color:var(--amber);}
+  .cc .sponsored-flag{
+    position:absolute;top:-9px;right:14px;background:var(--amber);color:#fff;
+    font-family:'Anton',sans-serif;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;
+    padding:3px 9px;border-radius:9px;transform:rotate(-4deg);border:1.5px solid var(--paper);
+  }
+  .cc .ad-inquire-link{color:var(--muted);font-weight:700;}
+  .cc .pin.sponsored{background:var(--amber) !important;width:20px;height:20px;}
+  .cc .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .cc .cat-chip{font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:14px;border:1px solid var(--line);color:var(--muted);background:#fff;}
+  .cc .cat-chip.active{color:#fff;border-color:transparent;}
+  .cc .cat-chip.location.active{background:var(--city-primary);}
+  .cc .sample-note{font-size:11.5px;color:var(--muted);padding:0 2px;}
   .why .kicker{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-text);margin-bottom:10px;}
   .why .sec-head{margin-bottom:28px;}
   .why .sec-head h2{font-size:clamp(28px,4vw,44px);line-height:1.06;letter-spacing:-0.02em;}
@@ -301,40 +315,22 @@
 
   /* ===== Brands ===== */
   .brands{background:var(--ink);color:#fff;padding:84px 0 92px;}
-  .brands .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start;}
+  .brands .sec-head{margin-bottom:26px;}
   .brands .kicker{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;}
-  .brands h2{margin:0 0 12px;font-size:clamp(28px,4vw,44px);line-height:1.06;letter-spacing:-0.02em;}
-  .brands .lead{margin:0;font-size:clamp(15px,1.5vw,17.5px);color:#B6C4DA;max-width:540px;}
-  .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:26px 0 24px;}
+  .brands .sec-head h2{margin:0;color:#fff;font-size:clamp(28px,4vw,44px);line-height:1.06;letter-spacing:-0.02em;}
+  .brands .lead{margin:10px 0 0;font-size:clamp(15px,1.5vw,17.5px);color:#B6C4DA;}
+  .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 18px;}
   .stat{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px 16px;}
   .stat b{display:block;font:700 28px 'Space Grotesk',sans-serif;letter-spacing:-0.01em;}
   .stat span{display:block;font-size:13px;line-height:1.4;color:#B6C4DA;margin-top:2px;text-wrap:balance;}
   .stat[hidden]{display:none;}
-  .cta-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .brands .why-visual{background:#FFF8EC;}
+  .brands .why-grid > div{color:var(--ink);}
+  .brands .cc #wbMap{height:180px;min-height:0;}
+  .brands .ico{background:var(--amber-dim);color:#9C6B14;}
+  .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px;}
   .btn-city{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:14.5px;padding:12px 20px;border-radius:999px;color:#fff;background:var(--c);border:0;}
   .btn-city:hover,.btn-city:focus-visible{filter:brightness(1.12);}
-  .brands .small{margin:14px 0 0;font-size:13.5px;color:#B6C4DA;}
-  .brands .small a{color:#fff;font-weight:700;}
-
-  .offer{display:flex;flex-direction:column;gap:14px;}
-  .mock-label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8FA2BF;margin-bottom:-4px;}
-  .mock{
-    background:linear-gradient(180deg,var(--amber-dim),#fff 60%);border:1.5px solid var(--amber);border-radius:14px;
-    padding:14px 16px;color:var(--ink);position:relative;
-  }
-  .mock.plain{background:#fff;border:1px solid var(--line);opacity:.92;}
-  .mock .flag{
-    display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
-    color:#7A5410;background:var(--amber);padding:2px 8px;border-radius:999px;margin-bottom:6px;
-  }
-  .mock .t{font:700 16px 'Space Grotesk',sans-serif;}
-  .mock .d{font-size:13.5px;color:var(--muted);margin-top:2px;}
-  .mock .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:12.5px;font-weight:600;}
-  .mock .row span{background:var(--paper-alt);padding:4px 10px;border-radius:999px;}
-  .perks{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:12px;}
-  .perks li{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;color:#DCE5F2;}
-  .perks li b{color:#fff;}
-  .perks svg{flex:0 0 auto;width:20px;height:20px;margin-top:2px;color:var(--amber);}
 
   /* ===== Sitewide header + footer (the same on the front page and the sitewide pages) ===== */
   .logo .accent{color:var(--teal);}
@@ -366,9 +362,6 @@
     .top-city{padding:8px 13px;font-size:13.5px;}
   }
 
-  @media (max-width:1000px){
-    .brands .wrap{grid-template-columns:1fr;gap:30px;}
-  }
   @media (max-width:900px){
     .explore-grid{grid-template-columns:1fr;}
     .globe-wrap{min-height:380px;}
@@ -498,58 +491,55 @@
 
 <section class="brands" id="brands" aria-label="Advertise with Freebies Near Me">
   <div class="wrap">
-    <div>
-      <div class="kicker">For brands</div>
-      <h2 class="display">Reach people who came here to get something free</h2>
-      <p class="lead">Everyone browsing Freebies Near Me is hunting for something to try today. That is the moment a new product, class or pop up is easiest to say yes to.</p>
-
-      <div class="stats" id="stats">
-        <div class="stat" id="statHunters" hidden><b id="statHuntersNum"></b><span id="statHuntersLabel">hunters a month</span></div>
-        <div class="stat" id="statBrands" hidden><b id="statBrandsNum"></b><span id="statBrandsLabel">brands already listed across our cities</span></div>
-        <div class="stat" id="statLive" hidden><b id="statLiveNum"></b><span id="statLiveLabel">free events across our cities, today and coming up</span></div>
-        <div class="stat" id="statCities"><b id="statCitiesNum">2</b><span>cities live, more on the way</span></div>
-      </div>
-
-      <div class="cta-row">
-        <a class="btn-city" style="--c:#274490" href="/toronto/advertise" data-ev="advertise_click" data-city="toronto" data-loc="brands">Advertise in Toronto &rarr;</a>
-        <a class="btn-city" style="--c:#FF6600" href="/new-york/advertise" data-ev="advertise_click" data-city="new-york" data-loc="brands">Advertise in New York &rarr;</a>
+    <div class="sec-head">
+      <div>
+        <div class="kicker">For brands</div>
+        <h2 class="display">Reach people who came here to get something free</h2>
+        <p class="lead">Everyone here is hunting for something to try today, the moment a new offer is easiest to say yes to.</p>
       </div>
     </div>
 
-    <div class="offer">
-      <div class="mock-label">Example: your sponsored listing</div>
-      <div class="mock">
-        <span class="flag">Sponsored</span>
-        <div class="t">Your brand: free sample, today only</div>
-        <div class="d">Amber highlight, a standout map pin, and first place in its category and neighbourhood.</div>
-        <div class="row"><span>On now</span><span>Directions</span><span>Add to calendar</span><span>Register</span></div>
-      </div>
-      <div class="mock plain" aria-hidden="true">
-        <div class="t" style="color:#6B7280">Everyone else, listed below</div>
-      </div>
+    <div class="stats" id="stats">
+      <div class="stat" id="statHunters" hidden><b id="statHuntersNum"></b><span id="statHuntersLabel">hunters a month</span></div>
+      <div class="stat" id="statBrands" hidden><b id="statBrandsNum"></b><span id="statBrandsLabel">brands already listed across our cities</span></div>
+      <div class="stat" id="statLive" hidden><b id="statLiveNum"></b><span id="statLiveLabel">free events across our cities, today and coming up</span></div>
+      <div class="stat" id="statCities"><b id="statCitiesNum">2</b><span>cities live, more on the way</span></div>
+    </div>
 
-      <ul class="perks">
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
-          <span><b>First in line.</b> Sponsored listings sort to the top of their category and neighbourhood, with a Sponsored badge and a standout pin on the map.</span>
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
-          <span><b>A slot of your own.</b> The featured ad card carries your message to everyone browsing that day, whatever filters they set.</span>
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
-          <span><b>Built for footfall.</b> Directions, add to calendar and a register link sit on your card, so interest turns into people at your door.</span>
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
-          <span><b>On their home screen.</b> Hunters can install Freebies Near Me straight from the browser, so your offer sits where they keep their favourite apps.</span>
-        </li>
-        <li>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
-          <span><b>Local by design.</b> Every listing lives in a city, a neighbourhood and a category, so your offer appears where it is relevant.</span>
-        </li>
-      </ul>
+    <div class="why-grid brands-grid">
+      <div>
+        <div class="why-visual cc" id="wbSponsored" aria-hidden="true" hidden></div>
+        <div class="why-body">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z"/></svg></div>
+          <div class="why-text"><h3 class="display">First in line</h3><p>Sponsored listings sort to the top of their category and neighbourhood, with an amber highlight and a Sponsored badge.</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="why-visual cc" id="wbSlot" aria-hidden="true" hidden></div>
+        <div class="why-body">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15 9a4 4 0 010 6M18 6a8 8 0 010 12"/></svg></div>
+          <div class="why-text"><h3 class="display">A slot of your own</h3><p>The featured ad card carries your message to everyone browsing that day, whatever filters they set.</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="why-visual cc" id="wbFoot" aria-hidden="true" hidden></div>
+        <div class="why-body">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div class="why-text"><h3 class="display">Built for footfall</h3><p>A standout map pin, plus directions, add to calendar and register on your card, so interest turns into people at your door.</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="why-visual cc" id="wbLocal" aria-hidden="true" hidden></div>
+        <div class="why-body">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+          <div class="why-text"><h3 class="display">Local by design</h3><p>Every listing lives in a city, a neighbourhood and a category, so your offer appears where it is relevant.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn-city" style="--c:#274490" href="/toronto/advertise" data-ev="advertise_click" data-city="toronto" data-loc="brands">Advertise in Toronto &rarr;</a>
+      <a class="btn-city" style="--c:#FF6600" href="/new-york/advertise" data-ev="advertise_click" data-city="new-york" data-loc="brands">Advertise in New York &rarr;</a>
     </div>
   </div>
 </section>
@@ -727,6 +717,7 @@
       refreshTags();
       renderLive();
       fillWhy();
+      fillBrands();
     }).catch(function(){});
   }
   function loadTotals(){
@@ -787,10 +778,12 @@
       ? '<span class="status-badge live"><span class="dot"></span>Live now</span>'
       : '<span class="status-badge soon"><span class="dot"></span>' + soonLabel(ev) + '</span>';
   }
-  function starsHTML(){
+  // rated=true is the row right after you tap a star: your stars coloured, "1 rating" and the Undo link
+  function starsHTML(rated){
     var h = '';
-    for (var i = 0; i < 5; i++) h += '<span class="star">&#9733;</span>';
-    return '<div class="rating-row"><span class="rating-label">Worthy?</span><span class="rating-stars">' + h + '</span><span class="rating-count">Be the first to rate</span></div>';
+    for (var i = 1; i <= 5; i++) h += '<span class="star' + (rated && i <= 4 ? ' filled' : '') + '">&#9733;</span>';
+    return '<div class="rating-row' + (rated ? ' locked' : '') + '"><span class="rating-label">Worthy?</span><span class="rating-stars">' + h + '</span>'
+      + (rated ? '<span class="rating-count">1 rating <span class="undo-link">Undo</span></span>' : '<span class="rating-count">Be the first to rate</span>') + '</div>';
   }
   // one city-page card; o picks which parts show (the live card shows all of them)
   function cardHTML(ev, o){
@@ -819,11 +812,12 @@
         + REPORT_TYPES.map(function(t){ return '<span class="report-chip">' + t + (t === 'Still going' ? ' <span class="chip-hint">(add photos)</span>' : '') + '</span>'; }).join('')
         + '</div></div>';
     }
-    return '<div class="card" style="border-left-color:' + color + '">'
+    return '<div class="card' + (ev.sponsored ? ' sponsored' : '') + '"' + (ev.sponsored ? '' : ' style="border-left-color:' + color + '"') + '>'
+      + (ev.sponsored ? '<div class="sponsored-flag">Sponsored</div>' : '')
       + '<div class="card-main' + (media ? '' : ' no-media') + '">' + media
       + '<div class="card-content"><div class="card-top"><div class="tag-row"><span class="tag cat" style="color:' + color + '">' + esc(CAT_LABEL[ev.cat] || 'Misc.') + '</span></div>' + badgeHTML(ev) + '</div>'
       + '<div class="card-text"><div class="card-what">' + esc(stripFree(ev.what)) + '</div><div class="card-brand">' + esc(ev.brand) + '</div></div>'
-      + (o.rating ? starsHTML() : '') + '</div></div>'
+      + (o.rating ? starsHTML(o.rated) : '') + '</div></div>'
       + (o.description && ev.description ? '<div class="card-description">' + esc(ev.description) + '</div>' : '')
       + '<div class="card-meta"><span>' + esc(placeLabel(ev.address, ev.neighbourhood)) + '</span>' + windows + avail + '</div>'
       + actions + report + '</div>';
@@ -886,6 +880,86 @@
       new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([doorEvent.lng, doorEvent.lat]).addTo(miniMap);
     } catch (e) { miniMap = null; }
   }
+  // a point in time at a given hour of a given local day, in a given time zone
+  function zonedTime(k, hour, tz){
+    var g = Date.parse(k + 'T' + String(hour).padStart(2, '0') + ':00:00Z'), p = {};
+    new Intl.DateTimeFormat('en-US', { timeZone:tz, hourCycle:'h23', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit' })
+      .formatToParts(new Date(g)).forEach(function(x){ p[x.type] = x.value; });
+    return new Date(g - (Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - g));
+  }
+  // a placeholder listing that shows what a sponsored card looks like (clearly labelled as a sample)
+  function sampleSponsored(city){
+    var k = dayKey(Date.now(), city.tz);
+    var a = zonedTime(k, 12, city.tz).toISOString(), b = zonedTime(k, 18, city.tz).toISOString();
+    return { city:city, cat:'food', status:'today', brand:'Your brand', what:'Your free sample or event', neighbourhood:'Your neighbourhood',
+             address:'Your address', description:'', signup_url:'x', image_url:null, sponsored:true,
+             ref:{ start_time:a, end_time:b }, rows:[{ start_time:a, end_time:b }] };
+  }
+  var adMap = null, adCity = null;
+  function initAdMap(){
+    if (adMap || !window.maplibregl || !adCity || !$('wbMap')) return;
+    try {
+      adMap = new maplibregl.Map({
+        container: 'wbMap',
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: [adCity.lng, adCity.lat],
+        zoom: 12.4,
+        cooperativeGestures: true,
+        attributionControl: { compact: true }
+      });
+      adMap.addControl(new maplibregl.NavigationControl(), 'top-left');
+      // real listings as category-coloured pins, and a larger amber pin for the sponsored one
+      var near = events.filter(function(e){ return e.city.slug === adCity.slug && typeof e.lat === 'number' && typeof e.lng === 'number'; }).slice(0, 14);
+      near.forEach(function(e){
+        var el = document.createElement('div');
+        el.className = 'pin';
+        el.style.background = CAT_COLOR[e.cat] || '#8B6F47';
+        new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([e.lng, e.lat]).addTo(adMap);
+      });
+      var star = document.createElement('div');
+      star.className = 'pin sponsored';
+      new maplibregl.Marker({ element: star, anchor: 'center' }).setLngLat([adCity.lng, adCity.lat]).addTo(adMap);
+    } catch (e) { adMap = null; }
+  }
+  function fillBrands(){
+    var city = (doorEvent && doorEvent.city) || cityBySlug(liveTab) || CITIES[0];
+    adCity = city;
+    var demo = sampleSponsored(city);
+    function put(id, html){
+      var box = $(id);
+      if (!html){ box.hidden = true; return; }
+      box.innerHTML = html;
+      box.hidden = false;
+      box.style.setProperty('--city-primary', city.color);
+    }
+    put('wbSponsored', cardHTML(demo, { rating:true }) + '<div class="sample-note">Sample listing, sorted first in its category and neighbourhood</div>');
+    put('wbSlot', '<div class="card sponsored"><div class="sponsored-flag">Advertisement</div>'
+      + '<div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>'
+      + '<div class="card-what">This space is claimable</div>'
+      + '<div class="card-brand">Brands can place a featured listing here to reach hunters browsing by location.</div>'
+      + '<div class="card-meta"><span class="ad-inquire-link">Inquire about ad placement &rarr;</span></div></div>');
+    put('wbFoot', '<div class="map-box" id="wbMap"></div>' + cardHTML(demo, { actions:true }));
+    initAdMap();
+    // neighbourhood and category chips, as on the city pages
+    var hoods = {}, cats = {};
+    events.forEach(function(e){
+      if (e.city.slug !== city.slug) return;
+      if (e.neighbourhood) hoods[e.neighbourhood] = (hoods[e.neighbourhood] || 0) + 1;
+      if (e.cat) cats[e.cat] = (cats[e.cat] || 0) + 1;
+    });
+    var topHoods = Object.keys(hoods).sort(function(a, b){ return hoods[b] - hoods[a]; }).slice(0, 4);
+    var topCats = Object.keys(cats).sort(function(a, b){ return cats[b] - cats[a]; }).slice(0, 4);
+    if (topHoods.length || topCats.length){
+      var h = '<div class="chip-row"><div class="cat-chip location active">All locations</div>'
+        + topHoods.map(function(n){ return '<div class="cat-chip location">' + esc(n) + '</div>'; }).join('') + '</div>';
+      h += '<div class="chip-row"><div class="cat-chip">All categories</div>'
+        + topCats.map(function(c, i){
+            var on = i === 0;
+            return '<div class="cat-chip' + (on ? ' active' : '') + '"' + (on ? ' style="background:' + (CAT_COLOR[c] || '#8B6F47') + '"' : '') + '>' + esc(CAT_LABEL[c] || c) + '</div>';
+          }).join('') + '</div>';
+      put('wbLocal', h);
+    } else put('wbLocal', '');
+  }
   function fillWhy(){
     var now = Date.now();
     // keep to listings with a few dates so the preview card stays the size it is on the live site
@@ -928,7 +1002,8 @@
       + cardHTML(door, { actions:true }) : '', door);
     if (door) initMiniMap();
     // 4. hunters tell hunters: the rating row and the update picker, open
-    put('wvCrowd', crowd ? cardHTML(crowd, { rating:true, report:'open' }) : '', crowd);
+    put('wvCrowd', crowd ? cardHTML(crowd, { rating:true, rated:true, report:'open' })
+      + '<div class="live-note">Your rating, as it looks right after you tap a star</div>' : '', crowd);
   }
 
   // ---- "free right now" strip ----
@@ -1207,7 +1282,7 @@
   });
 
   document.addEventListener('visibilitychange', spin);
-  function startGlobe(){ loadMapLib(function(){ initGlobe(); initMiniMap(); }); }
+  function startGlobe(){ loadMapLib(function(){ initGlobe(); initMiniMap(); initAdMap(); }); }
   if (document.readyState === 'complete') startGlobe();
   else window.addEventListener('load', startGlobe);
   loadUpcoming();
