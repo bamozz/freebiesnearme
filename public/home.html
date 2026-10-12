@@ -232,9 +232,15 @@
   .mini-actions{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:10px;font-size:12px;font-weight:700;color:var(--teal-text);}
   .mini-rate{display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;}
   .mini-rate-label{font-size:12px;font-weight:700;}
-  .mini-stars{font-size:18px;letter-spacing:1px;color:#D9D9CF;line-height:1;}
+  .mini-stars{font-size:18px;letter-spacing:1px;color:var(--amber);line-height:1;}
+  .mini-stars .off{color:#D9D9CF;}
+  .mini-step{display:flex;gap:12px;align-items:flex-start;}
+  .mini-step + .mini-step{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
+  .step-n{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--teal-dim);color:var(--teal-text);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .step-main{min-width:0;}
+  .mini-note{margin-top:8px;font-size:11.5px;color:var(--muted);}
   .mini-rate-count{font-size:12px;color:var(--muted);}
-  .mini-updates{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;}
+  .mini-updates{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
   .mini-share{font-size:11.5px;font-weight:700;color:var(--teal-text);margin-right:2px;}
   .update-tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;}
   .update-tag.confirm{background:var(--teal-dim);color:var(--teal);}
@@ -484,8 +490,19 @@
     <div>
       <div class="why-visual" aria-hidden="true">
         <div class="mini">
-          <div class="mini-rate"><span class="mini-rate-label">Worthy?</span><span class="mini-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span class="mini-rate-count">Be the first to rate</span></div>
-          <div class="mini-updates"><span class="mini-share">Share an update</span><span class="update-tag warn">Ran out</span><span class="update-tag confirm">Still going</span><span class="update-tag neutral">Under 30 mins wait</span></div>
+          <div class="mini-step">
+            <span class="step-n">1</span>
+            <div class="step-main">
+              <div class="mini-rate"><span class="mini-rate-label">Worthy?</span><span class="mini-stars on">&#9733;&#9733;&#9733;&#9733;<span class="off">&#9733;</span></span><span class="mini-rate-count">Tap a star to rate it</span></div>
+            </div>
+          </div>
+          <div class="mini-step">
+            <span class="step-n">2</span>
+            <div class="step-main">
+              <div class="mini-updates"><span class="mini-share">Share an update</span><span class="update-tag warn">Ran out</span><span class="update-tag confirm">Still going</span><span class="update-tag neutral">Under 30 mins wait</span></div>
+              <div class="mini-note">Add a photo or link your Instagram story, if you like</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="why-body">
