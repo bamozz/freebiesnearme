@@ -11,7 +11,6 @@
 // real place with no data yet" from an arbitrary or mistyped slug.
 export const NEIGHBOURHOODS: { label: string; slug: string }[] = [
   { label: 'The Annex', slug: 'the-annex' },
-  { label: 'Bell Manor Park', slug: 'bell-manor-park' },
   { label: 'Biidaasige Park', slug: 'biidaasige-park' },
   { label: 'Cherry Beach', slug: 'cherry-beach' },
   { label: 'Chinatown', slug: 'chinatown' },
@@ -30,7 +29,6 @@ export const NEIGHBOURHOODS: { label: string; slug: string }[] = [
   { label: 'Kensington Market', slug: 'kensington-market' },
   { label: 'King West', slug: 'king-west' },
   { label: 'Nathan Phillips Square', slug: 'nathan-phillips-square' },
-  { label: 'Old Science Centre', slug: 'old-science-centre' },
   { label: 'Old Town', slug: 'old-town' },
   { label: 'Queen West', slug: 'queen-west' },
   { label: 'Regent Park', slug: 'regent-park' },
@@ -63,6 +61,9 @@ export const NEIGHBOURHOODS: { label: string; slug: string }[] = [
   { label: 'Riverdale', slug: 'riverdale' },
   { label: 'Roncesvalles', slug: 'roncesvalles' },
   { label: 'Thorncliffe Park', slug: 'thorncliffe-park' },
+  { label: 'Weston', slug: 'weston' },
+  { label: 'Mount Dennis', slug: 'mount-dennis' },
+  { label: 'Oakwood Village', slug: 'oakwood-village' },
 ];
 
 export const NEIGHBOURHOOD_SLUG_LABEL: Record<string, string> = Object.fromEntries(

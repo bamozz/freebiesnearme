@@ -371,14 +371,14 @@ function slugify(text){
 }
 
 const LOCATIONS = [
-  'Bell Manor Park','Biidaasige Park','Bloor West Village','CF Eaton Centre','Cherry Beach','Chinatown',
-  'Christie Pits','Church-Wellesley Village','Corktown','Corso Italia','Danforth','Davisville Village',
-  'Distillery District','East York','Entertainment District','Evergreen Brick Works','Financial District','Forest Hill',
-  'Greektown','Harbord Village','Harbourfront','High Park','Kensington Market','King West',
-  'Lawrence Park','Leaside','Leslieville','Nathan Phillips Square','Old Science Centre','Old Town',
+  'Biidaasige Park','Bloor West Village','CF Eaton Centre','Cherry Beach','Chinatown','Christie Pits',
+  'Church-Wellesley Village','Corktown','Corso Italia','Danforth','Davisville Village','Distillery District',
+  'East York','Entertainment District','Evergreen Brick Works','Financial District','Forest Hill','Greektown',
+  'Harbord Village','Harbourfront','High Park','Kensington Market','King West','Lawrence Park',
+  'Leaside','Leslieville','Mount Dennis','Nathan Phillips Square','Oakwood Village','Old Town',
   'Parkdale','Queen West','Regent Park','Riverdale','Roncesvalles','Sankofa Square',
   'Sorauren Park','St. Lawrence Market','Stackt Market','The Annex','The Junction','The Well',
-  'Thorncliffe Park','Trillium Park','Union Station','Yonge and Eglinton','Yorkville',
+  'Thorncliffe Park','Trillium Park','Union Station','Weston','Yonge and Eglinton','Yorkville',
 ];
 const locationOptions = ['All locations', ...LOCATIONS];
 
@@ -407,7 +407,7 @@ const map = new maplibregl.Map({
   center: [-79.3832, 43.6532],
   zoom: 12.2,
   minZoom: 11,
-  maxBounds: [[-79.56, 43.60], [-79.25, 43.77]],
+  maxBounds: [[-79.55, 43.59], [-79.26, 43.75]],
   container: 'map',
   attributionControl: false,
 });
