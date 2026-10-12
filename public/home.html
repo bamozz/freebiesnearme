@@ -597,8 +597,12 @@
       box.querySelector('.n-soon').textContent = st.soon;
     });
     if (!known) return;
-    var line = today ? nf.format(today) + ' free ' + (today === 1 ? 'thing' : 'things') + ' happening today'
-      : soon ? nf.format(soon) + ' free ' + (soon === 1 ? 'thing' : 'things') + ' coming up' : '';
+    // headline badge: events in the next 7 days. "Today" alone swings from a dozen
+    // in the morning to two at night, so it makes a poor headline; a week is
+    // the window a hunter actually plans in.
+    var horizon = Date.now() + 7*24*3600*1000;
+    var week = events.filter(function(ev){ return ev.status === 'today' || ms(ev.ref.start_time) <= horizon; }).length;
+    var line = week >= 5 ? nf.format(week) + ' free events in the next 7 days' : 'New free events added every day';
     if (line) $('eyebrowText').textContent = line;
     if (today + soon){ $('statLiveNum').textContent = nf.format(today + soon); $('statLive').hidden = false; }
   }
