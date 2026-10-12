@@ -49,6 +49,20 @@ export const NEIGHBOURHOODS: { label: string; slug: string }[] = [
   { label: 'The Beaches', slug: 'the-beaches' },
   { label: 'West Queen West', slug: 'west-queen-west' },
   { label: 'Exhibition Place', slug: 'exhibition-place' },
+  { label: 'Bloor West Village', slug: 'bloor-west-village' },
+  { label: 'Corso Italia', slug: 'corso-italia' },
+  { label: 'Davisville Village', slug: 'davisville-village' },
+  { label: 'East York', slug: 'east-york' },
+  { label: 'Forest Hill', slug: 'forest-hill' },
+  { label: 'Greektown', slug: 'greektown' },
+  { label: 'High Park', slug: 'high-park' },
+  { label: 'Lawrence Park', slug: 'lawrence-park' },
+  { label: 'Leaside', slug: 'leaside' },
+  { label: 'Leslieville', slug: 'leslieville' },
+  { label: 'Parkdale', slug: 'parkdale' },
+  { label: 'Riverdale', slug: 'riverdale' },
+  { label: 'Roncesvalles', slug: 'roncesvalles' },
+  { label: 'Thorncliffe Park', slug: 'thorncliffe-park' },
 ];
 
 export const NEIGHBOURHOOD_SLUG_LABEL: Record<string, string> = Object.fromEntries(

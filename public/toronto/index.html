@@ -691,11 +691,14 @@ const catColor = Object.fromEntries(categories.map(c=>[c.id,c.color]));
 const catLabel = Object.fromEntries(categories.map(c=>[c.id,c.label]));
 
 const LOCATIONS = [
-  'The Annex','Bell Manor Park','Biidaasige Park','Cherry Beach','Chinatown','Christie Pits','Church-Wellesley Village','Corktown','Danforth','Distillery District',
-  'CF Eaton Centre','Entertainment District','Evergreen Brick Works','Financial District','Harbord Village',
-  'Harbourfront','The Junction','Kensington Market','King West','Nathan Phillips Square',
-  'Old Science Centre','Old Town','Queen West','Regent Park','Sankofa Square','Sorauren Park','Stackt Market','St. Lawrence Market',
-  'Trillium Park','Union Station','The Well','Yonge and Eglinton','Yorkville',
+  'Bell Manor Park','Biidaasige Park','Bloor West Village','CF Eaton Centre','Cherry Beach','Chinatown',
+  'Christie Pits','Church-Wellesley Village','Corktown','Corso Italia','Danforth','Davisville Village',
+  'Distillery District','East York','Entertainment District','Evergreen Brick Works','Financial District','Forest Hill',
+  'Greektown','Harbord Village','Harbourfront','High Park','Kensington Market','King West',
+  'Lawrence Park','Leaside','Leslieville','Nathan Phillips Square','Old Science Centre','Old Town',
+  'Parkdale','Queen West','Regent Park','Riverdale','Roncesvalles','Sankofa Square',
+  'Sorauren Park','St. Lawrence Market','Stackt Market','The Annex','The Junction','The Well',
+  'Thorncliffe Park','Trillium Park','Union Station','Yonge and Eglinton','Yorkville',
 ];
 
 let events = [];
@@ -797,7 +800,7 @@ const map = new maplibregl.Map({
   center: [-79.3832, 43.6532],
   zoom: 12.2,
   minZoom: 11,
-  maxBounds: [[-79.75, 43.53], [-79.05, 43.90]],
+  maxBounds: [[-79.56, 43.60], [-79.25, 43.77]],
   container: 'map',
   attributionControl: false,
 });
