@@ -124,12 +124,15 @@
   ::selection{background:rgba(14,156,130,0.18);}
   /* ===== Sitewide header + footer (the same on the front page and the sitewide pages) ===== */
   .logo .accent{color:var(--teal);}
+  .site-top{max-width:1220px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;line-height:1.5;}
+  .site-top .logo,.sf-brand .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;text-decoration:none;color:var(--ink);letter-spacing:-0.01em;}
+  .site-top .logo{font-size:20px;}
   .nav-actions{display:flex;align-items:center;gap:8px;}
   .top-city{font-size:14px;font-weight:600;text-decoration:none;padding:9px 12px;border-radius:999px;background:transparent;color:var(--ink);white-space:nowrap;}
   .top-city:hover{background:rgba(21,27,33,0.06);}
   .top-link{font-size:14px;font-weight:700;text-decoration:none;padding:9px 16px;border:0;border-radius:999px;background:#0E9C82;color:#fff;white-space:nowrap;}
   .top-link:hover{background:#0A7A66;}
-  footer{background:var(--paper-alt);border-top:1px solid var(--line);margin-top:0;}
+  footer{background:var(--paper-alt);border-top:1px solid var(--line);margin-top:0;line-height:1.5;}
   .sf{max-width:1220px;margin:0 auto;padding:36px 24px 32px;display:grid;grid-template-columns:1.5fr repeat(3,minmax(0,1fr));gap:28px 24px;}
   .sf-brand .logo{font-size:18px;}
   .sf-brand p{margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--muted);max-width:260px;}
@@ -144,6 +147,7 @@
   }
   @media (max-width:520px){
     .sf{padding-left:16px;padding-right:16px;}
+    .site-top{padding:14px 16px;}
     .nav-actions .top-link{display:none;}
     .top-city{padding:8px 13px;font-size:13.5px;}
   }
@@ -152,16 +156,14 @@
 </head>
 <body>
 
-<nav>
-  <div class="nav-inner">
-    <a class="logo" href="/">Freebies <span class="accent">Near Me</span></a>
-    <div class="nav-actions">
-      <a class="top-city" style="--c:#274490" href="/toronto" data-ev="city_select" data-city="toronto" data-loc="header">Toronto</a>
-      <a class="top-city" style="--c:#FF6600" href="/new-york" data-ev="city_select" data-city="new-york" data-loc="header">New York</a>
-      <a class="top-link" href="/#brands" data-ev="nav_for_brands" data-loc="header">Advertise with us</a>
-    </div>
+<header class="site-top">
+  <a class="logo" href="/">Freebies <span class="accent">Near Me</span></a>
+  <div class="nav-actions">
+    <a class="top-city" style="--c:#274490" href="/toronto" data-ev="city_select" data-city="toronto" data-loc="header">Toronto</a>
+    <a class="top-city" style="--c:#FF6600" href="/new-york" data-ev="city_select" data-city="new-york" data-loc="header">New York</a>
+    <a class="top-link" href="/#brands" data-ev="nav_for_brands" data-loc="header">Advertise with us</a>
   </div>
-</nav>
+</header>
 
 <!-- Install app banner: preview/testing only, see hostname check below -->
 <div class="install-banner" id="installBanner">
