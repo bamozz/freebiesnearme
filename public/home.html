@@ -204,48 +204,69 @@
   .why-grid .ico svg{width:27px;height:27px;}
   .why-grid h3{margin:0 0 6px;font-size:20px;line-height:1.2;font-family:'Space Grotesk',sans-serif;}
   .why-grid p{margin:0;font-size:15.5px;line-height:1.55;color:var(--muted);}
-  /* small previews built from the city pages' own components (status badges, action row, ratings, update tags) */
+  /* ===== Components copied from the city pages, so these previews look exactly like the live sites ===== */
   :root{--coral:#EF5B4E;}
-  .why-visual{flex:1 1 auto;display:flex;flex-direction:column;gap:8px;justify-content:center;background:#F1F8F5;border-bottom:1px solid var(--line);padding:20px 24px;min-height:176px;}
-  .mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;box-shadow:0 1px 2px rgba(21,27,33,0.04);}
-  .mini[hidden]{display:none;}
-  .mini-row{display:flex;align-items:center;gap:12px;}
-  .status-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto;}
-  .status-badge.live{background:var(--teal-dim);color:var(--teal);}
-  .status-badge.soon{background:var(--amber-dim);color:#9C6B14;}
-  .status-badge.ended{background:var(--paper-alt);color:var(--muted);}
-  .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
-  .mini-name{font-size:13.5px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
-  .mini-listing{display:flex;gap:12px;align-items:stretch;padding:10px;}
-  .mini-map{padding:0;overflow:hidden;}
-  #wvMap{height:150px;background:var(--paper-alt);}
-  .wv-pin{width:20px;height:20px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.4);}
-  .tag-cat{font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:3px 8px;border-radius:10px;background:var(--paper-alt);}
-  .mini-footnote{font-size:11.5px;color:var(--muted);padding:2px 4px 0;}
-  .mini-img{flex:0 0 84px;border-radius:8px;background:var(--paper-alt) center/cover no-repeat;}
-  .mini-body{min-width:0;display:flex;flex-direction:column;gap:2px;}
-  .mini-brand{font-size:12.5px;font-weight:600;color:var(--muted);}
-  .mini-what{font:700 15px 'Space Grotesk',sans-serif;line-height:1.25;}
-  .mini-desc{font-size:12.5px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .mini-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
-  .mini-tags .tag-cat{padding:3px 9px;}
-  .mini-actions{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:10px;font-size:12px;font-weight:700;color:var(--teal-text);}
-  .mini-rate{display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;}
-  .mini-rate-label{font-size:12px;font-weight:700;}
-  .mini-stars{font-size:18px;letter-spacing:1px;color:var(--amber);line-height:1;}
-  .mini-stars .off{color:#D9D9CF;}
-  .mini-step{display:flex;gap:12px;align-items:flex-start;}
-  .mini-step + .mini-step{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);}
-  .step-n{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--teal-dim);color:var(--teal-text);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;}
-  .step-main{min-width:0;}
-  .mini-note{margin-top:8px;font-size:11.5px;color:var(--muted);}
-  .mini-rate-count{font-size:12px;color:var(--muted);}
-  .mini-updates{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
-  .mini-share{font-size:11.5px;font-weight:700;color:var(--teal-text);margin-right:2px;}
-  .update-tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;}
-  .update-tag.confirm{background:var(--teal-dim);color:var(--teal);}
-  .update-tag.warn{background:rgba(239,91,78,0.12);color:var(--coral);}
-  .update-tag.neutral{background:var(--paper-alt);color:var(--muted);}
+  .why-visual{flex:1 1 auto;display:flex;flex-direction:column;gap:12px;justify-content:center;background:#F1F8F5;border-bottom:1px solid var(--line);padding:22px 24px;min-height:176px;pointer-events:none;}
+  .why-visual[hidden]{display:none;}
+  .cc{--paper:#F1F8F5;--city-primary:#274490;}
+  .cc .filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .cc .status-chip{font-size:13px;font-weight:600;padding:7px 13px;border-radius:16px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+  .cc .status-chip.active{background:var(--city-primary);color:#fff;border-color:var(--city-primary);}
+  .cc .status-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+  .cc .status-chip.active .pulse{background:#5FE3C4;}
+  .cc .card{
+    position:relative;background:#fff;border:1px solid var(--line);border-radius:8px;
+    padding:14px 14px 12px 16px;border-left:3px solid var(--line);width:100%;max-width:400px;
+  }
+  .cc .card::before,.cc .card::after{
+    content:"";position:absolute;top:50%;transform:translateY(-50%);
+    width:13px;height:13px;background:var(--paper);border:1px solid var(--line);border-radius:50%;
+  }
+  .cc .card::before{left:-10.5px;clip-path:inset(0 0 0 50%);}
+  .cc .card::after{right:-8.5px;clip-path:inset(0 50% 0 0);}
+  .cc .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .cc .tag-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .cc .tag{font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:3px 8px;border-radius:10px;}
+  .cc .tag.cat{background:var(--paper-alt);color:var(--muted);}
+  .cc .status-badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;display:flex;align-items:center;gap:5px;}
+  .cc .status-badge.live{background:var(--teal-dim);color:var(--teal);}
+  .cc .status-badge.soon{background:var(--amber-dim);color:#9C6B14;}
+  .cc .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+  .cc .card-what{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;line-height:1.3;}
+  .cc .card-brand{font-size:13px;color:var(--muted);font-weight:600;margin:0 0 8px;line-height:1.35;}
+  .cc .card-description{font-size:12.5px;font-weight:500;color:var(--muted);line-height:1.4;margin:8px 0;}
+  .cc .card-main{display:grid;grid-template-columns:clamp(92px,36%,150px) minmax(0,1fr);gap:14px;align-items:start;margin-bottom:10px;}
+  .cc .card-media{aspect-ratio:1/1;width:100%;border-radius:10px;overflow:hidden;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;}
+  .cc .card-media img{width:100%;height:100%;object-fit:cover;display:block;}
+  .cc .card-media[data-fit="contain"] img{object-fit:contain;}
+  .cc .card-media[data-fit="left"] img{object-position:left center;}
+  .cc .card-main.no-media{grid-template-columns:minmax(0,1fr);}
+  .cc .card-content{min-width:0;}
+  .cc .card-content .card-brand{margin:0 0 6px;}
+  .cc .card-content .rating-row{margin:0;}
+  .cc .card-content .card-top{flex-wrap:wrap;}
+  .cc .rating-row{display:flex;align-items:center;flex-wrap:wrap;gap:2px 6px;margin:0 0 8px;}
+  .cc .rating-row .star{font-size:15px;line-height:1;color:var(--line);}
+  .cc .rating-row .star.filled{color:var(--amber);}
+  .cc .rating-label{font-size:11px;font-weight:700;color:var(--ink);margin-right:2px;}
+  .cc .rating-stars{display:inline-flex;align-items:center;white-space:nowrap;}
+  .cc .rating-count{font-size:11px;color:var(--muted);}
+  .cc .card-meta{display:flex;flex-direction:column;gap:4px;border-top:1.5px dashed #D6D1BF;padding-top:8px;margin-top:2px;font-size:11.5px;color:var(--muted);}
+  .cc .avail{font-weight:700;}
+  .cc .avail.low{color:var(--coral);}
+  .cc .avail.ok{color:var(--teal);}
+  .cc .card-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 4px;}
+  .cc .card-actions span{white-space:nowrap;padding:8px 0;font-size:12px;font-weight:700;color:var(--teal);}
+  .cc .report-section{margin-top:8px;}
+  .cc .report-toggle{font-size:11px;color:var(--muted);text-decoration:underline;}
+  .cc .report-picker{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .cc .report-chip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--muted);}
+  .cc .chip-hint{font-weight:500;opacity:0.75;}
+  /* the map, as on the city map pages */
+  .cc .map-box{height:170px;width:100%;max-width:400px;border:1px solid var(--line);border-radius:12px;background:var(--paper-alt);overflow:hidden;}
+  .cc .pin{width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(21,27,33,0.4);}
+  .cc .pin::after{display:none;}
+  .cc .live-note{font-size:11.5px;color:var(--muted);padding:0 2px;}
   .why .kicker{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-text);margin-bottom:10px;}
   .why .sec-head{margin-bottom:28px;}
   .why .sec-head h2{font-size:clamp(28px,4vw,44px);line-height:1.06;letter-spacing:-0.02em;}
@@ -345,6 +366,7 @@
     .why-grid{grid-template-columns:1fr;}
     .why-body{padding:20px;gap:16px;}
     .why-visual{padding:16px;min-height:0;}
+    .cc .card-main{grid-template-columns:clamp(92px,30%,130px) minmax(0,1fr);}
     .why-grid .ico{width:44px;height:44px;}
     .why-grid .ico svg{width:22px;height:22px;}
     .live-grid{grid-template-columns:1fr;}
@@ -443,66 +465,28 @@
   </div>
   <div class="why-grid">
     <div>
-      <div class="why-visual" aria-hidden="true">
-        <div class="mini mini-row"><span class="status-badge live"><span class="dot"></span>Live now</span><span class="mini-name" data-slot="live"></span></div>
-        <div class="mini mini-row"><span class="status-badge soon"><span class="dot"></span>Next 3 days</span><span class="mini-name" data-slot="soon"></span></div>
-        <div class="mini mini-row"><span class="status-badge soon"><span class="dot"></span><span id="wvWeekLabel">Next week</span></span><span class="mini-name" data-slot="week"></span></div>
-      </div>
+      <div class="why-visual cc" id="wvClock" aria-hidden="true" hidden></div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
         <div class="why-text"><h3 class="display">A clock on every freebie</h3><p>See what is on now, what is coming up and what is already over, so you never turn up late.</p></div>
       </div>
     </div>
     <div>
-      <div class="why-visual" aria-hidden="true">
-        <div class="mini mini-listing" id="wvFree" hidden>
-          <div class="mini-img"></div>
-          <div class="mini-body">
-            <div class="mini-brand"></div>
-            <div class="mini-what"></div>
-            <div class="mini-desc"></div>
-            <div class="mini-tags"><span class="tag-cat" id="wvCat"></span><span class="status-badge" id="wvStatus"></span></div>
-          </div>
-        </div>
-        <div class="mini-footnote" id="wvNote" hidden>Listings shown are reviewed and confirmed by the Freebies Near Me team.</div>
-      </div>
+      <div class="why-visual cc" id="wvFree" aria-hidden="true" hidden></div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
         <div class="why-text"><h3 class="display">Actually free</h3><p>Every listing is reviewed by our team. If you have to buy something to get the freebie, it does not make the list.</p></div>
       </div>
     </div>
     <div>
-      <div class="why-visual" aria-hidden="true">
-        <div class="mini mini-map"><div id="wvMap"></div></div>
-        <div class="mini">
-          <div class="mini-brand" data-slot="door-brand"></div>
-          <div class="mini-what" data-slot="door-what"></div>
-          <div class="mini-actions"><span>&#128221; Register</span><span>&#128197; Add to calendar</span><span>&#128205; Get directions</span></div>
-        </div>
-      </div>
+      <div class="why-visual cc" id="wvDoor" aria-hidden="true" hidden></div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
         <div class="why-text"><h3 class="display">From map to door</h3><p>Directions, add to calendar and register sit on the same card. Browse by map, calendar or neighbourhood.</p></div>
       </div>
     </div>
     <div>
-      <div class="why-visual" aria-hidden="true">
-        <div class="mini">
-          <div class="mini-step">
-            <span class="step-n">1</span>
-            <div class="step-main">
-              <div class="mini-rate"><span class="mini-rate-label">Worthy?</span><span class="mini-stars on">&#9733;&#9733;&#9733;&#9733;<span class="off">&#9733;</span></span><span class="mini-rate-count">Tap a star to rate it</span></div>
-            </div>
-          </div>
-          <div class="mini-step">
-            <span class="step-n">2</span>
-            <div class="step-main">
-              <div class="mini-updates"><span class="mini-share">Share an update</span><span class="update-tag warn">Ran out</span><span class="update-tag confirm">Still going</span><span class="update-tag neutral">Under 30 mins wait</span></div>
-              <div class="mini-note">Add a photo or link your Instagram story, if you like</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="why-visual cc" id="wvCrowd" aria-hidden="true" hidden></div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 20v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/></svg></div>
         <div class="why-text"><h3 class="display">Hunters tell hunters</h3><p>Rate what was worth the trip and flag when something has run out, so nobody walks to an empty table.</p></div>
@@ -703,7 +687,8 @@
       out.push({ status:status, ref:ref, city:c, brand:first.brand, what:first.what, neighbourhood:first.neighbourhood,
                  image_url:first.image_url, image_fit:first.image_fit, sponsored:first.sponsored,
                  description:first.description, signup_url:first.signup_url,
-                 cat:first.category, lat:first.lat, lng:first.lng });
+                 cat:first.category, lat:first.lat, lng:first.lng, address:first.address,
+                 total:first.total_count, claimed:first.claimed_count, rows:rs });
     });
     return out;
   }
@@ -728,7 +713,7 @@
   function loadUpcoming(){
     // rows from yesterday on: enough to cover anything running today or later
     var since = new Date(Date.now() - 24*3600*1000).toISOString();
-    var q = 'listings?select=id,group_id,brand,what,description,signup_url,category,lat,lng,neighbourhood,city_slug,start_time,end_time,image_url,image_fit,sponsored'
+    var q = 'listings?select=id,group_id,brand,what,description,signup_url,category,lat,lng,address,total_count,claimed_count,image_source,neighbourhood,city_slug,start_time,end_time,image_url,image_fit,sponsored'
       + '&moderation_status=eq.approved&is_active=eq.true'
       + '&or=' + encodeURIComponent('(start_time.gte.' + since + ',end_time.gte.' + since + ')')
       + '&order=start_time.asc&limit=2000';
@@ -757,82 +742,150 @@
     }).catch(function(){});
   }
 
-  // ---- previews in the "why hunters" cards: the city pages' own components, filled from live listings ----
+  // ---- previews in the "why hunters" cards ----
+  // These rebuild the city pages' own cards, chips and map from live listings,
+  // using the same classes and CSS as the live sites (see the .cc rules).
   var CAT_LABEL = { food:'Food & Drink', beauty:'Beauty', fashion:'Fashion', tech:'Tech', wellness:'Wellness',
                     class_workshop:'Class & Workshop', concert_screening:'Concert & Screening', tour:'Tour', festival:'Festival', misc:'Misc.' };
   var CAT_COLOR = { food:'#EF5B4E', beauty:'#D6579A', fashion:'#3E6FA8', tech:'#0E9C82', wellness:'#8467C9',
                     class_workshop:'#2E8B57', concert_screening:'#C2703E', tour:'#C99A2E', festival:'#B23A9E', misc:'#8B6F47' };
+  var REPORT_TYPES = ['Ran out', 'Cancelled', 'Ended early', 'Under 30 mins wait', '30 mins - 1 hr wait', '1 hr+ wait', 'Still going'];
   var doorEvent = null, miniMap = null;
-  function shortName(ev){ return ev.brand + (ev.what ? ' · ' + ev.what : ''); }
+
+  function fmtDay(t, tz){ return new Date(t).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', timeZone:tz }); }
+  function fmtClock(t, tz){ return new Date(t).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', timeZone:tz }).toLowerCase().replace(' ', ''); }
+  // same wording as the city pages: "Wed, Oct 14, 6:00pm - 8:00pm"
+  function fmtRange(start, end, tz){
+    var s = ms(start), sDay = fmtDay(s, tz), sTime = hasClock(s, tz);
+    if (!end) return sTime ? sDay + ', from ' + fmtClock(s, tz) : sDay;
+    var rawEnd = ms(end), eTime = hasClock(rawEnd, tz);
+    var e = eTime ? rawEnd : rawEnd - 60000;
+    var dayPart = dayKey(s, tz) === dayKey(e, tz) ? sDay : sDay + ' - ' + fmtDay(e, tz);
+    if (sTime && eTime) return dayPart + ', ' + fmtClock(s, tz) + ' - ' + fmtClock(rawEnd, tz);
+    if (sTime) return dayPart + ', from ' + fmtClock(s, tz);
+    if (eTime) return dayPart + ', until ' + fmtClock(rawEnd, tz);
+    return dayPart;
+  }
+  function stripFree(t){
+    var x = String(t || '').replace(/\bfree\b(?!\s+flicks\b)/gi, ' ').replace(/\s{2,}/g, ' ').trim();
+    return x ? x.charAt(0).toUpperCase() + x.slice(1) : x;
+  }
+  function norm(t){ return String(t).toLowerCase().replace(/\b(toronto|new york)\b/g, '').replace(/\s+/g, ' ').trim(); }
+  function placeLabel(address, hood){
+    var has = address && hood && norm(address).indexOf(norm(hood)) !== -1;
+    return address ? (has ? address : address + ', ' + hood) : hood;
+  }
   // the same wording the city pages use for a listing that has not started yet
   function soonLabel(ev){
     var d = (ms(ev.ref.start_time) - Date.now()) / 86400000;
     return d <= 3 ? 'Next 3 days' : d <= 7 ? 'Next week' : d <= 30 ? 'Next 30 days' : 'Next month+';
   }
+  function badgeHTML(ev){
+    return ev.status === 'today'
+      ? '<span class="status-badge live"><span class="dot"></span>Live now</span>'
+      : '<span class="status-badge soon"><span class="dot"></span>' + soonLabel(ev) + '</span>';
+  }
+  function starsHTML(){
+    var h = '';
+    for (var i = 0; i < 5; i++) h += '<span class="star">&#9733;</span>';
+    return '<div class="rating-row"><span class="rating-label">Worthy?</span><span class="rating-stars">' + h + '</span><span class="rating-count">Be the first to rate</span></div>';
+  }
+  // one city-page card; o picks which parts show (the live card shows all of them)
+  function cardHTML(ev, o){
+    var tz = ev.city.tz, color = CAT_COLOR[ev.cat] || 'var(--line)';
+    var media = o.media && ev.image_url
+      ? '<div class="card-media" data-fit="' + esc(ev.image_fit || '') + '"' + (ev.image_fit === 'contain' ? ' style="background:' + color + '1F"' : '') + '><img src="' + esc(ev.image_url) + '" alt=""></div>'
+      : '';
+    var windows = ev.rows.map(function(r){ return '<span>' + esc(fmtRange(r.start_time, r.end_time, tz)) + '</span>'; }).join('');
+    var avail = '';
+    if (ev.total){
+      var left = ev.total - (ev.claimed || 0), cls = left / ev.total <= 0.15 ? 'low' : 'ok';
+      avail = '<span class="avail ' + cls + '">' + (left <= 0 ? 'All claimed' : left + ' left of ' + ev.total) + '</span>';
+    }
+    var actions = '';
+    if (o.actions){
+      var a = [];
+      if (ev.signup_url) a.push('<span>&#128221; Register</span>');
+      if (hasClock(ms(ev.ref.start_time), tz)) a.push('<span>&#128197; Add to calendar</span>');
+      a.push('<span>&#128205; Get directions</span>');
+      actions = '<div class="card-actions">' + a.join('') + '</div>';
+    }
+    var report = '';
+    if (o.report === 'closed') report = '<div class="report-section"><span class="report-toggle">Share an update</span></div>';
+    if (o.report === 'open'){
+      report = '<div class="report-section"><span class="report-toggle">Cancel</span><div class="report-picker">'
+        + REPORT_TYPES.map(function(t){ return '<span class="report-chip">' + t + (t === 'Still going' ? ' <span class="chip-hint">(add photos)</span>' : '') + '</span>'; }).join('')
+        + '</div></div>';
+    }
+    return '<div class="card" style="border-left-color:' + color + '">'
+      + '<div class="card-main' + (media ? '' : ' no-media') + '">' + media
+      + '<div class="card-content"><div class="card-top"><div class="tag-row"><span class="tag cat" style="color:' + color + '">' + esc(CAT_LABEL[ev.cat] || 'Misc.') + '</span></div>' + badgeHTML(ev) + '</div>'
+      + '<div class="card-text"><div class="card-what">' + esc(stripFree(ev.what)) + '</div><div class="card-brand">' + esc(ev.brand) + '</div></div>'
+      + (o.rating ? starsHTML() : '') + '</div></div>'
+      + (o.description && ev.description ? '<div class="card-description">' + esc(ev.description) + '</div>' : '')
+      + '<div class="card-meta"><span>' + esc(placeLabel(ev.address, ev.neighbourhood)) + '</span>' + windows + avail + '</div>'
+      + actions + report + '</div>';
+  }
   function initMiniMap(){
-    if (miniMap || !window.maplibregl || !doorEvent) return;
+    if (miniMap || !window.maplibregl || !doorEvent || !$('wvMap')) return;
     try {
       miniMap = new maplibregl.Map({
         container: 'wvMap',
         style: 'https://tiles.openfreemap.org/styles/liberty',
         center: [doorEvent.lng, doorEvent.lat],
         zoom: 14.3,
-        interactive: false,
+        cooperativeGestures: true,
         attributionControl: { compact: true }
       });
+      miniMap.addControl(new maplibregl.NavigationControl(), 'top-left');
       var el = document.createElement('div');
-      el.className = 'wv-pin';
+      el.className = 'pin';
       el.style.background = CAT_COLOR[doorEvent.cat] || '#0E9C82';
       new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([doorEvent.lng, doorEvent.lat]).addTo(miniMap);
     } catch (e) { miniMap = null; }
   }
   function fillWhy(){
     var now = Date.now();
-    function slot(name){ return document.querySelector('[data-slot="' + name + '"]'); }
-    var live = events.filter(function(e){ return e.status === 'today' && ms(e.ref.start_time) <= now; })[0]
-      || events.filter(function(e){ return e.status === 'today'; })[0];
-    var rest = events.filter(function(e){ return e.status === 'soon' && e !== live; });
-    function within(minDays, maxDays){
-      return rest.filter(function(e){ var d = (ms(e.ref.start_time) - now) / 86400000; return d > minDays && d <= maxDays; })[0];
+    // keep to listings with a few dates so the preview card stays the size it is on the live site
+    var pool = events.filter(function(e){ return e.rows.length <= 3; });
+    var used = [];
+    function take(list){
+      var e = list.filter(function(x){ return used.indexOf(x) === -1; })[0];
+      if (e) used.push(e);
+      return e;
     }
-    var soon = within(0, 3), week = within(3, 7) || within(7, 30);
-    if (live && slot('live')) slot('live').textContent = shortName(live);
-    if (soon && slot('soon')) slot('soon').textContent = shortName(soon);
-    if (week && slot('week')){
-      slot('week').textContent = shortName(week);
-      $('wvWeekLabel').textContent = soonLabel(week);
-    }
-    // a listing that shows what a card looks like: picture, description, category and status
-    var withImg = events.filter(function(e){ return e.image_url && e.description; });
-    var free = withImg.filter(function(e){ return /free/i.test(e.description); })[0] || withImg[0];
-    if (free){
-      var box = $('wvFree');
+    var free = take(pool.filter(function(e){ return e.image_url && e.description && /free/i.test(e.description) && e.status === 'today'; }))
+      || take(pool.filter(function(e){ return e.image_url && e.description; }));
+    var clock = take(pool.filter(function(e){ return e.status === 'soon' && ms(e.ref.start_time) - now <= 3*86400000; }))
+      || take(pool.filter(function(e){ return e.status === 'soon'; }));
+    var door = take(pool.filter(function(e){ return e.signup_url && typeof e.lat === 'number' && typeof e.lng === 'number'; }))
+      || take(pool.filter(function(e){ return typeof e.lat === 'number' && typeof e.lng === 'number'; }));
+    var crowd = take(pool.filter(function(e){ return e.status === 'today'; })) || take(pool);
+
+    function put(id, html, tint){
+      var box = $(id);
+      if (!html){ box.hidden = true; return; }
+      box.innerHTML = html;
       box.hidden = false;
-      $('wvNote').hidden = false;
-      box.querySelector('.mini-img').style.backgroundImage = 'url("' + free.image_url.replace(/"/g, '%22') + '")';
-      box.querySelector('.mini-brand').textContent = free.brand;
-      box.querySelector('.mini-what').textContent = free.what;
-      box.querySelector('.mini-desc').textContent = free.description;
-      var cat = $('wvCat');
-      cat.textContent = CAT_LABEL[free.cat] || 'Free';
-      cat.style.color = CAT_COLOR[free.cat] || 'var(--muted)';
-      var st = $('wvStatus');
-      if (free.status === 'today'){
-        st.className = 'status-badge live';
-        st.innerHTML = '<span class="dot"></span>Live now';
-      } else {
-        st.className = 'status-badge soon';
-        st.innerHTML = '<span class="dot"></span>' + soonLabel(free);
-      }
+      if (tint && tint.city) box.style.setProperty('--city-primary', tint.city.color);
     }
-    // map to door: a real map of a real listing, with its action row
-    var located = events.filter(function(e){ return typeof e.lat === 'number' && typeof e.lng === 'number'; });
-    doorEvent = located.filter(function(e){ return e.signup_url; })[0] || located[0] || null;
-    if (doorEvent){
-      slot('door-brand').textContent = doorEvent.brand + (doorEvent.neighbourhood ? ' · ' + doorEvent.neighbourhood : '');
-      slot('door-what').textContent = doorEvent.what;
-      initMiniMap();
-    }
+    // 1. a clock on every freebie: the status filters and a card badge, as on the city pages
+    if (clock){
+      var chips = [['All',''], ['Live now','pulse'], ['Next 3 days',''], ['Next week',''], ['Next 30 days',''], ['Next month+','']];
+      var active = soonLabel(clock);
+      put('wvClock', '<div class="filter-bar">' + chips.map(function(c){
+          return '<div class="status-chip' + (c[0] === active ? ' active' : '') + '">' + (c[1] ? '<span class="pulse"></span>' : '') + c[0] + '</div>';
+        }).join('') + '</div>' + cardHTML(clock, { media:true, rating:true }), clock);
+    } else put('wvClock', '');
+    // 2. actually free: a full card, plus the sentence from the live footers
+    put('wvFree', free ? cardHTML(free, { media:true, rating:true, description:true, actions:true, report:'closed' })
+      + '<div class="live-note">Listings shown are reviewed and confirmed by the Freebies Near Me team.</div>' : '', free);
+    // 3. from map to door: the map and the card's directions row
+    doorEvent = door || null;
+    put('wvDoor', door ? '<div class="map-box" id="wvMap"></div>' + cardHTML(door, { actions:true }) : '', door);
+    if (door) initMiniMap();
+    // 4. hunters tell hunters: the rating row and the update picker, open
+    put('wvCrowd', crowd ? cardHTML(crowd, { rating:true, report:'open' }) : '', crowd);
   }
 
   // ---- "free right now" strip ----
