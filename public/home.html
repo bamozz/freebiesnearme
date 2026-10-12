@@ -79,7 +79,9 @@
   .hero{padding-top:20px;padding-bottom:30px;}
   .hero h1{font-size:clamp(32px,calc((100vw - 48px) / 19.5),58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;}
   .hero h1 em{font-style:normal;color:var(--teal);}
-  .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:640px;}
+  .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:760px;}
+  .hero p .br-wide{display:none;}
+  @media (min-width:760px){ .hero p .br-wide{display:inline;} }
   /* descriptions wrap into even lines instead of leaving a stray word on the last one */
   .hero p,.sec-head p,.why-text p,.brands .lead,.install-text span,.perks li span,.stat span,.live-empty,.lcard .what,.cc .card-description,.cc .live-note{text-wrap:balance;}
   /* ===== Globe + city cards ===== */
@@ -410,7 +412,7 @@
 
 <section class="wrap hero">
   <h1 class="display">Free stuff is happening near you,<br> <em>never miss it again</em></h1>
-  <p>Every sample, giveaway, class and pop up is checked by our team and shown with its time, so you only turn up when it is on. Pick your city and see what is free right now.</p>
+  <p>Every sample, giveaway, class and pop up is checked by our team and shown with its time,<br class="br-wide"> so you only turn up when it is on. Pick your city and see what is free right now.</p>
   <div class="install" id="install">
     <div class="install-text">
       <strong>Skip the app store, install it in one tap</strong>
