@@ -20,6 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: 'Free Events Calendar | Freebies Near Me',
     description: `Browse ${city.name} free giveaways and pop up events by date.`,
+    alternates: { canonical: `https://www.freebiesnearme.app/${city.slug}/calendar` },
   };
 }
 

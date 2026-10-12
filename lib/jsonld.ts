@@ -4,7 +4,7 @@ import { assumedEndIso } from '@/lib/datetime';
 // Site-wide fallback so every Event still has an "image" field even when a
 // listing has none - Google Search Console flags a fully-missing image
 // field, and this is the same asset already used for og:image sitewide.
-const DEFAULT_EVENT_IMAGE = 'https://freebiesnearme.app/toronto/assets/og-image.png';
+const DEFAULT_EVENT_IMAGE = 'https://www.freebiesnearme.app/toronto/assets/og-image.png';
 
 export function buildHubItemList(listings: Listing[], hubLabel: string, hubUrl: string) {
   const itemListElement = listings.map((listing, index) => {
