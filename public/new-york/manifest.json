@@ -1,0 +1,14 @@
+{
+  "name": "Freebies Near Me New York",
+  "short_name": "Freebies NYC",
+  "description": "Free giveaways, samples, and pop up events happening in New York City right now.",
+  "start_url": "/new-york",
+  "id": "/new-york",
+  "display": "standalone",
+  "background_color": "#FEFCF6",
+  "theme_color": "#FF6600",
+  "icons": [
+    { "src": "/new-york/assets/favicon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/new-york/assets/favicon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
