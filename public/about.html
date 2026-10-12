@@ -21,23 +21,23 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <!-- Vercel Speed Insights -->
 <script defer src="/_vercel/speed-insights/script.js"></script>
-<title>Terms of Use | Freebies Near Me</title>
-<meta name="description" content="Terms of use for Freebies Near Me, including ownership of submitted content and our liability disclaimer.">
+<title>About | Freebies Near Me</title>
+<meta name="description" content="What Freebies Near Me is, how listings get verified before going live, and who it's for.">
 <link rel="icon" type="image/svg+xml" href="/toronto/assets/favicon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="/toronto/assets/favicon-192.png">
-<link rel="manifest" href="/manifest.json">
-<link rel="canonical" href="https://www.freebiesnearme.app/toronto/terms">
+<link rel="manifest" href="/home.webmanifest">
+<link rel="canonical" href="https://www.freebiesnearme.app/about">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Freebies Near Me">
-<meta property="og:url" content="https://www.freebiesnearme.app/toronto/terms">
-<meta property="og:title" content="Terms of Use | Freebies Near Me">
-<meta property="og:description" content="Terms of use for Freebies Near Me, including ownership of submitted content and our liability disclaimer.">
+<meta property="og:url" content="https://www.freebiesnearme.app/about">
+<meta property="og:title" content="About | Freebies Near Me">
+<meta property="og:description" content="What Freebies Near Me is, how listings get verified before going live, and who it's for.">
 <meta property="og:image" content="https://www.freebiesnearme.app/toronto/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Terms of Use | Freebies Near Me">
-<meta name="twitter:description" content="Terms of use for Freebies Near Me, including ownership of submitted content and our liability disclaimer.">
+<meta name="twitter:title" content="About | Freebies Near Me">
+<meta name="twitter:description" content="What Freebies Near Me is, how listings get verified before going live, and who it's for.">
 <meta name="twitter:image" content="https://www.freebiesnearme.app/toronto/assets/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -113,7 +113,7 @@
 
   .wrap{max-width:720px;margin:0 auto;padding:36px 24px 60px;}
   h1{font-size:clamp(26px,4vw,34px);margin:0 0 6px;}
-  .updated{font-size:12px;color:var(--muted);margin:0 0 32px;}
+  .sub{font-size:14.5px;color:var(--muted);margin:0 0 32px;max-width:560px;}
 
   .legal h2{font-size:17px;margin:30px 0 8px;font-family:'Space Grotesk',sans-serif;}
   .legal h2:first-of-type{margin-top:0;}
@@ -122,8 +122,17 @@
   .legal li{font-size:14.5px;line-height:1.65;color:var(--ink);margin-bottom:6px;}
   .legal a{color:var(--teal);text-decoration:none;font-weight:600;}
   .legal a:hover{text-decoration:underline;}
-  /* ===== Toronto flag colours: blue, red, white ===== */
-  :root{--city-primary:#274490;--city-primary-dark:#1C3270;--city-primary-text:#274490;}
+
+  .about-perks{display:flex;flex-direction:column;gap:10px;margin:0 0 8px;max-width:600px;}
+  .about-perk{
+    display:flex;gap:10px;align-items:flex-start;padding:12px 14px;
+    border:1.5px solid var(--line);border-radius:10px;background:#fff;
+  }
+  .about-perk-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);margin-top:6px;flex-shrink:0;}
+  .about-perk strong{font-size:13.5px;display:block;margin-bottom:2px;}
+  .about-perk span{font-size:12.5px;color:var(--muted);}
+  /* ===== Brand colours: these pages belong to no single city ===== */
+  :root{--city-primary:#0A7A66;--city-primary-dark:#075E4F;--city-primary-text:#0A7A66;}
   nav{box-shadow:inset 0 3px 0 var(--city-primary);}
   footer{box-shadow:inset 0 3px 0 var(--city-primary);}
   .nav-links .on{color:var(--city-primary-text);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;}
@@ -131,15 +140,15 @@
   .btn-solid{background:var(--city-primary);}
   .btn-solid:hover{background:var(--city-primary-dark);}
   .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--city-primary-text);}
-  ::selection{background:rgba(39,68,144,0.18);}
+  ::selection{background:rgba(14,156,130,0.18);}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <a class="logo" href="/toronto">Freebies Near Me <span class="logo-city">Toronto</span></a>
-    <a class="btn-solid" href="/toronto">Back to map</a>
+    <a class="logo" href="/">Freebies Near Me</a>
+    <a class="btn-solid" href="/">Find freebies</a>
   </div>
 </nav>
 
@@ -198,58 +207,45 @@
 </script>
 
 <div class="wrap">
-  <h1 class="display">Terms of Use</h1>
-  <p class="updated">Last updated August 17, 2026</p>
+  <h1 class="display">About Freebies Near Me</h1>
+  <p class="sub">A map and directory of free giveaways, samples, and pop up events happening in every city we cover, right now.</p>
 
   <div class="legal">
-    <h2>Acceptance of these terms</h2>
-    <p>By using Freebies Near Me, you agree to these terms. If you don't agree, please don't use the site.</p>
+    <h2>What this is</h2>
+    <p>Freebies Near Me is a running map and directory of free things happening in Toronto and New York: product giveaways, sample days, pop up activations, free classes and workshops, concerts, and more. Pick a city, then browse by map, by category, by neighbourhood, or by date on the events calendar, and see what's live right now versus what's coming up.</p>
 
-    <h2>What Freebies Near Me is</h2>
-    <p>Freebies Near Me is a directory of free giveaways, samples, and pop up events happening in Toronto. Listings are submitted by brands, organizers, and the community, and reviewed before they go live. We don't run these events ourselves and aren't affiliated with the businesses or organizers behind them unless stated otherwise.</p>
+    <h2>How listings get verified</h2>
+    <p>Every listing starts as a submission, from a brand, an organizer, or someone in the community who spotted something worth sharing. Before anything goes live, submissions are automatically screened to filter out spam and inappropriate content, then reviewed by our team to confirm it's a real, currently available free listing with a real time and location. Nothing is published without that review.</p>
 
-    <h2>Content you submit</h2>
-    <p>When you submit a listing, photo, update, or other content, you keep ownership of it. By submitting, you grant Freebies Near Me a nonexclusive, worldwide license to display, edit for clarity or length, and remove that content on the site. You confirm that you have the right to submit whatever you send us, and that it doesn't infringe on anyone else's rights.</p>
+    <h2>Who it's for</h2>
+    <div class="about-perks">
+      <div class="about-perk">
+        <span class="about-perk-dot"></span>
+        <div><strong>Anyone looking for free things to do</strong><span>Students, families, and anyone in our cities who wants to find what's free and nearby without digging through social media.</span></div>
+      </div>
+      <div class="about-perk">
+        <span class="about-perk-dot"></span>
+        <div><strong>Brands and organizers</strong><span>A place to list a giveaway, sample day, or pop up in front of people already looking for exactly that. See the <a href="/toronto/advertise">advertising options</a> for <a href="/toronto/advertise">Toronto</a> or <a href="/new-york/advertise">New York</a> if you want extra visibility.</span></div>
+      </div>
+    </div>
 
-    <h2>No guarantee listings are accurate or available</h2>
-    <p>We do our best to keep listings accurate and up to date, but details can change or an event can be cancelled, sell out, or run out of stock without notice. We don't guarantee that any listing is accurate, currently available, or will still be running by the time you get there. Always confirm directly with the organizer or venue before heading out.</p>
-
-    <h2>Limitation of liability</h2>
-    <p>Freebies Near Me is provided "as is," without warranties of any kind. To the fullest extent permitted by law, we're not liable for any loss, damage, or inconvenience arising from your use of this site or your attendance at any listed event, including events that turn out to be inaccurate, cancelled, or unavailable.</p>
-
-    <h2>Acceptable use</h2>
-    <ul>
-      <li>Don't submit spam, fake listings, or content you don't have the rights to.</li>
-      <li>Don't scrape or systematically copy the site's listings without permission.</li>
-      <li>Don't use the submission or contact forms to send anything unlawful, harassing, or misleading.</li>
-    </ul>
-    <p>We may remove any listing or content, and restrict access to the site, at our discretion.</p>
-
-    <h2>Changes to these terms</h2>
-    <p>We may update these terms as the site changes. Continued use of the site after a change means you accept the updated terms.</p>
-
-    <h2>Questions</h2>
-    <p>Reach out any time through our <a href="/toronto/feedback">feedback form</a>.</p>
+    <h2>Questions or feedback</h2>
+    <p>Spotted something wrong, or have an idea? Let us know through our <a href="/feedback">feedback form</a>.</p>
   </div>
 </div>
 
 <footer>
   <div class="footer-inner">
-    <a class="logo" href="/toronto">Freebies Near Me <span class="logo-city">Toronto</span></a>
+    <a class="logo" href="/">Freebies Near Me</a>
     <div class="footer-links">
-      <a class="feedback-link" href="/toronto/advertise">Advertise</a>
-      <a class="feedback-link" href="/toronto/feedback">Feedback</a>
-      <a class="feedback-link" href="/toronto/changelog">Changelog</a>
-      <a class="feedback-link" href="/toronto/about">About</a>
-      <a class="feedback-link" href="/toronto/privacy">Privacy</a>
-      <a class="feedback-link" href="/toronto/terms">Terms</a>
-      <a class="feedback-link" href="/">All cities</a>
+      <a class="feedback-link" href="/toronto">Toronto</a>
+      <a class="feedback-link" href="/new-york">New York</a>
+      <a class="feedback-link" href="/feedback">Feedback</a>
+      <a class="feedback-link" href="/about">About</a>
+      <a class="feedback-link" href="/privacy">Privacy</a>
+      <a class="feedback-link" href="/terms">Terms</a>
     </div>
     <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
-    <div class="footer-hubs">
-      <p><span>Categories:</span> <a href="/toronto/food-drink">Food &amp; Drink</a>, <a href="/toronto/beauty">Beauty</a>, <a href="/toronto/fashion">Fashion</a>, <a href="/toronto/tech">Tech</a>, <a href="/toronto/wellness">Wellness</a>, <a href="/toronto/class-workshop">Class &amp; Workshop</a>, <a href="/toronto/concert-screening">Concert &amp; Screening</a>, <a href="/toronto/tour">Tour</a>, <a href="/toronto/festival">Festival</a>, <a href="/toronto/misc">Misc.</a></p>
-      <p><span>Neighbourhoods:</span> <a href="/toronto/the-well">The Well</a>, <a href="/toronto/yorkville">Yorkville</a>, <a href="/toronto/liberty-village">Liberty Village</a>, <a href="/toronto/distillery-district">Distillery District</a>, <a href="/toronto/kensington-market">Kensington Market</a>, <a href="/toronto/harbourfront">Harbourfront</a>, <a href="/toronto/king-west">King West</a>, <a href="/toronto/the-junction">The Junction</a></p>
-    </div>
   </div>
 </footer>
 

@@ -2,48 +2,228 @@
   "framework": "nextjs",
   "cleanUrls": false,
   "redirects": [
-    { "source": "/home.html", "destination": "/", "statusCode": 301 },
-    { "source": "/toronto/index.html", "destination": "/toronto", "statusCode": 301 },
-    { "source": "/toronto/map.html", "destination": "/toronto/map", "statusCode": 301 },
-    { "source": "/toronto/submit.html", "destination": "/toronto/submit", "statusCode": 301 },
-    { "source": "/toronto/feedback.html", "destination": "/toronto/feedback", "statusCode": 301 },
-    { "source": "/toronto/advertise.html", "destination": "/toronto/advertise", "statusCode": 301 },
-    { "source": "/toronto/changelog.html", "destination": "/toronto/changelog", "statusCode": 301 },
-    { "source": "/toronto/privacy.html", "destination": "/toronto/privacy", "statusCode": 301 },
-    { "source": "/toronto/terms.html", "destination": "/toronto/terms", "statusCode": 301 },
-    { "source": "/toronto/about.html", "destination": "/toronto/about", "statusCode": 301 },
-    { "source": "/new-york/index.html", "destination": "/new-york", "statusCode": 301 },
-    { "source": "/new-york/map.html", "destination": "/new-york/map", "statusCode": 301 },
-    { "source": "/new-york/submit.html", "destination": "/new-york/submit", "statusCode": 301 },
-    { "source": "/new-york/feedback.html", "destination": "/new-york/feedback", "statusCode": 301 },
-    { "source": "/new-york/advertise.html", "destination": "/new-york/advertise", "statusCode": 301 },
-    { "source": "/new-york/changelog.html", "destination": "/new-york/changelog", "statusCode": 301 },
-    { "source": "/new-york/privacy.html", "destination": "/new-york/privacy", "statusCode": 301 },
-    { "source": "/new-york/terms.html", "destination": "/new-york/terms", "statusCode": 301 },
-    { "source": "/new-york/about.html", "destination": "/new-york/about", "statusCode": 301 }
+    {
+      "source": "/home.html",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/index.html",
+      "destination": "/toronto",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/map.html",
+      "destination": "/toronto/map",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/submit.html",
+      "destination": "/toronto/submit",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/advertise.html",
+      "destination": "/toronto/advertise",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/changelog.html",
+      "destination": "/toronto/changelog",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/index.html",
+      "destination": "/new-york",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/map.html",
+      "destination": "/new-york/map",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/submit.html",
+      "destination": "/new-york/submit",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/advertise.html",
+      "destination": "/new-york/advertise",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/changelog.html",
+      "destination": "/new-york/changelog",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/feedback",
+      "destination": "/feedback",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/feedback.html",
+      "destination": "/feedback",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/about",
+      "destination": "/about",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/about.html",
+      "destination": "/about",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/privacy",
+      "destination": "/privacy",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/privacy.html",
+      "destination": "/privacy",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/terms",
+      "destination": "/terms",
+      "statusCode": 301
+    },
+    {
+      "source": "/toronto/terms.html",
+      "destination": "/terms",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/feedback",
+      "destination": "/feedback",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/feedback.html",
+      "destination": "/feedback",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/about",
+      "destination": "/about",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/about.html",
+      "destination": "/about",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/privacy",
+      "destination": "/privacy",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/privacy.html",
+      "destination": "/privacy",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/terms",
+      "destination": "/terms",
+      "statusCode": 301
+    },
+    {
+      "source": "/new-york/terms.html",
+      "destination": "/terms",
+      "statusCode": 301
+    },
+    {
+      "source": "/feedback.html",
+      "destination": "/feedback",
+      "statusCode": 301
+    },
+    {
+      "source": "/about.html",
+      "destination": "/about",
+      "statusCode": 301
+    },
+    {
+      "source": "/privacy.html",
+      "destination": "/privacy",
+      "statusCode": 301
+    },
+    {
+      "source": "/terms.html",
+      "destination": "/terms",
+      "statusCode": 301
+    }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/home.html" },
-    { "source": "/toronto", "destination": "/toronto/index.html" },
-    { "source": "/toronto/map", "destination": "/toronto/map.html" },
-    { "source": "/toronto/submit", "destination": "/toronto/submit.html" },
-    { "source": "/toronto/feedback", "destination": "/toronto/feedback.html" },
-    { "source": "/toronto/advertise", "destination": "/toronto/advertise.html" },
-    { "source": "/toronto/changelog", "destination": "/toronto/changelog.html" },
-    { "source": "/toronto/privacy", "destination": "/toronto/privacy.html" },
-    { "source": "/toronto/terms", "destination": "/toronto/terms.html" },
-    { "source": "/toronto/about", "destination": "/toronto/about.html" },
-    { "source": "/new-york", "destination": "/new-york/index.html" },
-    { "source": "/new-york/map", "destination": "/new-york/map.html" },
-    { "source": "/new-york/submit", "destination": "/new-york/submit.html" },
-    { "source": "/new-york/feedback", "destination": "/new-york/feedback.html" },
-    { "source": "/new-york/advertise", "destination": "/new-york/advertise.html" },
-    { "source": "/new-york/changelog", "destination": "/new-york/changelog.html" },
-    { "source": "/new-york/privacy", "destination": "/new-york/privacy.html" },
-    { "source": "/new-york/terms", "destination": "/new-york/terms.html" },
-    { "source": "/new-york/about", "destination": "/new-york/about.html" }
+    {
+      "source": "/",
+      "destination": "/home.html"
+    },
+    {
+      "source": "/toronto",
+      "destination": "/toronto/index.html"
+    },
+    {
+      "source": "/toronto/map",
+      "destination": "/toronto/map.html"
+    },
+    {
+      "source": "/toronto/submit",
+      "destination": "/toronto/submit.html"
+    },
+    {
+      "source": "/toronto/advertise",
+      "destination": "/toronto/advertise.html"
+    },
+    {
+      "source": "/toronto/changelog",
+      "destination": "/toronto/changelog.html"
+    },
+    {
+      "source": "/new-york",
+      "destination": "/new-york/index.html"
+    },
+    {
+      "source": "/new-york/map",
+      "destination": "/new-york/map.html"
+    },
+    {
+      "source": "/new-york/submit",
+      "destination": "/new-york/submit.html"
+    },
+    {
+      "source": "/new-york/advertise",
+      "destination": "/new-york/advertise.html"
+    },
+    {
+      "source": "/new-york/changelog",
+      "destination": "/new-york/changelog.html"
+    },
+    {
+      "source": "/feedback",
+      "destination": "/feedback.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    }
   ],
   "crons": [
-    { "path": "/api/cron/deactivate-expired", "schedule": "0 8 * * *" }
+    {
+      "path": "/api/cron/deactivate-expired",
+      "schedule": "0 8 * * *"
+    }
   ]
 }
