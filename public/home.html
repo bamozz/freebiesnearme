@@ -88,7 +88,7 @@
   .explore-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:22px;align-items:stretch;}
   .explore-panel{display:flex;flex-direction:column;gap:14px;min-width:0;}
   .globe-wrap{
-    position:relative;border-radius:22px;overflow:hidden;min-height:500px;
+    position:relative;border-radius:22px;overflow:hidden;min-height:420px;
     background:radial-gradient(120% 120% at 50% 40%,var(--space-2) 0%,var(--space) 70%);
     border:1px solid #0a1220;
   }
@@ -157,7 +157,8 @@
   .why .sec-head p{max-width:none;}
 
   /* ===== Free right now (right-hand panel) ===== */
-  .live-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+  /* the cards share whatever height the globe frame has, so the two sides end on the same line */
+  .live-grid{flex:1 1 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(96px,1fr);gap:12px;}
   .lcard{
     position:relative;display:flex;flex-direction:row;align-items:stretch;text-decoration:none;background:#fff;
     border:1px solid var(--line);border-left:4px solid var(--c);border-radius:12px;overflow:hidden;
