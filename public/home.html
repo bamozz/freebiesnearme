@@ -198,7 +198,7 @@
   .why-band{background:#F8F5EC;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:84px 0 92px;}
   .why{padding-bottom:0;}
   .why-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
-  .why-grid > div{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .why-grid > div{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;}
   .why-body{display:flex;gap:20px;align-items:flex-start;padding:24px 28px 26px;}
   .why-grid .ico{
     flex:0 0 auto;width:54px;height:54px;border-radius:14px;background:var(--teal-dim);color:var(--teal-text);
@@ -209,7 +209,7 @@
   .why-grid p{margin:0;font-size:15.5px;line-height:1.55;color:var(--muted);}
   /* small previews built from the city pages' own components (status badges, action row, ratings, update tags) */
   :root{--coral:#EF5B4E;}
-  .why-visual{display:flex;flex-direction:column;gap:8px;justify-content:center;background:#F1F8F5;border-bottom:1px solid var(--line);padding:20px 24px;min-height:176px;}
+  .why-visual{flex:1 1 auto;display:flex;flex-direction:column;gap:8px;justify-content:center;background:#F1F8F5;border-bottom:1px solid var(--line);padding:20px 24px;min-height:176px;}
   .mini{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 14px;box-shadow:0 1px 2px rgba(21,27,33,0.04);}
   .mini[hidden]{display:none;}
   .mini-row{display:flex;align-items:center;gap:12px;}
@@ -220,15 +220,18 @@
   .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
   .mini-name{font-size:13.5px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
   .mini-listing{display:flex;gap:12px;align-items:stretch;padding:10px;}
+  .mini-map{padding:0;overflow:hidden;}
+  #wvMap{height:150px;background:var(--paper-alt);}
+  .wv-pin{width:20px;height:20px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.4);}
+  .tag-cat{font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:3px 8px;border-radius:10px;background:var(--paper-alt);}
+  .mini-footnote{font-size:11.5px;color:var(--muted);padding:2px 4px 0;}
   .mini-img{flex:0 0 84px;border-radius:8px;background:var(--paper-alt) center/cover no-repeat;}
   .mini-body{min-width:0;display:flex;flex-direction:column;gap:2px;}
   .mini-brand{font-size:12.5px;font-weight:600;color:var(--muted);}
   .mini-what{font:700 15px 'Space Grotesk',sans-serif;line-height:1.25;}
   .mini-desc{font-size:12.5px;color:var(--muted);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .mini-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
-  .mini-tags span{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;}
-  .tag-free{background:var(--teal-dim);color:var(--teal);}
-  .tag-ok{background:var(--paper-alt);color:var(--ink);}
+  .mini-tags .tag-cat{padding:3px 9px;}
   .mini-actions{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:10px;font-size:12px;font-weight:700;color:var(--teal-text);}
   .mini-rate{display:flex;align-items:center;flex-wrap:wrap;gap:2px 8px;}
   .mini-rate-label{font-size:12px;font-weight:700;}
@@ -279,7 +282,7 @@
   .stat span{display:block;font-size:13px;line-height:1.4;color:#B6C4DA;margin-top:2px;text-wrap:balance;}
   .stat[hidden]{display:none;}
   .cta-row{display:flex;gap:10px;flex-wrap:wrap;}
-  .btn-city{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:14.5px;padding:12px 20px;border-radius:999px;color:#fff;background:var(--c);border:1px solid rgba(255,255,255,0.35);}
+  .btn-city{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:14.5px;padding:12px 20px;border-radius:999px;color:#fff;background:var(--c);border:0;}
   .btn-city:hover,.btn-city:focus-visible{filter:brightness(1.12);}
   .brands .small{margin:14px 0 0;font-size:13.5px;color:#B6C4DA;}
   .brands .small a{color:#fff;font-weight:700;}
@@ -377,7 +380,7 @@
   <p>Samples, giveaways, free classes and pop ups, checked by our team and mapped with a clock on each one, so you show up while it is still free. Pick your city to see what is on right now.</p>
   <div class="install" id="install">
     <div class="install-text">
-      <strong>Skip the app store. Install it in one tap.</strong>
+      <strong>Skip the app store, install it in one tap</strong>
       <span>Freebies Near Me is a web app. Put it on your home screen and it opens full screen like any other app, with nothing to download from an app store.</span>
       <span class="install-steps" id="installSteps" hidden></span>
     </div>
@@ -450,7 +453,7 @@
       <div class="why-visual" aria-hidden="true">
         <div class="mini mini-row"><span class="status-badge live"><span class="dot"></span>Live now</span><span class="mini-name" data-slot="live"></span></div>
         <div class="mini mini-row"><span class="status-badge soon"><span class="dot"></span>Next 3 days</span><span class="mini-name" data-slot="soon"></span></div>
-        <div class="mini mini-row"><span class="status-badge ended">Wrapped up</span><span class="mini-name" data-slot="ended"></span></div>
+        <div class="mini mini-row"><span class="status-badge soon"><span class="dot"></span><span id="wvWeekLabel">Next week</span></span><span class="mini-name" data-slot="week"></span></div>
       </div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
@@ -465,9 +468,10 @@
             <div class="mini-brand"></div>
             <div class="mini-what"></div>
             <div class="mini-desc"></div>
-            <div class="mini-tags"><span class="tag-free">Free</span><span class="tag-ok">&#10003; Reviewed by our team</span></div>
+            <div class="mini-tags"><span class="tag-cat" id="wvCat"></span><span class="status-badge" id="wvStatus"></span></div>
           </div>
         </div>
+        <div class="mini-footnote" id="wvNote" hidden>Listings shown are reviewed and confirmed by the Freebies Near Me team.</div>
       </div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
@@ -476,6 +480,7 @@
     </div>
     <div>
       <div class="why-visual" aria-hidden="true">
+        <div class="mini mini-map"><div id="wvMap"></div></div>
         <div class="mini">
           <div class="mini-brand" data-slot="door-brand"></div>
           <div class="mini-what" data-slot="door-what"></div>
@@ -517,7 +522,7 @@
   <div class="wrap">
     <div>
       <div class="kicker">For brands</div>
-      <h2 class="display">Reach people who came here to get something free.</h2>
+      <h2 class="display">Reach people who came here to get something free</h2>
       <p class="lead">Everyone browsing Freebies Near Me is hunting for something to try today. That is the moment a new product, class or pop up is easiest to say yes to.</p>
 
       <div class="stats" id="stats">
@@ -704,7 +709,8 @@
       if (!ref) return;
       out.push({ status:status, ref:ref, city:c, brand:first.brand, what:first.what, neighbourhood:first.neighbourhood,
                  image_url:first.image_url, image_fit:first.image_fit, sponsored:first.sponsored,
-                 description:first.description, signup_url:first.signup_url });
+                 description:first.description, signup_url:first.signup_url,
+                 cat:first.category, lat:first.lat, lng:first.lng });
     });
     return out;
   }
@@ -729,7 +735,7 @@
   function loadUpcoming(){
     // rows from yesterday on: enough to cover anything running today or later
     var since = new Date(Date.now() - 24*3600*1000).toISOString();
-    var q = 'listings?select=id,group_id,brand,what,description,signup_url,neighbourhood,city_slug,start_time,end_time,image_url,image_fit,sponsored'
+    var q = 'listings?select=id,group_id,brand,what,description,signup_url,category,lat,lng,neighbourhood,city_slug,start_time,end_time,image_url,image_fit,sponsored'
       + '&moderation_status=eq.approved&is_active=eq.true'
       + '&or=' + encodeURIComponent('(start_time.gte.' + since + ',end_time.gte.' + since + ')')
       + '&order=start_time.asc&limit=2000';
@@ -758,34 +764,81 @@
     }).catch(function(){});
   }
 
-  // ---- previews in the "why hunters" cards, filled from live listings ----
-  function shortName(ev){ return ev.brand + (ev.what ? ' \u00b7 ' + ev.what : ''); }
+  // ---- previews in the "why hunters" cards: the city pages' own components, filled from live listings ----
+  var CAT_LABEL = { food:'Food & Drink', beauty:'Beauty', fashion:'Fashion', tech:'Tech', wellness:'Wellness',
+                    class_workshop:'Class & Workshop', concert_screening:'Concert & Screening', tour:'Tour', festival:'Festival', misc:'Misc.' };
+  var CAT_COLOR = { food:'#EF5B4E', beauty:'#D6579A', fashion:'#3E6FA8', tech:'#0E9C82', wellness:'#8467C9',
+                    class_workshop:'#2E8B57', concert_screening:'#C2703E', tour:'#C99A2E', festival:'#B23A9E', misc:'#8B6F47' };
+  var doorEvent = null, miniMap = null;
+  function shortName(ev){ return ev.brand + (ev.what ? ' · ' + ev.what : ''); }
+  // the same wording the city pages use for a listing that has not started yet
+  function soonLabel(ev){
+    var d = (ms(ev.ref.start_time) - Date.now()) / 86400000;
+    return d <= 3 ? 'Next 3 days' : d <= 7 ? 'Next week' : d <= 30 ? 'Next 30 days' : 'Next month+';
+  }
+  function initMiniMap(){
+    if (miniMap || !window.maplibregl || !doorEvent) return;
+    try {
+      miniMap = new maplibregl.Map({
+        container: 'wvMap',
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: [doorEvent.lng, doorEvent.lat],
+        zoom: 14.3,
+        interactive: false,
+        attributionControl: { compact: true }
+      });
+      var el = document.createElement('div');
+      el.className = 'wv-pin';
+      el.style.background = CAT_COLOR[doorEvent.cat] || '#0E9C82';
+      new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([doorEvent.lng, doorEvent.lat]).addTo(miniMap);
+    } catch (e) { miniMap = null; }
+  }
   function fillWhy(){
-    var now = Date.now(), soonLimit = now + 3*24*3600*1000;
+    var now = Date.now();
     function slot(name){ return document.querySelector('[data-slot="' + name + '"]'); }
     var live = events.filter(function(e){ return e.status === 'today' && ms(e.ref.start_time) <= now; })[0]
       || events.filter(function(e){ return e.status === 'today'; })[0];
-    var soon = events.filter(function(e){ return e.status === 'soon' && ms(e.ref.start_time) <= soonLimit && e !== live; })[0];
+    var rest = events.filter(function(e){ return e.status === 'soon' && e !== live; });
+    function within(minDays, maxDays){
+      return rest.filter(function(e){ var d = (ms(e.ref.start_time) - now) / 86400000; return d > minDays && d <= maxDays; })[0];
+    }
+    var soon = within(0, 3), week = within(3, 7) || within(7, 30);
     if (live && slot('live')) slot('live').textContent = shortName(live);
     if (soon && slot('soon')) slot('soon').textContent = shortName(soon);
-    // most recent listing that has wrapped up
-    sbGet('listings?select=brand,what&moderation_status=eq.approved&end_time=lt.' + encodeURIComponent(new Date(now).toISOString()) + '&order=end_time.desc&limit=1')
-      .then(function(r){ if (r[0] && slot('ended')) slot('ended').textContent = shortName(r[0]); }).catch(function(){});
-    // a listing that shows what "free" looks like here: has a picture and says so in its description
+    if (week && slot('week')){
+      slot('week').textContent = shortName(week);
+      $('wvWeekLabel').textContent = soonLabel(week);
+    }
+    // a listing that shows what a card looks like: picture, description, category and status
     var withImg = events.filter(function(e){ return e.image_url && e.description; });
     var free = withImg.filter(function(e){ return /free/i.test(e.description); })[0] || withImg[0];
     if (free){
       var box = $('wvFree');
       box.hidden = false;
+      $('wvNote').hidden = false;
       box.querySelector('.mini-img').style.backgroundImage = 'url("' + free.image_url.replace(/"/g, '%22') + '")';
       box.querySelector('.mini-brand').textContent = free.brand;
       box.querySelector('.mini-what').textContent = free.what;
       box.querySelector('.mini-desc').textContent = free.description;
+      var cat = $('wvCat');
+      cat.textContent = CAT_LABEL[free.cat] || 'Free';
+      cat.style.color = CAT_COLOR[free.cat] || 'var(--muted)';
+      var st = $('wvStatus');
+      if (free.status === 'today'){
+        st.className = 'status-badge live';
+        st.innerHTML = '<span class="dot"></span>Live now';
+      } else {
+        st.className = 'status-badge soon';
+        st.innerHTML = '<span class="dot"></span>' + soonLabel(free);
+      }
     }
-    var door = events.filter(function(e){ return e.signup_url; })[0] || free || events[0];
-    if (door){
-      slot('door-brand').textContent = door.brand + (door.neighbourhood ? ' \u00b7 ' + door.neighbourhood : '');
-      slot('door-what').textContent = door.what;
+    // map to door: a real map of a real listing, with its action row
+    var located = events.filter(function(e){ return typeof e.lat === 'number' && typeof e.lng === 'number'; });
+    doorEvent = located.filter(function(e){ return e.signup_url; })[0] || located[0] || null;
+    if (doorEvent){
+      slot('door-brand').textContent = doorEvent.brand + (doorEvent.neighbourhood ? ' · ' + doorEvent.neighbourhood : '');
+      slot('door-what').textContent = doorEvent.what;
+      initMiniMap();
     }
   }
 
@@ -1070,7 +1123,7 @@
   });
 
   document.addEventListener('visibilitychange', spin);
-  function startGlobe(){ loadMapLib(initGlobe); }
+  function startGlobe(){ loadMapLib(function(){ initGlobe(); initMiniMap(); }); }
   if (document.readyState === 'complete') startGlobe();
   else window.addEventListener('load', startGlobe);
   loadUpcoming();
