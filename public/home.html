@@ -194,30 +194,21 @@
 
   /* ===== Why hunters rely on it ===== */
   /* its own band: a soft tint and extra air, quieter than the dark brands section below */
-  .why-band{background:#F8F5EC;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:64px 0;margin-top:8px;}
+  .why-band{background:#F8F5EC;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:68px 0 72px;margin-top:8px;}
   .why{padding-bottom:0;}
-  .why-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;}
-  .why-grid > div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 18px 20px;}
+  .why-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
+  .why-grid > div{display:flex;gap:20px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 28px;}
   .why-grid .ico{
-    width:38px;height:38px;border-radius:10px;background:var(--teal-dim);color:var(--teal-text);
-    display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+    flex:0 0 auto;width:54px;height:54px;border-radius:14px;background:var(--teal-dim);color:var(--teal-text);
+    display:flex;align-items:center;justify-content:center;
   }
-  .why-grid .ico svg{width:20px;height:20px;}
-  .why-grid h3{margin:0 0 4px;font-size:16.5px;font-family:'Space Grotesk',sans-serif;}
-  .why-grid p{margin:0;font-size:14px;color:var(--muted);}
-  .hero .install{margin-top:22px;}
-  .install-steps{display:block;margin-top:8px;font-size:13.5px;font-weight:600;color:var(--ink);}
-  .install-steps[hidden]{display:none;}
-  .install{
-    margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-    background:linear-gradient(135deg,var(--teal-dim),#fff);border:1px solid #BFE6DC;border-radius:14px;padding:16px 20px;
-  }
-  .install[hidden]{display:none;}
-  .install-text{max-width:760px;}
-  .install-text strong{display:block;font:700 17px 'Space Grotesk',sans-serif;margin-bottom:2px;}
-  .install-text span{font-size:14px;color:var(--muted);}
-  .install .btn{border:none;cursor:pointer;font-family:'Inter',sans-serif;--c:var(--teal-text);}
-  .install .btn[hidden]{display:none;}
+  .why-grid .ico svg{width:27px;height:27px;}
+  .why-grid h3{margin:0 0 6px;font-size:20px;line-height:1.2;font-family:'Space Grotesk',sans-serif;}
+  .why-grid p{margin:0;font-size:15.5px;line-height:1.55;color:var(--muted);}
+  .why .kicker{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-text);margin-bottom:10px;}
+  .why .sec-head{margin-bottom:28px;}
+  .why .sec-head h2{font-size:clamp(28px,4vw,44px);line-height:1.06;letter-spacing:-0.02em;}
+  .why .sec-head p{margin-top:10px;font-size:clamp(15px,1.5vw,17.5px);}
   .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:14px;padding:10px 18px;border-radius:999px;color:#fff;background:var(--c,var(--ink));}
   .btn:hover{filter:brightness(0.92);}
 
@@ -285,7 +276,6 @@
   }
 
   @media (max-width:1000px){
-    .why-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
     .brands .wrap{grid-template-columns:1fr;gap:30px;}
   }
   @media (max-width:900px){
@@ -298,6 +288,9 @@
     .globe-wrap{min-height:340px;border-radius:18px;}
     .globe-hint{display:none;}
     .why-grid{grid-template-columns:1fr;}
+    .why-grid > div{padding:20px;gap:16px;}
+    .why-grid .ico{width:44px;height:44px;}
+    .why-grid .ico svg{width:22px;height:22px;}
     .live-grid{grid-template-columns:1fr;}
     .lcard:nth-child(n+5){display:none;}
     .brands{padding:44px 0 48px;}
@@ -389,6 +382,7 @@
 <div class="wrap why">
   <div class="sec-head">
     <div>
+      <div class="kicker">For hunters</div>
       <h2 class="display">Why hunters keep it open</h2>
       <p>Built so you spend ten seconds checking and the rest of the day enjoying the freebie.</p>
     </div>
@@ -396,23 +390,19 @@
   <div class="why-grid">
     <div>
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-      <h3 class="display">A clock on every freebie</h3>
-      <p>See what is on now, what is coming up and what is already over, so you never turn up late.</p>
+      <div class="why-text"><h3 class="display">A clock on every freebie</h3><p>See what is on now, what is coming up and what is already over, so you never turn up late.</p></div>
     </div>
     <div>
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
-      <h3 class="display">Actually free</h3>
-      <p>Every listing is reviewed by our team. If you have to buy something to get the freebie, it does not make the list.</p>
+      <div class="why-text"><h3 class="display">Actually free</h3><p>Every listing is reviewed by our team. If you have to buy something to get the freebie, it does not make the list.</p></div>
     </div>
     <div>
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
-      <h3 class="display">From map to door</h3>
-      <p>Directions, add to calendar and register sit on the same card. Browse by map, calendar or neighbourhood.</p>
+      <div class="why-text"><h3 class="display">From map to door</h3><p>Directions, add to calendar and register sit on the same card. Browse by map, calendar or neighbourhood.</p></div>
     </div>
     <div>
       <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 20v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/></svg></div>
-      <h3 class="display">Hunters tell hunters</h3>
-      <p>Rate what was worth the trip and flag when something has run out, so nobody walks to an empty table.</p>
+      <div class="why-text"><h3 class="display">Hunters tell hunters</h3><p>Rate what was worth the trip and flag when something has run out, so nobody walks to an empty table.</p></div>
     </div>
   </div>
 </div>
