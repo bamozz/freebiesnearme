@@ -90,7 +90,8 @@
   .eyebrow .live-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:blink 1.8s ease-in-out infinite;}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
   @media (prefers-reduced-motion: reduce){.eyebrow .live-dot{animation:none;}}
-  .hero h1{font-size:clamp(32px,5.2vw,58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;max-width:820px;}
+  /* two lines: the break after "you." is fixed, and the size follows the width so line one never wraps (phones drop to a fixed size and wrap) */
+  .hero h1{font-size:clamp(32px,calc((100vw - 48px) / 19.5),58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;}
   .hero h1 em{font-style:normal;color:var(--teal);}
   .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:640px;}
   /* ===== City picker ===== */
@@ -111,7 +112,7 @@
   .pick .nums b{display:block;font:700 34px 'Space Grotesk',sans-serif;line-height:1;color:var(--c);}
   .pick .nums span{display:block;margin-top:4px;font-size:13px;color:var(--muted);font-weight:600;}
   .pick .go{margin-top:auto;align-self:flex-start;font-size:15px;font-weight:700;color:#fff;background:var(--c);padding:11px 20px;border-radius:999px;}
-  .pick.soon{background:var(--paper-alt);border-style:dashed;}
+  .pick.soon{background:transparent;border-style:dashed;}
   .pick.soon::before{background:var(--line);}
   .pick.soon h2{font-size:22px;}
   .pick.soon .nums{display:none;}
@@ -173,7 +174,7 @@
     background:var(--paper-alt);border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:14.5px;font-weight:600;
   }
   .why-cta .btns{display:flex;gap:8px;flex-wrap:wrap;}
-  .hero .install{margin-top:22px;max-width:820px;}
+  .hero .install{margin-top:22px;}
   .install-steps{display:block;margin-top:8px;font-size:13.5px;font-weight:600;color:var(--ink);}
   .install-steps[hidden]{display:none;}
   .install{
@@ -181,7 +182,7 @@
     background:linear-gradient(135deg,var(--teal-dim),#fff);border:1px solid #BFE6DC;border-radius:14px;padding:16px 20px;
   }
   .install[hidden]{display:none;}
-  .install-text{max-width:620px;}
+  .install-text{max-width:760px;}
   .install-text strong{display:block;font:700 17px 'Space Grotesk',sans-serif;margin-bottom:2px;}
   .install-text span{font-size:14px;color:var(--muted);}
   .install .btn{border:none;cursor:pointer;font-family:'Inter',sans-serif;--c:var(--teal-text);}
@@ -265,7 +266,7 @@
 
 <section class="wrap hero">
   <div class="eyebrow"><span class="live-dot" aria-hidden="true"></span><span id="eyebrowText">Free things, updated daily</span></div>
-  <h1 class="display">Free stuff is happening near you. <em>Never miss it again.</em></h1>
+  <h1 class="display">Free stuff is happening near you.<br> <em>Never miss it again.</em></h1>
   <p>Samples, giveaways, free classes and pop ups, checked by our team and mapped with a clock on each one, so you show up while it is still free. Pick your city to see what is on right now.</p>
   <div class="install" id="install">
     <div class="install-text">
