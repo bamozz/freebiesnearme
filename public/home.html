@@ -84,14 +84,6 @@
 
   /* ===== Hero (hunters) ===== */
   .hero{padding-top:14px;padding-bottom:22px;}
-  .eyebrow{
-    display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;
-    font-size:13px;font-weight:700;color:var(--teal-text);background:var(--teal-dim);padding:6px 12px;border-radius:999px;
-  }
-  .eyebrow .live-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:blink 1.8s ease-in-out infinite;}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-  @media (prefers-reduced-motion: reduce){.eyebrow .live-dot{animation:none;}}
-  /* two lines: the break after "you." is fixed, and the size follows the width so line one never wraps (phones drop to a fixed size and wrap) */
   .hero h1{font-size:clamp(32px,calc((100vw - 48px) / 19.5),58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;}
   .hero h1 em{font-style:normal;color:var(--teal);}
   .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:640px;}
@@ -133,6 +125,8 @@
   .pick .nums b{display:block;font:700 34px 'Space Grotesk',sans-serif;line-height:1;color:var(--c);}
   .pick .nums span{display:block;margin-top:4px;font-size:13px;color:var(--muted);font-weight:600;}
   .pick .go{margin-top:auto;align-self:flex-start;font-size:15px;font-weight:700;color:#fff;background:var(--c);padding:11px 20px;border-radius:999px;}
+  .pick .nums > div[hidden]{display:none;}
+  .pick .num-none{font-size:14px;font-weight:600;color:var(--muted);}
   .pick.soon{background:transparent;border-style:dashed;}
   .pick.soon::before{background:var(--line);}
   .pick.soon h2{font-size:22px;}
@@ -201,7 +195,9 @@
   .live-empty{padding:26px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:14px;background:#fff;}
 
   /* ===== Why hunters rely on it ===== */
-  .why{padding-bottom:48px;}
+  /* its own band: a soft tint and extra air, quieter than the dark brands section below */
+  .why-band{background:#F8F5EC;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:64px 0;margin-top:8px;}
+  .why{padding-bottom:0;}
   .why-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;}
   .why-grid > div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 18px 20px;}
   .why-grid .ico{
@@ -290,6 +286,7 @@
     .live-grid{grid-template-columns:1fr;}
     .lcard:nth-child(n+5){display:none;}
     .brands{padding:44px 0 48px;}
+    .why-band{padding:44px 0;}
     .btn-city{flex:1 1 100%;justify-content:center;}
     .stats{grid-template-columns:1fr;gap:10px;}
     .stat{display:flex;align-items:baseline;gap:14px;padding:12px 16px;}
@@ -309,7 +306,6 @@
 </header>
 
 <section class="wrap hero">
-  <div class="eyebrow"><span class="live-dot" aria-hidden="true"></span><span id="eyebrowText">Free things, updated daily</span></div>
   <h1 class="display">Free stuff is happening near you.<br> <em>Never miss it again.</em></h1>
   <p>Samples, giveaways, free classes and pop ups, checked by our team and mapped with a clock on each one, so you show up while it is still free. Pick your city to see what is on right now.</p>
   <div class="install" id="install">
@@ -339,14 +335,14 @@
     <span class="badge" hidden></span>
     <h2 class="display">Toronto</h2>
     <div class="region">Ontario, Canada</div>
-    <div class="nums"><div><b class="n-today">-</b><span>happening today</span></div><div><b class="n-soon">-</b><span>coming up</span></div></div>
+    <div class="nums"><div class="num-today"><b class="n-today">-</b><span>happening today</span></div><div class="num-soon"><b class="n-soon">-</b><span class="l-soon">coming up</span></div><div class="num-none" hidden>New free listings are added every day</div></div>
     <span class="go">Open Toronto &rarr;</span>
   </a>
   <a class="pick" data-city="new-york" data-ev="city_select" data-loc="card" href="/new-york" style="--c:#FF6600">
     <span class="badge" hidden></span>
     <h2 class="display">New York</h2>
     <div class="region">New York City, USA</div>
-    <div class="nums"><div><b class="n-today">-</b><span>happening today</span></div><div><b class="n-soon">-</b><span>coming up</span></div></div>
+    <div class="nums"><div class="num-today"><b class="n-today">-</b><span>happening today</span></div><div class="num-soon"><b class="n-soon">-</b><span class="l-soon">coming up</span></div><div class="num-none" hidden>New free listings are added every day</div></div>
     <span class="go">Open New York &rarr;</span>
   </a>
   <a class="pick soon" href="/feedback?city=other&amp;mode=idea" data-ev="suggest_city" data-loc="card">
@@ -373,7 +369,8 @@
   <div class="live-grid" id="liveGrid"></div>
 </section>
 
-<section class="wrap why" aria-label="Why hunters use Freebies Near Me">
+<section class="why-band" aria-label="Why hunters use Freebies Near Me">
+<div class="wrap why">
   <div class="sec-head">
     <div>
       <h2 class="display">Why hunters keep it open</h2>
@@ -402,6 +399,7 @@
       <p>Rate what was worth the trip and flag when something has run out, so nobody walks to an empty table.</p>
     </div>
   </div>
+</div>
 </section>
 
 <section class="brands" id="brands" aria-label="Advertise with Freebies Near Me">
@@ -413,8 +411,8 @@
 
       <div class="stats" id="stats">
         <div class="stat" id="statHunters" hidden><b id="statHuntersNum"></b><span id="statHuntersLabel">hunters a month</span></div>
-        <div class="stat" id="statBrands" hidden><b id="statBrandsNum"></b><span>brands already listed</span></div>
-        <div class="stat" id="statLive" hidden><b id="statLiveNum"></b><span>free events today and coming up</span></div>
+        <div class="stat" id="statBrands" hidden><b id="statBrandsNum"></b><span id="statBrandsLabel">brands already listed across our cities</span></div>
+        <div class="stat" id="statLive" hidden><b id="statLiveNum"></b><span id="statLiveLabel">free events across our cities, today and coming up</span></div>
         <div class="stat" id="statCities"><b id="statCitiesNum">2</b><span>cities live, more on the way</span></div>
       </div>
 
@@ -593,17 +591,15 @@
       var box = document.querySelector('.pick[data-city="' + c.slug + '"]');
       if (!st || !box) return;
       known = true; today += st.today; soon += st.soon;
+      // a zero reads badly, so only the counts that exist are shown
       box.querySelector('.n-today').textContent = st.today;
       box.querySelector('.n-soon').textContent = st.soon;
+      box.querySelector('.num-today').hidden = st.today === 0;
+      box.querySelector('.num-soon').hidden = st.soon === 0;
+      box.querySelector('.l-soon').textContent = st.today === 0 ? 'free events coming up' : 'coming up';
+      box.querySelector('.num-none').hidden = !(st.today === 0 && st.soon === 0);
     });
     if (!known) return;
-    // headline badge: events in the next 7 days. "Today" alone swings from a dozen
-    // in the morning to two at night, so it makes a poor headline; a week is
-    // the window a hunter actually plans in.
-    var horizon = Date.now() + 7*24*3600*1000;
-    var week = events.filter(function(ev){ return ev.status === 'today' || ms(ev.ref.start_time) <= horizon; }).length;
-    var line = week >= 5 ? nf.format(week) + ' free events in the next 7 days' : 'New free events added every day';
-    if (line) $('eyebrowText').textContent = line;
     if (today + soon){ $('statLiveNum').textContent = nf.format(today + soon); $('statLive').hidden = false; }
   }
   function loadUpcoming(){
@@ -715,6 +711,10 @@
   });
 
   // ---- audience tile (only shows a number you have supplied) ----
+  // these totals span every city, so the labels say so
+  var scope = CITIES.length === 2 ? 'both cities' : 'all ' + CITIES.length + ' cities';
+  $('statBrandsLabel').textContent = 'brands already listed across ' + scope;
+  $('statLiveLabel').textContent = 'free events across ' + scope + ', today and coming up';
   $('statCitiesNum').textContent = CITIES.length;
   if (AUDIENCE && typeof AUDIENCE.huntersPerMonth === 'number' && AUDIENCE.huntersPerMonth > 0){
     $('statHuntersNum').textContent = nf.format(AUDIENCE.huntersPerMonth);
