@@ -2,7 +2,7 @@
   "framework": "nextjs",
   "cleanUrls": false,
   "redirects": [
-    { "source": "/home.html", "destination": "/", "statusCode": 301 },
+    { "source": "/", "destination": "/toronto", "permanent": false },
     { "source": "/toronto/index.html", "destination": "/toronto", "statusCode": 301 },
     { "source": "/toronto/map.html", "destination": "/toronto/map", "statusCode": 301 },
     { "source": "/toronto/submit.html", "destination": "/toronto/submit", "statusCode": 301 },
@@ -23,7 +23,6 @@
     { "source": "/new-york/about.html", "destination": "/new-york/about", "statusCode": 301 }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/home.html" },
     { "source": "/toronto", "destination": "/toronto/index.html" },
     { "source": "/toronto/map", "destination": "/toronto/map.html" },
     { "source": "/toronto/submit", "destination": "/toronto/submit.html" },

@@ -14,8 +14,7 @@ export const revalidate = 3600;
 // 302-redirects to /toronto, so listing the city homes directly is the
 // correct canonical entry for a sitemap rather than the redirecting root.
 function staticRoutes(): MetadataRoute.Sitemap {
-  const root = { url: `${BASE_URL}/`, changeFrequency: 'weekly' as const, priority: 1.0 };
-  const cities = Object.keys(CITIES).flatMap((slug) => [
+  return Object.keys(CITIES).flatMap((slug) => [
     { url: `${BASE_URL}/${slug}`, changeFrequency: 'daily' as const, priority: 1.0 },
     { url: `${BASE_URL}/${slug}/map`, changeFrequency: 'daily' as const, priority: 0.8 },
     { url: `${BASE_URL}/${slug}/calendar`, changeFrequency: 'daily' as const, priority: 0.7 },
@@ -26,7 +25,6 @@ function staticRoutes(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/${slug}/privacy`, changeFrequency: 'yearly' as const, priority: 0.2 },
     { url: `${BASE_URL}/${slug}/terms`, changeFrequency: 'yearly' as const, priority: 0.2 },
   ]);
-  return [root, ...cities];
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
