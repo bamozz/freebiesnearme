@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://freebiesnearme.app/sitemap.xml
+Sitemap: https://www.freebiesnearme.app/sitemap.xml

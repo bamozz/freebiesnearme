@@ -179,6 +179,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description: `${activeCount} free listings happening now or coming up.`,
+    alternates: { canonical: `https://www.freebiesnearme.app/${city}/${hub}` },
   };
 }
 
@@ -221,7 +222,7 @@ export default async function HubPage({ params }: Props) {
   const cityConfig = getCity(city) as CityConfig;
   const hubLabel = hubDisplayLabel(hub, resolved.type, cityConfig);
   const cityLabel = cityConfig.name;
-  const hubUrl = `https://freebiesnearme.app/${city}/${hub}`;
+  const hubUrl = `https://www.freebiesnearme.app/${city}/${hub}`;
   const jsonLd = buildHubItemList(items, hubLabel, hubUrl);
 
   return (
