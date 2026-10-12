@@ -181,7 +181,7 @@
     font-size:13px;font-weight:600;padding:7px 13px;border-radius:16px;
     border:1px solid var(--line);cursor:pointer;background:#fff;display:flex;align-items:center;gap:6px;
   }
-  .status-chip.active{background:var(--flag-blue);color:#fff;border-color:var(--flag-blue);}
+  .status-chip.active{background:var(--city-primary);color:#fff;border-color:var(--city-primary);}
   .status-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);}
   .status-chip.active .pulse{background:#5FE3C4;}
   .chip-row{
@@ -199,7 +199,7 @@
     border:1px solid var(--line);cursor:pointer;color:var(--muted);background:#fff;
   }
   .cat-chip.active{color:#fff;border-color:transparent;}
-  .cat-chip.location.active{background:var(--flag-blue);}
+  .cat-chip.location.active{background:var(--city-primary);}
 
   /* ===== Layout ===== */
   .layout{
@@ -482,15 +482,15 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast.err{background:var(--coral);}
   /* ===== Toronto flag colours: blue, red, white ===== */
-  :root{--flag-blue:#274490;--flag-blue-dark:#1C3270;}
-  nav{box-shadow:inset 0 3px 0 var(--flag-blue);}
-  footer{box-shadow:inset 0 3px 0 var(--flag-blue);}
-  .nav-links .on{color:var(--flag-blue);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;}
-  .tab-item.on{color:var(--flag-blue);}
-  .btn-solid{background:var(--flag-blue);}
-  .btn-solid:hover{background:var(--flag-blue-dark);}
-  .city-name{color:var(--flag-blue);}
-  .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--flag-blue);}
+  :root{--city-primary:#274490;--city-primary-dark:#1C3270;--city-primary-text:#274490;}
+  nav{box-shadow:inset 0 3px 0 var(--city-primary);}
+  footer{box-shadow:inset 0 3px 0 var(--city-primary);}
+  .nav-links .on{color:var(--city-primary-text);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;}
+  .tab-item.on{color:var(--city-primary-text);}
+  .btn-solid{background:var(--city-primary);}
+  .btn-solid:hover{background:var(--city-primary-dark);}
+  .city-name{color:var(--city-primary);}
+  .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--city-primary-text);}
   .logo{align-items:baseline;gap:0.25em;}
   ::selection{background:rgba(39,68,144,0.18);}
   /* ===== Search row with filters trigger (mobile) ===== */
@@ -502,10 +502,10 @@
     background:#fff;border:1px solid var(--line);border-radius:10px;cursor:pointer;
   }
   .filters-toggle svg{width:1em;height:1em;}
-  .filters-toggle[aria-expanded="true"]{color:var(--flag-blue);border-color:var(--flag-blue);}
+  .filters-toggle[aria-expanded="true"]{color:var(--city-primary-text);border-color:var(--city-primary);}
   .filters-toggle-count{
     position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;
-    background:var(--flag-blue);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;padding:0 5px;
+    background:var(--city-primary);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;padding:0 5px;
   }
   @media (max-width:760px){
     .filters-toggle{display:flex;}

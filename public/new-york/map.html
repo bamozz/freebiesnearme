@@ -138,7 +138,7 @@
     border:1px solid var(--line);cursor:pointer;white-space:nowrap;background:#fff;color:var(--muted);
     flex-shrink:0;display:flex;align-items:center;gap:6px;
   }
-  .cat-chip.active{background:var(--flag-blue);color:#fff;border-color:var(--flag-blue);}
+  .cat-chip.active{background:var(--city-primary);color:#fff;border-color:var(--city-primary);}
   .cat-chip .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);}
   .cat-chip.active .pulse{background:#5FE3C4;}
 
@@ -208,18 +208,18 @@
     border:2px solid #fff;box-shadow:0 1px 4px rgba(21,27,33,0.4);
   }
   .pin.sponsored{background:var(--amber) !important;}
-  /* ===== New York flag colours: blue, orange, white ===== */
-  :root{--flag-blue:#1F3F93;--flag-blue-dark:#162F6E;}
-  nav{box-shadow:inset 0 3px 0 var(--flag-blue);}
-  footer{box-shadow:inset 0 3px 0 var(--flag-blue);}
-  .nav-links .on{color:var(--flag-blue);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;}
-  .tab-item.on{color:var(--flag-blue);}
-  .btn-solid{background:var(--flag-blue);}
-  .btn-solid:hover{background:var(--flag-blue-dark);}
-  .city-name{color:var(--flag-blue);}
-  .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--flag-blue);}
+  /* ===== New York flag colours: orange, blue, white ===== */
+  :root{--city-primary:#FF6600;--city-primary-dark:#CC5200;--city-primary-text:#C24E00;}
+  nav{box-shadow:inset 0 3px 0 var(--city-primary);}
+  footer{box-shadow:inset 0 3px 0 var(--city-primary);}
+  .nav-links .on{color:var(--city-primary-text);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:7px;}
+  .tab-item.on{color:var(--city-primary-text);}
+  .btn-solid{background:var(--city-primary);}
+  .btn-solid:hover{background:var(--city-primary-dark);}
+  .city-name{color:var(--city-primary);}
+  .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--city-primary-text);}
   .logo{align-items:baseline;gap:0.25em;}
-  ::selection{background:rgba(39,68,144,0.18);}
+  ::selection{background:rgba(255,102,0,0.18);}
   /* ===== Collapsible filters (mobile) ===== */
   .filters-toggle-wrap{display:none;border-bottom:1px solid var(--line);background:#fff;flex-shrink:0;z-index:400;padding:9px 16px;}
   .filters-toggle{
@@ -229,7 +229,7 @@
   }
   .filters-toggle-icon{width:18px;height:18px;flex-shrink:0;}
   .filters-toggle-label{flex:1;}
-  .filters-toggle-count{min-width:20px;height:20px;border-radius:10px;background:var(--flag-blue);color:#fff;font-size:12px;line-height:20px;text-align:center;padding:0 6px;}
+  .filters-toggle-count{min-width:20px;height:20px;border-radius:10px;background:var(--city-primary);color:#fff;font-size:12px;line-height:20px;text-align:center;padding:0 6px;}
   .filters-toggle-chevron{width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin-top:-3px;transition:transform .15s ease;}
   .filters-toggle[aria-expanded="true"] .filters-toggle-chevron{transform:rotate(-135deg);margin-top:3px;}
   .filters-panel{flex-shrink:0;}

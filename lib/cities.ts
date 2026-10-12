@@ -18,6 +18,13 @@ export type CityConfig = {
   neighbourhoods: Neighbourhood[];
   // Curated subset linked from every page footer, kept short on purpose.
   popularSlugs: string[];
+  // City accent colour (CSS variables --city-primary / -dark / -text). The
+  // static pages in public/<slug>/ set the same three values in their own
+  // :root block; Next-rendered pages get them from app/[city]/layout.tsx.
+  primary: string;
+  primaryDark: string;
+  // Darker shade for small text on white, where the main colour is too light.
+  primaryText: string;
 };
 
 // Curated New York place list. Same role as lib/neighbourhoods.ts for
@@ -76,6 +83,9 @@ export const CITIES: Record<string, CityConfig> = {
     slug: 'toronto',
     name: 'Toronto',
     region: 'ON',
+    primary: '#274490',
+    primaryDark: '#1C3270',
+    primaryText: '#274490',
     neighbourhoods: TORONTO_NEIGHBOURHOODS,
     popularSlugs: [
       'the-well',
@@ -92,6 +102,10 @@ export const CITIES: Record<string, CityConfig> = {
     slug: 'new-york',
     name: 'New York',
     region: 'NY',
+    // NYC flag orange.
+    primary: '#FF6600',
+    primaryDark: '#CC5200',
+    primaryText: '#C24E00',
     neighbourhoods: NEW_YORK_NEIGHBOURHOODS,
     popularSlugs: [
       'times-square',
