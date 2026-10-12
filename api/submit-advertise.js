@@ -27,6 +27,9 @@ function countUrls(text) {
   return ((text || '').match(urlPattern) || []).length;
 }
 
+// Cities the site runs in; anything else falls back to the column default.
+const ALLOWED_CITY_SLUGS = ['toronto', 'new-york'];
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -104,6 +107,8 @@ export default async function handler(req, res) {
     message: `Placement interest: ${placement || 'Not specified'}\n\n${message}`,
     correction: null,
     contact,
+    // which city site the inquiry came from
+    city_slug: ALLOWED_CITY_SLUGS.includes(body.city_slug) ? body.city_slug : 'toronto',
   };
 
   const insertRes = await fetch(`${process.env.SUPABASE_URL}/rest/v1/feedback`, {

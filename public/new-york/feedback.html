@@ -355,6 +355,7 @@
       message: message,
       correction: mode === 'issue' ? (document.getElementById('correctInfo').value || null) : null,
       contact: null,
+      city_slug: 'new-york',
     };
 
     const { error } = await sb.from('feedback').insert(payload);
