@@ -426,6 +426,9 @@
     .premium-tease{padding:20px;}
     .why-grid{grid-template-columns:1fr;}
     .why-body{padding:20px;gap:16px;}
+    /* on phones the words come first and the preview follows */
+    .why-grid > div{flex-direction:column-reverse;}
+    .why-visual{border-bottom:0;border-top:1px solid var(--line);}
     .why-visual{padding:16px;min-height:0;}
     .cc .card-main{grid-template-columns:clamp(92px,30%,130px) minmax(0,1fr);}
     .cc .door-views{grid-template-columns:1fr;}
