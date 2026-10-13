@@ -1,0 +1,24 @@
+# Freebies Near Me
+
+> A live guide to free giveaways, samples, classes and pop up events in Toronto and New York. Every listing is checked by our team before it goes live and is shown with its date, time and location.
+
+Freebies Near Me helps people find free things to try and do, such as product samples, giveaways, free classes, tours, concerts and pop up events, in the city they are in. Brands can advertise to those people with sponsored listings and featured cards.
+
+## Cities
+- [Toronto](https://www.freebiesnearme.app/toronto): free things to do in Toronto today, on a live map and calendar. Covers downtown, midtown and the former municipalities of Toronto, York and East York.
+- [New York](https://www.freebiesnearme.app/new-york): free things to do in New York City across the five boroughs.
+
+## Key pages
+- [Toronto map](https://www.freebiesnearme.app/toronto/map) and [calendar](https://www.freebiesnearme.app/toronto/calendar)
+- [New York map](https://www.freebiesnearme.app/new-york/map) and [calendar](https://www.freebiesnearme.app/new-york/calendar)
+- [Advertise in Toronto](https://www.freebiesnearme.app/toronto/advertise) and [in New York](https://www.freebiesnearme.app/new-york/advertise)
+- [About](https://www.freebiesnearme.app/about)
+
+## How it works
+- A listing counts as free only if no purchase is needed to get the freebie or take part.
+- Each listing shows what it is, where, when, and whether it is live now or coming up.
+- Neighbourhood and category pages group listings, for example /toronto/yorkville or /new-york/food-drink.
+- Listings are updated daily and expired ones are removed.
+
+## Contact
+- Feedback and corrections: https://www.freebiesnearme.app/feedback

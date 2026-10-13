@@ -7,7 +7,9 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Freebies Near Me',
-  description: 'Free giveaways, samples, and pop up events happening in Toronto right now.',
+  metadataBase: new URL('https://www.freebiesnearme.app'),
+  description: 'Free giveaways, samples, classes and pop up events in Toronto and New York, checked by our team and updated daily.',
+  openGraph: { siteName: 'Freebies Near Me', type: 'website', locale: 'en_CA' },
   manifest: '/manifest.json',
   icons: {
     icon: [

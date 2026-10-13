@@ -155,10 +155,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const label = hubDisplayLabel(hub, resolved.type, cityConfig);
   const cityLabel = cityConfig.name;
   const monthYear = currentMonthYear();
+  // Titles stay under ~60 characters so search results do not cut them off;
+  // the month and year (a freshness signal) live in the description instead.
   const title =
     resolved.type === 'category'
-      ? `Free ${label} in ${cityLabel} Today (${monthYear}) | Freebies Near Me`
-      : `Free Stuff & Freebies at ${label} Today (${monthYear}) | Freebies Near Me`;
+      ? `Free ${label} in ${cityLabel} Today | Freebies Near Me`
+      : `Free Things in ${label}, ${cityLabel} | Freebies Near Me`;
 
   // active_listing_count (from the stats view) counts every is_active row
   // regardless of whether its time window has already ended, so it can't be
@@ -176,10 +178,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .returns<Listing[]>();
   const activeCount = groupListings(listings ?? []).filter((l) => l.groupStatus !== 'ended').length;
 
+  const where = resolved.type === 'category' ? `${label.toLowerCase()} in ${cityLabel}` : `${label}, ${cityLabel}`;
+  const description =
+    activeCount > 0
+      ? `${activeCount} free ${activeCount === 1 ? 'listing' : 'listings'} for ${where}, happening now or coming up. Giveaways, samples, classes and pop ups, checked by our team, updated ${monthYear}.`
+      : `Free giveaways, samples, classes and pop ups for ${where}. New listings are added every day, checked by our team.`;
+  const url = `https://www.freebiesnearme.app/${city}/${hub}`;
+  const image = `https://www.freebiesnearme.app/${city}/assets/og-image.png`;
   return {
     title,
-    description: `${activeCount} free listings happening now or coming up.`,
-    alternates: { canonical: `https://www.freebiesnearme.app/${city}/${hub}` },
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'website',
+      siteName: 'Freebies Near Me',
+      title,
+      description,
+      url,
+      images: [{ url: image, width: 1200, height: 630 }],
+    },
+    twitter: { card: 'summary_large_image', title, description, images: [image] },
   };
 }
 

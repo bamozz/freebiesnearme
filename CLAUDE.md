@@ -12,7 +12,7 @@ Data lives in Supabase. Writes to `listings` only happen through `api/submit-lis
 
 - **Production**: `main`, served at www.freebiesnearme.app (and freebiesnearme.app). Only merge here when asked.
 - **Staging**: the `staging` branch, served at https://freebiesnearme.vercel.app (a branch domain, so every push to `staging` updates it automatically; it sits behind Vercel login). Review visual and structural changes here first: merge the feature branch into `staging`, push, then check freebiesnearme.vercel.app.
-- **City picker homepage is staging only for now**: `public/home.html` (the city picker), the `/` rewrite in `vercel.json`, the "All cities" footer links and their changelog entries exist only on `staging`. Production's `/` still redirects to `/toronto`. To release it, revert the revert on `main` (commit `cf2770d`) or merge `staging`.
+- **Front page** (`public/home.html`, the city picker with globe) is live in production at `/` via the `/` rewrite in `vercel.json`. The sitewide pages (`/feedback`, `/about`, `/privacy`, `/terms`) are live too.
 - Both environments read and write the **same Supabase database**. Listings for a city that production doesn't serve yet must stay `moderation_status = 'pending'`, because production pages only filter by city once that code is merged.
 
 ## Cities

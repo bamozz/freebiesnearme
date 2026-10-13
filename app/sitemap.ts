@@ -10,23 +10,24 @@ const BASE_URL = 'https://www.freebiesnearme.app';
 export const revalidate = 3600;
 
 // Core static pages use their real live paths (/toronto, /toronto/map,
-// /toronto/submit) - bare /map and /submit 404 on this site, and / only
-// 302-redirects to /toronto, so listing the city homes directly is the
-// correct canonical entry for a sitemap rather than the redirecting root.
+// /toronto/submit). The front page at / is the city picker and a real page in
+// its own right, so it is listed alongside each city's home. Pages whose
+// content changes every day carry a lastModified date so crawlers revisit them.
 function staticRoutes(): MetadataRoute.Sitemap {
-  const root = { url: `${BASE_URL}/`, changeFrequency: 'weekly' as const, priority: 1.0 };
+  const now = new Date();
+  const root = { url: `${BASE_URL}/`, lastModified: now, changeFrequency: 'daily' as const, priority: 1.0 };
   const cities = Object.keys(CITIES).flatMap((slug) => [
-    { url: `${BASE_URL}/${slug}`, changeFrequency: 'daily' as const, priority: 1.0 },
-    { url: `${BASE_URL}/${slug}/map`, changeFrequency: 'daily' as const, priority: 0.8 },
-    { url: `${BASE_URL}/${slug}/calendar`, changeFrequency: 'daily' as const, priority: 0.7 },
+    { url: `${BASE_URL}/${slug}`, lastModified: now, changeFrequency: 'daily' as const, priority: 1.0 },
+    { url: `${BASE_URL}/${slug}/map`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.8 },
+    { url: `${BASE_URL}/${slug}/calendar`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.8 },
     { url: `${BASE_URL}/${slug}/submit`, changeFrequency: 'monthly' as const, priority: 0.5 },
-    { url: `${BASE_URL}/${slug}/advertise`, changeFrequency: 'monthly' as const, priority: 0.4 },
+    { url: `${BASE_URL}/${slug}/advertise`, changeFrequency: 'monthly' as const, priority: 0.6 },
     { url: `${BASE_URL}/${slug}/changelog`, changeFrequency: 'weekly' as const, priority: 0.3 },
   ]);
   // Sitewide pages have one address for every city.
   const sitewide = [
+    { url: `${BASE_URL}/about`, changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: `${BASE_URL}/feedback`, changeFrequency: 'yearly' as const, priority: 0.2 },
-    { url: `${BASE_URL}/about`, changeFrequency: 'monthly' as const, priority: 0.4 },
     { url: `${BASE_URL}/privacy`, changeFrequency: 'yearly' as const, priority: 0.2 },
     { url: `${BASE_URL}/terms`, changeFrequency: 'yearly' as const, priority: 0.2 },
   ];
