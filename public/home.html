@@ -284,7 +284,7 @@
     padding:3px 9px;border-radius:9px;transform:rotate(-4deg);border:1.5px solid var(--paper);
   }
   .cc .ad-inquire-link{color:var(--muted);font-weight:700;}
-  .cc .pin.sponsored{background:var(--amber) !important;width:20px;height:20px;}
+  .cc .pin.sponsored{background:var(--amber) !important;}
   .cc .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
   .cc .cat-chip{font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:14px;border:1px solid var(--line);color:var(--muted);background:#fff;}
   .cc .cat-chip.active{color:#fff;border-color:transparent;}
@@ -537,6 +537,13 @@
         </div>
       </div>
       <div>
+        <div class="why-visual cc" id="wbFoot" aria-hidden="true" hidden></div>
+        <div class="why-body">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div class="why-text"><h3 class="display">Stands out on the map</h3><p>Your pin turns amber,<br class="br-wide"> easy to spot among the rest.</p></div>
+        </div>
+      </div>
+      <div>
         <div class="why-visual cc" id="wbSlot" aria-hidden="true" hidden></div>
         <div class="why-body">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15 9a4 4 0 010 6M18 6a8 8 0 010 12"/></svg></div>
@@ -544,17 +551,10 @@
         </div>
       </div>
       <div>
-        <div class="why-visual cc" id="wbFoot" aria-hidden="true" hidden></div>
-        <div class="why-body">
-          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
-          <div class="why-text"><h3 class="display">Built for footfall</h3><p>A standout pin sends hunters to your door,<br class="br-wide"> with directions and register on your card.</p></div>
-        </div>
-      </div>
-      <div>
         <div class="why-visual cc" id="wbLocal" aria-hidden="true" hidden></div>
         <div class="why-body">
-          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
-          <div class="why-text"><h3 class="display">Local by design</h3><p>Your offer shows up where it fits,<br class="br-wide"> by city, neighbourhood and category.</p></div>
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+          <div class="why-text"><h3 class="display">Your own message</h3><p>Promote a launch, a sale or a new store,<br class="br-wide"> with no dated event needed.</p></div>
         </div>
       </div>
     </div>
@@ -977,8 +977,15 @@
       box.hidden = false;
       box.style.setProperty('--city-primary', city.color);
     }
-    put('wbSponsored', cardHTML(demo, { rating:true }) + '<div class="sample-note">Sample listing, sorted first in its category and neighbourhood</div>');
-    // the featured card sits in the list under any filter, so the preview shows a filter row above it
+    // 1. first in line: the sponsored card on top, a free listing below it
+    var plain = events.filter(function(e){ return e.city.slug === city.slug && e.rows.length <= 2; })[0]
+      || events.filter(function(e){ return e.rows.length <= 2; })[0];
+    put('wbSponsored', cardHTML(demo, {}) + (plain ? cardHTML(plain, {}) : '')
+      + '<div class="sample-note">Sample sponsored listing, sorted above the free ones</div>');
+    // 2. stands out on the map: a larger amber pin among the category-coloured ones
+    put('wbFoot', '<div class="map-box" id="wbMap"></div><div class="sample-note">Sample sponsored pin, among real listings</div>');
+    initAdMap();
+    // 3. seen under every filter: the featured card with a filter row above it
     var slotCats = ['food', 'beauty', 'festival'];
     put('wbSlot', '<div class="chip-row"><div class="cat-chip">All categories</div>'
       + slotCats.map(function(c, i){
@@ -988,30 +995,19 @@
       + '<div class="card sponsored"><div class="sponsored-flag">Advertisement</div>'
       + '<div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>'
       + '<div class="card-what">Your message, front and centre</div>'
-      + '<div class="card-brand">Your brand, your offer and your link, in the words you choose.</div>'
+      + '<div class="card-brand">Your brand, your offer and your link.</div>'
       + '<div class="card-meta"><span class="ad-inquire-link">Your call to action &rarr;</span></div></div>'
       + '<div class="sample-note">Sample featured card, shown with every filter</div>');
-    put('wbFoot', '<div class="map-box" id="wbMap"></div>' + cardHTML(demo, { actions:true }));
-    initAdMap();
-    // neighbourhood and category chips, as on the city pages
-    var hoods = {}, cats = {};
-    events.forEach(function(e){
-      if (e.city.slug !== city.slug) return;
-      if (e.neighbourhood) hoods[e.neighbourhood] = (hoods[e.neighbourhood] || 0) + 1;
-      if (e.cat) cats[e.cat] = (cats[e.cat] || 0) + 1;
-    });
-    var topHoods = Object.keys(hoods).sort(function(a, b){ return hoods[b] - hoods[a]; }).slice(0, 4);
-    var topCats = Object.keys(cats).sort(function(a, b){ return cats[b] - cats[a]; }).slice(0, 4);
-    if (topHoods.length || topCats.length){
-      var h = '<div class="chip-row"><div class="cat-chip location active">All locations</div>'
-        + topHoods.map(function(n){ return '<div class="cat-chip location">' + esc(n) + '</div>'; }).join('') + '</div>';
-      h += '<div class="chip-row"><div class="cat-chip">All categories</div>'
-        + topCats.map(function(c, i){
-            var on = i === 0;
-            return '<div class="cat-chip' + (on ? ' active' : '') + '"' + (on ? ' style="background:' + (CAT_COLOR[c] || '#8B6F47') + '"' : '') + '>' + esc(CAT_LABEL[c] || c) + '</div>';
-          }).join('') + '</div>';
-      put('wbLocal', h);
-    } else put('wbLocal', '');
+    // 4. your own message: it does not have to be a dated event
+    function ad(what, brand){
+      return '<div class="card sponsored"><div class="sponsored-flag">Advertisement</div>'
+        + '<div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>'
+        + '<div class="card-what">' + what + '</div><div class="card-brand">' + brand + '</div>'
+        + '<div class="card-meta"><span class="ad-inquire-link">Your call to action &rarr;</span></div></div>';
+    }
+    put('wbLocal', ad('Grand opening this weekend', 'Your store, your address, your welcome offer')
+      + ad('New range now in store', 'Your product, your story, your link')
+      + '<div class="sample-note">Samples: no date, time or event needed</div>');
   }
   function fillWhy(){
     var now = Date.now();
