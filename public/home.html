@@ -540,7 +540,7 @@
         <div class="why-visual cc" id="wbSlot" aria-hidden="true" hidden></div>
         <div class="why-body">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15 9a4 4 0 010 6M18 6a8 8 0 010 12"/></svg></div>
-          <div class="why-text"><h3 class="display">A slot of your own</h3><p>Your message gets its own card,<br class="br-wide"> shown to everyone browsing that day.</p></div>
+          <div class="why-text"><h3 class="display">Seen under every filter</h3><p>Your message shows in every list,<br class="br-wide"> whatever filter hunters pick.</p></div>
         </div>
       </div>
       <div>
@@ -978,11 +978,19 @@
       box.style.setProperty('--city-primary', city.color);
     }
     put('wbSponsored', cardHTML(demo, { rating:true }) + '<div class="sample-note">Sample listing, sorted first in its category and neighbourhood</div>');
-    put('wbSlot', '<div class="card sponsored"><div class="sponsored-flag">Advertisement</div>'
+    // the featured card sits in the list under any filter, so the preview shows a filter row above it
+    var slotCats = ['food', 'beauty', 'festival'];
+    put('wbSlot', '<div class="chip-row"><div class="cat-chip">All categories</div>'
+      + slotCats.map(function(c, i){
+          var on = i === 1;
+          return '<div class="cat-chip' + (on ? ' active' : '') + '"' + (on ? ' style="background:' + CAT_COLOR[c] + '"' : '') + '>' + CAT_LABEL[c] + '</div>';
+        }).join('') + '</div>'
+      + '<div class="card sponsored"><div class="sponsored-flag">Advertisement</div>'
       + '<div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>'
-      + '<div class="card-what">This space is claimable</div>'
-      + '<div class="card-brand">Brands can place a featured listing here to reach hunters browsing by location.</div>'
-      + '<div class="card-meta"><span class="ad-inquire-link">Inquire about ad placement &rarr;</span></div></div>');
+      + '<div class="card-what">Your message, front and centre</div>'
+      + '<div class="card-brand">Your brand, your offer and your link, in the words you choose.</div>'
+      + '<div class="card-meta"><span class="ad-inquire-link">Your call to action &rarr;</span></div></div>'
+      + '<div class="sample-note">Sample featured card, shown with every filter</div>');
     put('wbFoot', '<div class="map-box" id="wbMap"></div>' + cardHTML(demo, { actions:true }));
     initAdMap();
     // neighbourhood and category chips, as on the city pages
