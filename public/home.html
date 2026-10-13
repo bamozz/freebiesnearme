@@ -203,7 +203,8 @@
 
   /* ===== Free right now (right-hand panel) ===== */
   /* the cards share whatever height the globe frame has, so the two sides end on the same line */
-  .live-grid{flex:1 1 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(96px,1fr);gap:12px;}
+  /* one fixed card height on every tab, so a long title never makes one city's cards taller than another's */
+  .live-grid{--lcard-h:148px;flex:1 1 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:var(--lcard-h);gap:12px;}
   .lcard{
     position:relative;display:flex;flex-direction:row;align-items:stretch;text-decoration:none;background:#fff;
     border:1.5px solid var(--c);border-radius:12px;overflow:hidden;
@@ -211,7 +212,7 @@
   }
   .lcard:hover{box-shadow:0 8px 24px rgba(21,27,33,0.10);transform:translateY(-2px);}
   /* always a square: as tall as the card, with the width following the height */
-  .lcard .img{position:relative;flex:0 0 auto;align-self:stretch;aspect-ratio:1/1;min-height:96px;background:var(--paper-alt);overflow:hidden;}
+  .lcard .img{position:relative;flex:0 0 auto;align-self:stretch;aspect-ratio:1/1;min-height:0;background:var(--paper-alt);overflow:hidden;}
   .lcard .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
   /* portrait posters and logos: the whole image, sat on a soft blurred copy of itself so there are no bare bars */
   .lcard .img::before{content:"";position:absolute;inset:-24px;background:var(--bg) center/cover no-repeat;filter:blur(20px) saturate(1.15);opacity:0;}
@@ -220,9 +221,9 @@
   .lcard .body{padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
   .lcard .when{align-self:flex-start;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--paper-alt);color:var(--ink);}
   .lcard .when.now{background:var(--teal-dim);color:var(--teal-text);}
-  .lcard .brand{font:700 14.5px 'Space Grotesk',sans-serif;margin-top:4px;line-height:1.25;}
+  .lcard .brand{font:700 14.5px 'Space Grotesk',sans-serif;margin-top:4px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .lcard .what{font-size:12.5px;color:var(--muted);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .lcard .where{margin-top:auto;padding-top:5px;font-size:11.5px;font-weight:600;color:var(--c);}
+  .lcard .where{margin-top:auto;padding-top:5px;font-size:11.5px;font-weight:600;color:var(--c);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .live-empty{grid-column:1 / -1;padding:26px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:14px;background:#fff;}
 
   /* ===== Why hunters rely on it ===== */
@@ -247,6 +248,7 @@
   .cc{--paper:#F1F8F5;--city-primary:#274490;align-items:center;}
   .cc > *{width:100%;max-width:400px;}
   .cc > .door-views{max-width:600px;}
+  .cc > .live-note,.cc > .sample-note{max-width:none;}
   .cc .door-views{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch;}
   .cc .cal-nav{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;}
   .cc .cal-nav-label{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14.5px;min-width:112px;text-align:center;}
@@ -329,7 +331,15 @@
     padding:3px 9px;border-radius:9px;transform:rotate(-4deg);border:1.5px solid var(--paper);
   }
   .cc .ad-inquire-link{color:var(--muted);font-weight:700;}
-  .cc .pin.sponsored{background:var(--amber) !important;}
+  .cc .pin.sponsored{
+    background:var(--amber) !important;width:26px;height:26px;border-width:3px;z-index:2;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 0 5px rgba(240,164,48,0.35),0 2px 8px rgba(21,27,33,0.45);
+  }
+  .cc .pin.sponsored::after{
+    display:block;content:"\2605";position:static;width:auto;height:auto;margin:0;border:0;animation:none;
+    color:#fff;font-size:12px;line-height:1;
+  }
   .cc .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
   .cc .cat-chip{font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:14px;border:1px solid var(--line);color:var(--muted);background:#fff;}
   .cc .cat-chip.active{color:#fff;border-color:transparent;}

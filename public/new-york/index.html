@@ -491,7 +491,13 @@
     width:16px;height:16px;border-radius:50%;cursor:pointer;
     border:2px solid #fff;box-shadow:0 1px 4px rgba(21,27,33,0.4);
   }
-  .pin.sponsored{background:var(--amber) !important;}
+  /* a sponsored pin is larger, wears a soft amber halo and a star, and sits above the free pins, so it never blends in with the category colours */
+  .pin.sponsored{
+    background:var(--amber) !important;width:26px;height:26px;border-width:3px;z-index:2;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 0 5px rgba(240,164,48,0.35),0 2px 8px rgba(21,27,33,0.45);
+  }
+  .pin.sponsored::after{content:"\2605";color:#fff;font-size:12px;line-height:1;}
 
   /* ===== Value strip ===== */
   .value-strip{
@@ -544,6 +550,7 @@
   .btn-solid:hover{background:var(--city-primary-dark);}
   .city-name{color:var(--city-primary);}
   .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--city-primary-text);}
+  .logo .accent{color:var(--teal);}
   .logo{align-items:baseline;gap:0.25em;}
   ::selection{background:rgba(255,102,0,0.18);}
   /* ===== Search row with filters trigger (mobile) ===== */
@@ -573,7 +580,7 @@
 
 <nav>
   <div class="nav-inner">
-    <a class="logo" href="/new-york">Freebies Near Me <span class="logo-city">New York</span></a>
+    <a class="logo" href="/new-york">Freebies <span class="accent">Near Me</span> <span class="logo-city">New York</span></a>
     <div class="nav-links"><span class="on">Explore</span><a href="/new-york/map">Map</a><a href="/new-york/calendar">Calendar</a></div>
     <div class="nav-right">
       <a class="btn-solid" href="/new-york/submit">Submit an event</a>
@@ -677,7 +684,7 @@
 
 <footer>
   <div class="footer-inner">
-    <a class="logo" href="/new-york">Freebies Near Me <span class="logo-city">New York</span></a>
+    <a class="logo" href="/new-york">Freebies <span class="accent">Near Me</span> <span class="logo-city">New York</span></a>
     <div class="footer-links">
       <a class="feedback-link" href="/new-york/advertise">Advertise</a>
       <a class="feedback-link" href="/feedback">Feedback</a>

@@ -16,7 +16,7 @@ export default function SiteFooter({
   return (
     <footer>
       <div className="footer-inner">
-        <a className="logo" href={base}>Freebies Near Me <span className="logo-city">{cityName}</span></a>
+        <a className="logo" href={base}>Freebies <span className="accent">Near Me</span> <span className="logo-city">{cityName}</span></a>
         <div className="footer-links">
           <a className="feedback-link" href={`${base}/advertise`}>Advertise</a>
           <a className="feedback-link" href="/feedback">Feedback</a>

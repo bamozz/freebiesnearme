@@ -162,6 +162,7 @@
   .btn-solid{background:var(--city-primary);}
   .btn-solid:hover{background:var(--city-primary-dark);}
   .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--city-primary-text);}
+  .logo .accent{color:var(--teal);}
   ::selection{background:rgba(39,68,144,0.18);}
 </style>
 </head>
@@ -169,7 +170,7 @@
 
 <nav>
   <div class="nav-inner">
-    <a class="logo" href="/toronto">Freebies Near Me <span class="logo-city">Toronto</span></a>
+    <a class="logo" href="/toronto">Freebies <span class="accent">Near Me</span> <span class="logo-city">Toronto</span></a>
     <a class="btn-solid" href="/toronto">Back to map</a>
   </div>
 </nav>
@@ -242,7 +243,7 @@
 
 <footer>
   <div class="footer-inner">
-    <a class="logo" href="/toronto">Freebies Near Me <span class="logo-city">Toronto</span></a>
+    <a class="logo" href="/toronto">Freebies <span class="accent">Near Me</span> <span class="logo-city">Toronto</span></a>
     <div class="footer-links">
       <a class="feedback-link" href="/toronto/advertise">Advertise</a>
       <a class="feedback-link" href="/feedback">Feedback</a>
@@ -265,6 +266,17 @@
   // Newest first. Add a new object to the top of this array whenever you
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
+    {
+      date: 'October 12, 2026',
+      emoji: '\u{2B50}',
+      title: 'Sponsored pins are easier to spot on the map',
+      blurb: "A sponsored listing's pin is now bigger, with a star and a soft amber glow, so it stands out from the free listings around it.",
+      sections: [
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Sponsored pins', text: 'Larger, starred and glowing amber on the map, and always shown on top of the other pins.' },
+        ]},
+      ],
+    },
     {
       date: 'October 12, 2026',
       emoji: '\u{1F4F2}',
