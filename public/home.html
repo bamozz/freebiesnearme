@@ -228,7 +228,8 @@
   .why-band{background:#F8F5EC;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:84px 0 92px;}
   .why{padding-bottom:0;}
   .why-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
-  .why-grid > div{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;}
+  /* text first, preview after, on every screen */
+  .why-grid > div{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column-reverse;}
   .why-body{display:flex;gap:20px;align-items:flex-start;padding:24px 28px 26px;}
   .why-grid .ico{
     flex:0 0 auto;width:54px;height:54px;border-radius:14px;background:var(--teal-dim);color:var(--teal-text);
@@ -239,7 +240,7 @@
   .why-grid p{margin:0;font-size:15.5px;line-height:1.55;color:var(--muted);min-height:3.1em;}
   /* ===== Components copied from the city pages, so these previews look exactly like the live sites ===== */
   :root{--coral:#EF5B4E;}
-  .why-visual{flex:1 1 auto;display:flex;flex-direction:column;gap:12px;justify-content:center;background:#F1F8F5;border-bottom:1px solid var(--line);padding:22px 24px;min-height:176px;pointer-events:none;}
+  .why-visual{flex:1 1 auto;display:flex;flex-direction:column;gap:12px;justify-content:center;background:#F1F8F5;border-top:1px solid var(--line);padding:22px 24px;min-height:176px;pointer-events:none;}
   .why-visual[hidden]{display:none;}
   .cc{--paper:#F1F8F5;--city-primary:#274490;align-items:center;}
   .cc > *{width:100%;max-width:400px;}
@@ -441,9 +442,6 @@
     .pt-item p{font-size:12px;line-height:1.45;}
     .why-grid{grid-template-columns:1fr;}
     .why-body{padding:20px;gap:16px;}
-    /* on phones the words come first and the preview follows */
-    .why-grid > div{flex-direction:column-reverse;}
-    .why-visual{border-bottom:0;border-top:1px solid var(--line);}
     .why-visual{padding:16px;min-height:0;}
     .cc .card-main{grid-template-columns:clamp(92px,30%,130px) minmax(0,1fr);}
     .cc .door-views{grid-template-columns:1fr;}
