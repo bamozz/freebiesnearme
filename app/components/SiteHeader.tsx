@@ -12,7 +12,7 @@ export default function SiteHeader() {
   return (
     <nav>
       <div className="nav-inner">
-        <a className="logo" href={base}>Freebies Near Me <span className="logo-city">{city.name}</span></a>
+        <a className="logo" href={base}>Freebies <span className="accent">Near Me</span> <span className="logo-city">{city.name}</span></a>
         <div className="nav-links">
           <a href={base}>Explore</a>
           <a href={`${base}/map`}>Map</a>

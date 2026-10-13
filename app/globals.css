@@ -383,4 +383,5 @@ footer{box-shadow:inset 0 3px 0 var(--city-primary);}
 .btn-solid:hover{background:var(--city-primary-dark);}
 .city-name{color:var(--city-primary);}
 .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--city-primary-text);}
+.logo .accent{color:var(--teal);}
 ::selection{background:rgba(39,68,144,0.18);}
