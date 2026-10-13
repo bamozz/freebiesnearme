@@ -123,7 +123,7 @@
   /* a longer first line needs a wider card before it can break at the comma */
   @media (min-width:1180px){ .br-lg{display:inline;} }
   /* descriptions wrap into even lines instead of leaving a stray word on the last one */
-  .hero p,.sec-head p,.why-text p,.brands .lead,.install-text span,.perks li span,.stat span,.live-empty,.lcard .what,.cc .card-description,.cc .live-note{text-wrap:balance;}
+  .hero p,.sec-head p,.why-text p,.brands .lead,.perks li span,.stat span,.live-empty,.lcard .what,.cc .card-description,.cc .live-note{text-wrap:balance;}
   /* ===== Globe + city cards ===== */
   .explore{padding-top:8px;padding-bottom:72px;}
   .explore-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:22px;align-items:stretch;}
@@ -333,23 +333,6 @@
   .why .sec-head{margin-bottom:28px;}
   .why .sec-head h2{font-size:clamp(28px,4vw,44px);line-height:1.06;letter-spacing:-0.02em;}
   .why .sec-head p{margin-top:10px;font-size:clamp(15px,1.5vw,17.5px);}
-  /* install card (under the hero text) */
-  .hero .install{margin-top:22px;}
-  .install{
-    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-    background:linear-gradient(135deg,var(--teal-dim),#fff);border:1px solid #BFE6DC;border-radius:14px;padding:16px 20px;
-  }
-  .install[hidden]{display:none;}
-  /* the install card is for tablets only: hidden on phones and on wide screens with a mouse */
-  @media (max-width:767px){ .install{display:none;} }
-  @media (min-width:1025px) and (hover:hover) and (pointer:fine){ .install{display:none;} }
-  .install-text{max-width:760px;}
-  .install-text strong{display:block;font:700 17px 'Space Grotesk',sans-serif;margin-bottom:2px;}
-  .install-text span{font-size:14px;color:var(--muted);}
-  .install-steps{display:block;margin-top:8px;font-size:13.5px;font-weight:600;color:var(--ink);}
-  .install-steps[hidden]{display:none;}
-  .install .btn{border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;background:none;color:#0A7A66;padding:0;border-radius:0;white-space:nowrap;}
-  .install .btn:hover{background:none;filter:none;text-decoration:underline;}
   .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:14px;padding:10px 18px;border-radius:999px;color:#fff;background:var(--c,var(--ink));}
   .btn:hover{filter:brightness(0.92);}
 
@@ -469,14 +452,6 @@
 <section class="wrap hero">
   <h1 class="display">Free things are happening near you,<br> <em>never miss them</em></h1>
   <p>Brands get found while hunters discover free things to try and do.<br class="br-wide"> Pick your city to start.</p>
-  <div class="install" id="install">
-    <div class="install-text">
-      <strong>Skip the app store, install it in one tap</strong>
-      <span>Freebies Near Me is a web app. Put it on your home screen and it opens full screen like any other app, with nothing to download from an app store.</span>
-      <span class="install-steps" id="installSteps" hidden></span>
-    </div>
-    <button type="button" class="btn" id="installBtn" data-ev="install_click" data-loc="hero">Install the app &rarr;</button>
-  </div>
 </section>
 
 <main>
@@ -1218,38 +1193,14 @@
     limitStats();   // keep to the four strongest
   }
 
-  // ---- installable web app (no app store) ----
+  // ---- opened from the home screen ----
+  // A hunter who installed the site from their browser lands on the city they used last.
   var standalone = !!(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
   safe(function(){ if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function(){}); });
-  if (standalone){
-    $('install').hidden = true;
-    // Launched from the home screen (no referrer): go straight to the city the
-    // hunter used last. Following an "All cities" link inside the app has a
-    // referrer, so it still shows the picker. Browser visits are never redirected.
-    if (lastCity && !document.referrer){ location.replace('/' + lastCity.slug); return; }
-  } else {
-    var installBtn = $('installBtn'), installSteps = $('installSteps'), deferredInstall = null;
-    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferredInstall = e; });
-    installBtn.addEventListener('click', function(){
-      if (deferredInstall){
-        deferredInstall.prompt();
-        deferredInstall.userChoice.then(function(c){
-          track('install_choice', { outcome: c && c.outcome || '', location: 'hero' });
-        }).finally(function(){ deferredInstall = null; });
-        return;
-      }
-      // No one-tap prompt here (iPhone, or the browser has not offered it yet): show the steps.
-      installSteps.hidden = false;
-      installSteps.textContent = isIOS
-        ? 'On iPhone and iPad: tap the Share icon in Safari, then choose Add to Home Screen.'
-        : 'Open your browser menu and choose Install app or Add to Home screen. On a computer, look for the install icon in the address bar.';
-    });
-    window.addEventListener('appinstalled', function(){
-      track('app_installed', { location: 'hero' });
-      $('install').hidden = true;
-    });
-  }
+  // Launched from the home screen (no referrer): go straight to the city the
+  // hunter used last. Following an "All cities" link inside the app has a
+  // referrer, so it still shows the picker. Browser visits are never redirected.
+  if (standalone && lastCity && !document.referrer){ location.replace('/' + lastCity.slug); return; }
 
   // ---- globe ----
   var map = null, markers = [], spinning = true, interacting = false;
