@@ -17,10 +17,23 @@ type Props = { params: Promise<{ city: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = getCity((await params).city);
   if (!city) return {};
+  const title = `${city.name} Free Events Calendar | Freebies Near Me`;
+  const description = `Plan your week with a calendar of free giveaways, samples, classes and pop up events in ${city.name}. Add any listing to your own calendar in one tap.`;
+  const url = `https://www.freebiesnearme.app/${city.slug}/calendar`;
+  const image = `https://www.freebiesnearme.app/${city.slug}/assets/og-image.png`;
   return {
-    title: 'Free Events Calendar | Freebies Near Me',
-    description: `Browse ${city.name} free giveaways and pop up events by date.`,
-    alternates: { canonical: `https://www.freebiesnearme.app/${city.slug}/calendar` },
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'website',
+      siteName: 'Freebies Near Me',
+      title,
+      description,
+      url,
+      images: [{ url: image, width: 1200, height: 630 }],
+    },
+    twitter: { card: 'summary_large_image', title, description, images: [image] },
   };
 }
 
