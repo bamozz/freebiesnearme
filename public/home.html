@@ -86,7 +86,6 @@
   .hero p,.sec-head p,.why-text p,.brands .lead,.install-text span,.perks li span,.stat span,.live-empty,.lcard .what,.cc .card-description,.cc .live-note{text-wrap:balance;}
   /* ===== Globe + city cards ===== */
   .explore{padding-top:8px;padding-bottom:72px;}
-  .explore .sec-head{margin-bottom:22px;}
   .explore-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:22px;align-items:stretch;}
   .explore-panel{display:flex;flex-direction:column;gap:14px;min-width:0;}
   .globe-wrap{
@@ -193,8 +192,8 @@
     display:flex;align-items:center;justify-content:center;
   }
   .why-grid .ico svg{width:27px;height:27px;}
-  .why-grid h3{margin:0 0 6px;font-size:20px;line-height:1.2;font-family:'Space Grotesk',sans-serif;}
-  .why-grid p{margin:0;font-size:15.5px;line-height:1.55;color:var(--muted);}
+  .why-grid h3{margin:0 0 6px;font-size:20px;line-height:1.2;font-family:'Space Grotesk',sans-serif;min-height:1.2em;}
+  .why-grid p{margin:0;font-size:15.5px;line-height:1.55;color:var(--muted);min-height:3.1em;}
   /* ===== Components copied from the city pages, so these previews look exactly like the live sites ===== */
   :root{--coral:#EF5B4E;}
   .why-visual{flex:1 1 auto;display:flex;flex-direction:column;gap:12px;justify-content:center;background:#F1F8F5;border-bottom:1px solid var(--line);padding:22px 24px;min-height:176px;pointer-events:none;}
@@ -418,12 +417,6 @@
 
 <main>
 <section class="wrap explore" id="cities" aria-label="Free right now, by city">
-  <div class="sec-head">
-    <div>
-      <h2 class="display">Free right now, and coming up</h2>
-      <p>Pick a city on the globe or below to see what hunters can grab today.</p>
-    </div>
-  </div>
   <div class="explore-grid">
     <div class="globe-wrap">
       <div id="globe" role="img" aria-label="A globe with pins on the cities Freebies Near Me covers: Toronto and New York"></div>
@@ -462,28 +455,28 @@
       <div class="why-visual cc" id="wvClock" aria-hidden="true" hidden></div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-        <div class="why-text"><h3 class="display">A clock on every freebie</h3><p>See what is on now, what is coming up and what is already over, so you never turn up late.</p></div>
+        <div class="why-text"><h3 class="display">A clock on every freebie</h3><p>See what is on now and what is coming up, so you never turn up late.</p></div>
       </div>
     </div>
     <div>
       <div class="why-visual cc" id="wvFree" aria-hidden="true" hidden></div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <div class="why-text"><h3 class="display">Actually free</h3><p>Every listing is reviewed by our team. If you have to buy something to get the freebie, it does not make the list.</p></div>
+        <div class="why-text"><h3 class="display">Actually free</h3><p>Reviewed by our team. If you have to buy something to get it, it does not make the list.</p></div>
       </div>
     </div>
     <div>
       <div class="why-visual cc" id="wvDoor" aria-hidden="true" hidden></div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
-        <div class="why-text"><h3 class="display">Map and calendar, your pick</h3><p>See what is near you on the map, or plan your week on the calendar. Then get directions or add it to your own calendar in one tap.</p></div>
+        <div class="why-text"><h3 class="display">Map and calendar, your pick</h3><p>Browse the map or plan your week on the calendar, then add it to your own in one tap.</p></div>
       </div>
     </div>
     <div>
       <div class="why-visual cc" id="wvCrowd" aria-hidden="true" hidden></div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 20v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/></svg></div>
-        <div class="why-text"><h3 class="display">Hunters tell hunters</h3><p>Rate what was worth the trip and flag when something has run out, so nobody walks to an empty table.</p></div>
+        <div class="why-text"><h3 class="display">Hunters tell hunters</h3><p>Rate what was worth the trip and flag what ran out, so nobody walks to an empty table.</p></div>
       </div>
     </div>
   </div>
@@ -511,28 +504,28 @@
         <div class="why-visual cc" id="wbSponsored" aria-hidden="true" hidden></div>
         <div class="why-body">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z"/></svg></div>
-          <div class="why-text"><h3 class="display">First in line</h3><p>Sponsored listings sort to the top of their category and neighbourhood, with an amber highlight and a Sponsored badge.</p></div>
+          <div class="why-text"><h3 class="display">First in line</h3><p>Sponsored listings sort first in their category and neighbourhood, in amber.</p></div>
         </div>
       </div>
       <div>
         <div class="why-visual cc" id="wbSlot" aria-hidden="true" hidden></div>
         <div class="why-body">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15 9a4 4 0 010 6M18 6a8 8 0 010 12"/></svg></div>
-          <div class="why-text"><h3 class="display">A slot of your own</h3><p>The featured ad card carries your message to everyone browsing that day, whatever filters they set.</p></div>
+          <div class="why-text"><h3 class="display">A slot of your own</h3><p>The featured ad card reaches everyone browsing that day, whatever filters they set.</p></div>
         </div>
       </div>
       <div>
         <div class="why-visual cc" id="wbFoot" aria-hidden="true" hidden></div>
         <div class="why-body">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
-          <div class="why-text"><h3 class="display">Built for footfall</h3><p>A standout map pin, plus directions, add to calendar and register on your card, so interest turns into people at your door.</p></div>
+          <div class="why-text"><h3 class="display">Built for footfall</h3><p>A standout pin plus directions and register on your card turn interest into visits.</p></div>
         </div>
       </div>
       <div>
         <div class="why-visual cc" id="wbLocal" aria-hidden="true" hidden></div>
         <div class="why-body">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
-          <div class="why-text"><h3 class="display">Local by design</h3><p>Every listing lives in a city, a neighbourhood and a category, so your offer appears where it is relevant.</p></div>
+          <div class="why-text"><h3 class="display">Local by design</h3><p>Every listing sits in a city, neighbourhood and category, so it shows where it matters.</p></div>
         </div>
       </div>
     </div>
