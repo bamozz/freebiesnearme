@@ -340,7 +340,8 @@
     background:linear-gradient(135deg,var(--teal-dim),#fff);border:1px solid #BFE6DC;border-radius:14px;padding:16px 20px;
   }
   .install[hidden]{display:none;}
-  /* the install card is for phones and tablets: hidden on a wide screen with a mouse */
+  /* the install card is for tablets only: hidden on phones and on wide screens with a mouse */
+  @media (max-width:767px){ .install{display:none;} }
   @media (min-width:1025px) and (hover:hover) and (pointer:fine){ .install{display:none;} }
   .install-text{max-width:760px;}
   .install-text strong{display:block;font:700 17px 'Space Grotesk',sans-serif;margin-bottom:2px;}
