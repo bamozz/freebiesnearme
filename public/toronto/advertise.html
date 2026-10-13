@@ -54,33 +54,41 @@
   :root{
     color-scheme:light;
     --paper:#FEFCF6; --paper-alt:#F5F2E8; --ink:#151B21; --muted:#6B7280;
-    --line:#E4E8E5; --teal:#0E9C82; --teal-dim:#E3F5F0;
+    --line:#E4E8E5; --teal:#0E9C82; --teal-dim:#E3F5F0; --teal-text:#0A7A66;
     --amber:#F0A430; --amber-dim:#FCEED8; --coral:#EF5B4E;
   }
+  /* maplibre-gl.css defines .maplibregl-marker{position:absolute}, but it is fetched after the page paints */
+  .maplibregl-marker{position:absolute !important;}
   *{box-sizing:border-box;}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto;}}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;}
   .display{font-family:'Space Grotesk',sans-serif;}
+  .wrap{max-width:1220px;margin:0 auto;padding-left:28px;padding-right:28px;}
+  .br-wide{display:none;}
+  @media (min-width:760px){ .br-wide{display:inline;} }
 
   nav{
     border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(254,252,246,0.92);
     backdrop-filter:blur(6px);z-index:500;
   }
   .nav-inner{
-    max-width:640px;margin:0 auto;padding:16px 24px;
+    max-width:1220px;margin:0 auto;padding:16px 28px;
     display:flex;align-items:center;justify-content:space-between;
   }
-  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);}
+  .logo{display:flex;align-items:baseline;gap:0.25em;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);white-space:nowrap;}
   .btn-solid{
     background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;
     padding:9px 16px;border-radius:20px;cursor:pointer;white-space:nowrap;
     text-decoration:none;
   }
+  @media (max-width:760px){ .logo{font-size:17px;} }
 
   footer{
-    margin-top:34px;border-top:1px solid var(--line);background:#fff;
+    margin-top:0;border-top:1px solid var(--line);background:#fff;
   }
   .footer-inner{
-    max-width:640px;margin:0 auto;padding:24px 24px 40px;
+    max-width:1220px;margin:0 auto;padding:24px 28px 40px;
     display:flex;flex-direction:column;align-items:flex-start;gap:10px;
   }
   footer .logo{font-size:16px;}
@@ -97,15 +105,14 @@
     .footer-hubs p{white-space:normal;overflow-x:visible;}
   }
 
-  /* ===== Install app banner (preview/testing only - see the hostname
-     check in the script that shows it) ===== */
+  /* ===== Install app banner (shown only when the browser offers an install) ===== */
   .install-banner{
     display:none;
     background:var(--paper-alt);color:var(--ink);border-bottom:1px solid var(--line);
   }
   .install-banner.show{display:block;}
   .install-banner-inner{
-    max-width:640px;margin:0 auto;padding:10px 24px;
+    max-width:1220px;margin:0 auto;padding:10px 28px;
     display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;
   }
   .install-banner-text{flex:1;line-height:1.35;}
@@ -122,19 +129,108 @@
   }
   .install-banner-close:hover{color:var(--ink);}
 
-  .wrap{max-width:640px;margin:0 auto;padding:36px 24px 60px;}
-  h1{font-size:clamp(26px,4vw,34px);margin:0 0 6px;}
-  .sub{font-size:14.5px;color:var(--muted);margin:0 0 28px;max-width:480px;}
+  /* ===== The pitch: the same section, copy and cards as "For brands" on the front page ===== */
+  .brands{background:var(--ink);color:#fff;padding:84px 0 92px;}
+  .sec-head{margin-bottom:26px;}
+  .kicker{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+  .brands .kicker{color:var(--amber);}
+  .brands h1{margin:0;color:#fff;font-size:clamp(28px,4vw,44px);line-height:1.06;letter-spacing:-0.02em;text-wrap:balance;}
+  .brands h1 em{font-style:normal;color:var(--teal);}
+  .brands .lead{margin:10px 0 0;font-size:clamp(15px,1.5vw,17.5px);color:#B6C4DA;text-wrap:balance;}
+  .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 26px;}
+  .btn-city{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:14.5px;padding:12px 20px;border-radius:999px;color:#fff;background:var(--city-primary);border:0;}
+  .btn-city:hover,.btn-city:focus-visible{filter:brightness(1.12);}
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 18px;}
+  .stat{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px 16px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .stat b{display:block;font:700 28px 'Space Grotesk',sans-serif;letter-spacing:-0.01em;line-height:1;}
+  .stat span{display:block;font-size:13.5px;line-height:1.3;color:#B6C4DA;text-wrap:balance;}
+  .stat[hidden]{display:none;}
+  .stats-note{margin:-6px 0 20px;font-size:12.5px;color:#8FA2BF;}
+  .stats:not(:has(.stat:not([hidden]))),.stats:not(:has(.stat:not([hidden]))) + .stats-note{display:none;}
 
-  .perks{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
-  .perk{
-    display:flex;gap:10px;align-items:flex-start;padding:12px 14px;
-    border:1.5px solid var(--line);border-radius:10px;background:#fff;
+  .why-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
+  /* text first, preview after, on every screen */
+  .why-grid > div{background:#fff;border:0;border-radius:16px;overflow:hidden;display:flex;flex-direction:column-reverse;color:var(--ink);}
+  .why-body{display:flex;gap:20px;align-items:flex-start;padding:24px 28px 26px;background:var(--amber);}
+  .why-grid h3{margin:0 0 6px;font-size:20px;line-height:1.2;font-family:'Space Grotesk',sans-serif;min-height:1.2em;color:#fff;}
+  .why-grid p{margin:0;font-size:15.5px;line-height:1.55;color:#fff;min-height:3.1em;text-wrap:balance;}
+  .why-visual{flex:1 1 auto;display:flex;flex-direction:column;gap:12px;justify-content:center;background:#FFF8EC;padding:22px 24px;min-height:176px;pointer-events:none;}
+  .why-visual[hidden]{display:none;}
+
+  /* ===== Components copied from the city pages, so these previews look exactly like the live site ===== */
+  .cc{--paper:#FFF8EC;align-items:center;}
+  .cc > *{width:100%;max-width:400px;}
+  .cc .card{
+    position:relative;background:#fff;border:1px solid var(--line);border-radius:8px;
+    padding:14px 14px 12px 16px;border-left:3px solid var(--line);width:100%;max-width:400px;
   }
-  .perk-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);margin-top:6px;flex-shrink:0;}
-  .perk strong{font-size:13.5px;display:block;margin-bottom:2px;}
-  .perk span{font-size:12.5px;color:var(--muted);}
+  .cc .card::before,.cc .card::after{
+    content:"";position:absolute;top:50%;transform:translateY(-50%);
+    width:13px;height:13px;background:var(--paper);border:1px solid var(--line);border-radius:50%;
+  }
+  .cc .card::before{left:-10.5px;clip-path:inset(0 0 0 50%);}
+  .cc .card::after{right:-8.5px;clip-path:inset(0 50% 0 0);}
+  .cc .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .cc .tag-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .cc .tag{font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:3px 8px;border-radius:10px;}
+  .cc .tag.cat{background:var(--paper-alt);color:var(--muted);}
+  .cc .status-badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;display:flex;align-items:center;gap:5px;}
+  .cc .status-badge.live{background:var(--teal-dim);color:var(--teal);}
+  .cc .status-badge.soon{background:var(--amber-dim);color:#9C6B14;}
+  .cc .status-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+  .cc .card-what{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin:8px 0 2px;line-height:1.3;}
+  .cc .card-brand{font-size:13px;color:var(--muted);font-weight:600;margin:0 0 8px;line-height:1.35;}
+  .cc .card-main{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start;margin-bottom:10px;}
+  .cc .card-content{min-width:0;}
+  .cc .card-content .card-brand{margin:0 0 6px;}
+  .cc .card-content .card-top{flex-wrap:wrap;}
+  .cc .card-meta{display:flex;flex-direction:column;gap:4px;border-top:1.5px dashed #D6D1BF;padding-top:8px;margin-top:2px;font-size:11.5px;color:var(--muted);}
+  .cc .avail{font-weight:700;}
+  .cc .avail.low{color:var(--coral);}
+  .cc .avail.ok{color:var(--teal);}
+  .cc .card.sponsored{background:linear-gradient(180deg,var(--amber-dim),#fff 60%);border-color:var(--amber);}
+  .cc .sponsored-flag{
+    position:absolute;top:-9px;right:14px;background:var(--amber);color:#fff;
+    font-family:'Anton',sans-serif;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;
+    padding:3px 9px;border-radius:9px;transform:rotate(-4deg);border:1.5px solid var(--paper);
+  }
+  .cc .ad-inquire-link{color:var(--muted);font-weight:700;}
+  .cc .map-box{height:180px;min-height:0;width:100%;border:1px solid var(--line);border-radius:12px;background:var(--paper-alt);overflow:hidden;}
+  .cc .pin{width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(21,27,33,0.4);}
+  .cc .pin.sponsored{
+    background:var(--amber) !important;width:26px;height:26px;border-width:3px;z-index:2;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 0 5px rgba(240,164,48,0.35),0 2px 8px rgba(21,27,33,0.45);
+  }
+  .cc .pin.sponsored::after{content:"\2605";color:#fff;font-size:12px;line-height:1;}
+  .cc .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .cc .cat-chip{font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:14px;border:1px solid var(--line);color:var(--muted);background:#fff;}
+  .cc .cat-chip.active{color:#fff;border-color:transparent;}
+  .cc .sample-note{font-size:11.5px;color:var(--muted);padding:0 2px;max-width:none;}
 
+  /* a teaser for what is planned: clearly marked as coming soon */
+  .premium-tease{
+    margin-top:18px;padding:26px 28px;border-radius:16px;border:1px solid rgba(240,164,48,0.5);
+    background:linear-gradient(135deg,rgba(240,164,48,0.12),rgba(240,164,48,0.04));
+    display:flex;flex-direction:column;gap:20px;
+  }
+  @media (min-width:1100px){
+    .premium-tease{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:26px;align-items:center;}
+  }
+  .pt-badge{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#1A1204;background:var(--amber);padding:3px 10px;border-radius:999px;margin-bottom:10px;}
+  .pt-head h3{margin:0 0 6px;font-size:clamp(20px,2.4vw,26px);line-height:1.15;letter-spacing:-0.015em;color:#fff;text-wrap:balance;}
+  .pt-head p{margin:0;font-size:15px;line-height:1.55;color:#B6C4DA;text-wrap:balance;}
+  .pt-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+  .pt-item{display:flex;flex-direction:column;gap:8px;}
+  .pt-item h4{margin:0;font:700 16px 'Space Grotesk',sans-serif;color:#fff;}
+  .pt-item p{margin:0;font-size:13.5px;line-height:1.55;color:#B6C4DA;}
+
+  /* ===== The inquiry form ===== */
+  .inquire{padding:72px 0 84px;scroll-margin-top:60px;}
+  .inquire-box{max-width:640px;margin:0 auto;}
+  .inquire .kicker{color:var(--teal-text);}
+  .inquire h2{margin:0;font-size:clamp(24px,3.2vw,34px);line-height:1.1;letter-spacing:-0.015em;}
+  .inquire .sub{margin:8px 0 26px;font-size:15px;color:var(--muted);}
   form{display:flex;flex-direction:column;gap:16px;}
   label{font-size:12.5px;font-weight:700;color:var(--ink);display:flex;flex-direction:column;gap:6px;}
   label.optional::after{content:" (optional)";font-weight:500;color:var(--muted);text-transform:none;}
@@ -146,19 +242,42 @@
   textarea.field-error, input.field-error{border-color:var(--coral);background:#FDE8E6;}
   .field-error-msg{font-size:12px;font-weight:600;color:var(--coral);display:none;}
   .field-error-msg.show{display:block;}
-
   .submit-btn{
-    margin-top:8px;background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;
-    padding:13px;border:none;border-radius:10px;cursor:pointer;
+    margin-top:8px;background:var(--city-primary);color:#fff;font-weight:700;font-size:14.5px;
+    padding:13px;border:none;border-radius:999px;cursor:pointer;
   }
+  .submit-btn:hover{background:var(--city-primary-dark);}
   .submit-btn:disabled{opacity:0.5;cursor:default;}
-
   .result{
     margin-top:18px;padding:14px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none;
   }
   .result.ok{background:var(--teal-dim);color:var(--teal);display:block;}
   .result.err{background:#FDE8E6;color:var(--coral);display:block;}
   .hp-field{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;}
+
+  @media (max-width:900px){
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr));}
+  }
+  @media (max-width:520px){
+    .wrap,.nav-inner,.footer-inner,.install-banner-inner{padding-left:16px;padding-right:16px;}
+    .brands{padding:60px 0 64px;}
+    .inquire{padding:56px 0 64px;}
+    .btn-city{flex:1 1 100%;justify-content:center;}
+    .why-grid{grid-template-columns:1fr;}
+    .why-body{padding:20px;gap:16px;}
+    .why-visual{padding:16px;min-height:0;}
+    .why-grid p{font-size:14.5px;}
+    /* 2x2 on phones: the number sits above its label */
+    .stats{gap:10px;}
+    .stat{flex-direction:column;align-items:flex-start;gap:6px;padding:14px;}
+    .stat b{font-size:26px;}
+    .stat span{font-size:13px;}
+    /* the three benefits stay in one row on phones, with the type tightened to fit */
+    .premium-tease{padding:20px 16px;}
+    .pt-items{gap:10px;}
+    .pt-item h4{font-size:12.5px;line-height:1.2;white-space:nowrap;}
+    .pt-item p{font-size:12px;line-height:1.45;}
+  }
   /* ===== Toronto flag colours: blue, red, white ===== */
   :root{--city-primary:#274490;--city-primary-dark:#1C3270;--city-primary-text:#274490;}
   nav{box-shadow:inset 0 3px 0 var(--city-primary);}
@@ -240,22 +359,79 @@
 })();
 </script>
 
-<div class="wrap">
-  <h1 class="display">Advertise with us</h1>
-  <p class="sub">Get your brand in front of people in Toronto who are actively looking for free things to do, right now.</p>
-
-  <div class="perks">
-    <div class="perk">
-      <span class="perk-dot"></span>
-      <div><strong>Sponsored listing: boosts an event you submit</strong><span>Amber highlight, a Sponsored badge, a standout map pin, and it always sorts to the top of the results for its category and neighbourhood. This upgrades a real listing, still filtered like any other event.</span></div>
+<main>
+<section class="brands" aria-label="Advertise in Toronto">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="kicker">Advertise in Toronto</div>
+        <h1 class="display">Hunters are always looking for the next freebie,<br> let them find yours <em>first</em></h1>
+        <p class="lead">Whether you are just starting out or branching out,<br class="br-wide"> a sponsored listing puts your offer in front of them from day one.</p>
+      </div>
     </div>
-    <div class="perk">
-      <span class="perk-dot"></span>
-      <div><strong>Featured ad card: a separate ad slot</strong><span>Not tied to any listing. Your own card with your own message, shown to everyone browsing that day no matter what category or neighbourhood they've filtered to.</span></div>
+
+    <div class="cta-row">
+      <a class="btn-city" href="#inquire" data-ev="advertise_inquire_jump">Send an inquiry &darr;</a>
+    </div>
+
+    <div class="stats" id="stats">
+      <div class="stat" id="statHunters" hidden><b id="statHuntersNum"></b><span id="statHuntersLabel">hunters a month</span></div>
+      <div class="stat" id="statBrands" hidden><b id="statBrandsNum"></b><span>brands listed</span></div>
+      <div class="stat" id="statLive" hidden><b id="statLiveNum"></b><span>events today and coming up</span></div>
+      <div class="stat" id="statListings" hidden><b id="statListingsNum"></b><span>listings published</span></div>
+      <div class="stat" id="statHoods" hidden><b id="statHoodsNum"></b><span>neighbourhoods covered</span></div>
+    </div>
+    <div class="stats-note">Live numbers for Toronto</div>
+
+    <div class="why-grid brands-grid">
+      <div>
+        <div class="why-visual cc" id="wbSponsored" aria-hidden="true" hidden></div>
+        <div class="why-body">
+          <div class="why-text"><h3 class="display">First in line</h3><p>Your listing sorts first in its category,<br class="br-wide"> so hunters see you before anyone else.</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="why-visual cc" id="wbFoot" aria-hidden="true" hidden></div>
+        <div class="why-body">
+          <div class="why-text"><h3 class="display">Stands out on the map</h3><p>Your pin turns amber,<br class="br-wide"> easy to spot among the rest.</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="why-visual cc" id="wbSlot" aria-hidden="true" hidden></div>
+        <div class="why-body">
+          <div class="why-text"><h3 class="display">Seen under every filter</h3><p>Your message shows in every list,<br class="br-wide"> whatever filter hunters pick.</p></div>
+        </div>
+      </div>
+      <div>
+        <div class="why-visual cc" id="wbLocal" aria-hidden="true" hidden></div>
+        <div class="why-body">
+          <div class="why-text"><h3 class="display">Your own message</h3><p>Promote a launch, a sale or a new store,<br class="br-wide"> with no dated event needed.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="premium-tease">
+      <div class="pt-head">
+        <span class="pt-badge">Coming soon</span>
+        <h3 class="display">Premium members will be your keenest audience</h3>
+        <p>Hunters will be able to go premium,<br class="br-wide"> and brands get three new ways to reach them.</p>
+      </div>
+      <div class="pt-items">
+        <div class="pt-item"><h4>Priority alerts</h4><p>Reach premium members first,<br class="br-wide"> the moment you go live.</p></div>
+        <div class="pt-item"><h4>Early access</h4><p>Give them limited drops first,<br class="br-wide"> for a strong start.</p></div>
+        <div class="pt-item"><h4>Exclusive deals</h4><p>Offer perks only they can claim,<br class="br-wide"> and turn fans into regulars.</p></div>
+      </div>
     </div>
   </div>
+</section>
 
-  <form id="advertiseForm">
+<section class="inquire" id="inquire" aria-label="Send an advertising inquiry">
+  <div class="wrap">
+    <div class="inquire-box">
+      <div class="kicker">Get in touch</div>
+      <h2 class="display">Tell us what you would like to promote</h2>
+      <p class="sub">Send an inquiry and we will email you rates and next steps for Toronto.</p>
+      <form id="advertiseForm">
     <label class="hp-field" for="company" aria-hidden="true">Company
       <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
     </label>
@@ -288,7 +464,10 @@
     <button type="submit" class="submit-btn" id="submitBtn">Send inquiry</button>
     <div class="result" id="result"></div>
   </form>
-</div>
+    </div>
+  </div>
+</section>
+</main>
 
 <footer>
   <div class="footer-inner">
@@ -309,7 +488,6 @@
     </div>
   </div>
 </footer>
-
 
 <script>
   // Small curated list of common disposable/temporary email providers,
@@ -444,9 +622,261 @@
     submitBtn.textContent = 'Send inquiry';
     resultEl.className = 'result ok';
     resultEl.textContent = "Thanks, we'll be in touch about rates and next steps.";
+    try { if (window.gtag) gtag('event', 'advertise_submit', { city: 'toronto', location: 'advertise' }); } catch (e) {}
     document.getElementById('advertiseForm').reset();
     if (typeof turnstile !== 'undefined') turnstile.reset();
   });
+</script>
+
+<script src="/audience.js"></script>
+<script>
+// The pitch above: the same previews as "For brands" on the front page, built from this city's
+// live listings and styled with the live site's own card, chip and pin rules (see the .cc CSS).
+(function(){
+  var CITY = { slug:'toronto', name:'Toronto', lng:-79.3832, lat:43.6532, color:'#274490', tz:'America/Toronto' };
+  var AUDIENCE = window.FNM_AUDIENCE || { huntersPerMonth:null, label:'hunters a month' };
+  var SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
+  var nf = new Intl.NumberFormat('en-CA');
+  var events = [];
+
+  function $(id){ return document.getElementById(id); }
+  function safe(fn){ try { return fn(); } catch (e) { return null; } }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(ch){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]; }); }
+  function sbGet(path){
+    return fetch(SUPABASE_URL + '/rest/v1/' + path, { headers:{ apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + SUPABASE_ANON_KEY } })
+      .then(function(r){ return r.ok ? r.json() : []; });
+  }
+
+  // ---- funnel tracking (GA4) ----
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('[data-ev]') : null;
+    if (a) safe(function(){ if (window.gtag) gtag('event', a.getAttribute('data-ev'), { city: CITY.slug, location: 'advertise' }); });
+  });
+
+  // ---- events: grouped and counted by the city pages' own rules ----
+  function ms(t){ return new Date(t).getTime(); }
+  function dayKey(t, tz){ return new Intl.DateTimeFormat('en-CA', { timeZone:tz, year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date(t)); }
+  function hasClock(t, tz){
+    var h = 0, m = 0;
+    new Intl.DateTimeFormat('en-US', { timeZone:tz, hourCycle:'h23', hour:'2-digit', minute:'2-digit' }).formatToParts(new Date(t)).forEach(function(x){
+      if (x.type === 'hour') h = +x.value;
+      if (x.type === 'minute') m = +x.value;
+    });
+    return h !== 0 || m !== 0;
+  }
+  function rowEndKey(r, tz){
+    var sk = dayKey(ms(r.start_time), tz);
+    if (!r.end_time) return sk;
+    var e = ms(r.end_time);
+    var ek = hasClock(e, tz) ? dayKey(e, tz) : dayKey(e - 60000, tz);
+    return ek < sk ? sk : ek;
+  }
+  function rowIsToday(r, tz, now, todayKey){
+    if (r.end_time){ var e = ms(r.end_time); if (hasClock(e, tz) && now > e) return false; }
+    return todayKey >= dayKey(ms(r.start_time), tz) && todayKey <= rowEndKey(r, tz);
+  }
+  function buildEvents(rows){
+    var now = Date.now(), groups = {}, order = [], out = [], tz = CITY.tz, todayKey = dayKey(now, tz);
+    rows.forEach(function(r){
+      if (r.city_slug !== CITY.slug) return;
+      var k = r.group_id || (r.city_slug + '|' + r.brand + '|' + r.neighbourhood + '|' + r.what);
+      if (!groups[k]){ groups[k] = []; order.push(k); }
+      groups[k].push(r);
+    });
+    order.forEach(function(k){
+      var rs = groups[k].sort(function(a, b){ return ms(a.start_time) - ms(b.start_time); });
+      var first = rs[0], ref = null, status = '';
+      for (var i = 0; i < rs.length; i++){ if (rowIsToday(rs[i], tz, now, todayKey)){ ref = rs[i]; status = 'today'; break; } }
+      if (!ref){
+        for (var j = 0; j < rs.length; j++){ if (dayKey(ms(rs[j].start_time), tz) > todayKey){ ref = rs[j]; status = 'soon'; break; } }
+      }
+      if (!ref) return;
+      out.push({ status:status, ref:ref, city:CITY, brand:first.brand, what:first.what, neighbourhood:first.neighbourhood,
+                 sponsored:first.sponsored, cat:first.category, lat:first.lat, lng:first.lng, address:first.address,
+                 total:first.total_count, claimed:first.claimed_count, rows:rs });
+    });
+    return out;
+  }
+  function loadEvents(){
+    var since = new Date(Date.now() - 24*3600*1000).toISOString();
+    var q = 'listings?select=id,group_id,brand,what,category,lat,lng,address,total_count,claimed_count,neighbourhood,city_slug,start_time,end_time,sponsored'
+      + '&moderation_status=eq.approved&is_active=eq.true&city_slug=eq.' + CITY.slug
+      + '&or=' + encodeURIComponent('(start_time.gte.' + since + ',end_time.gte.' + since + ')')
+      + '&order=start_time.asc&limit=2000';
+    return sbGet(q).then(function(rows){ events = buildEvents(rows); }).catch(function(){ events = []; });
+  }
+
+  // ---- stats: only numbers that exist, never more than four, the strongest first ----
+  function limitStats(){
+    var shown = [].filter.call(document.querySelectorAll('#stats .stat'), function(t){ return !t.hidden; });
+    while (shown.length > 4) shown.pop().hidden = true;
+  }
+  function showStat(id, n){ $(id + 'Num').textContent = nf.format(n); $(id).hidden = false; limitStats(); }
+  function loadTotals(){
+    return sbGet('listings?select=brand,neighbourhood&moderation_status=eq.approved&city_slug=eq.' + CITY.slug + '&limit=5000').then(function(rows){
+      var brands = {}, hoods = {}, nb = 0, nh = 0;
+      rows.forEach(function(r){
+        var b = String(r.brand || '').trim().toLowerCase(), h = String(r.neighbourhood || '').trim().toLowerCase();
+        if (b && !brands[b]){ brands[b] = true; nb++; }
+        if (h && !hoods[h]){ hoods[h] = true; nh++; }
+      });
+      if (nb >= 10) showStat('statBrands', nb);
+      if (rows.length >= 25) showStat('statListings', rows.length);
+      if (nh >= 5) showStat('statHoods', nh);
+    }).catch(function(){});
+  }
+  if (AUDIENCE && typeof AUDIENCE.huntersPerMonth === 'number' && AUDIENCE.huntersPerMonth > 0){
+    $('statHuntersLabel').textContent = AUDIENCE.label || 'hunters a month';
+    showStat('statHunters', AUDIENCE.huntersPerMonth);
+  }
+
+  // ---- previews ----
+  var CAT_LABEL = { food:'Food & Drink', beauty:'Beauty', fashion:'Fashion', tech:'Tech', wellness:'Wellness',
+                    class_workshop:'Class & Workshop', concert_screening:'Concert & Screening', tour:'Tour', festival:'Festival', misc:'Misc.' };
+  var CAT_COLOR = { food:'#EF5B4E', beauty:'#D6579A', fashion:'#3E6FA8', tech:'#0E9C82', wellness:'#8467C9',
+                    class_workshop:'#2E8B57', concert_screening:'#C2703E', tour:'#C99A2E', festival:'#B23A9E', misc:'#8B6F47' };
+  function fmtDay(t, tz){ return new Date(t).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', timeZone:tz }); }
+  function fmtClock(t, tz){ return new Date(t).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', timeZone:tz }).toLowerCase().replace(' ', ''); }
+  function fmtRange(start, end, tz){
+    var s = ms(start), sDay = fmtDay(s, tz), sTime = hasClock(s, tz);
+    if (!end) return sTime ? sDay + ', from ' + fmtClock(s, tz) : sDay;
+    var rawEnd = ms(end), eTime = hasClock(rawEnd, tz);
+    var e = eTime ? rawEnd : rawEnd - 60000;
+    var dayPart = dayKey(s, tz) === dayKey(e, tz) ? sDay : sDay + ' - ' + fmtDay(e, tz);
+    if (sTime && eTime) return dayPart + ', ' + fmtClock(s, tz) + ' - ' + fmtClock(rawEnd, tz);
+    if (sTime) return dayPart + ', from ' + fmtClock(s, tz);
+    if (eTime) return dayPart + ', until ' + fmtClock(rawEnd, tz);
+    return dayPart;
+  }
+  function stripFree(t){
+    var x = String(t || '').replace(/\bfree\b(?!\s+flicks\b)/gi, ' ').replace(/\s{2,}/g, ' ').trim();
+    return x ? x.charAt(0).toUpperCase() + x.slice(1) : x;
+  }
+  function norm(t){ return String(t).toLowerCase().replace(/\b(toronto|new york)\b/g, '').replace(/\s+/g, ' ').trim(); }
+  function placeLabel(address, hood){
+    var has = address && hood && norm(address).indexOf(norm(hood)) !== -1;
+    return address ? (has ? address : address + ', ' + hood) : hood;
+  }
+  function soonLabel(ev){
+    var d = (ms(ev.ref.start_time) - Date.now()) / 86400000;
+    return d <= 3 ? 'Next 3 days' : d <= 7 ? 'Next week' : d <= 30 ? 'Next 30 days' : 'Next month+';
+  }
+  function badgeHTML(ev){
+    return ev.status === 'today'
+      ? '<span class="status-badge live"><span class="dot"></span>Live now</span>'
+      : '<span class="status-badge soon"><span class="dot"></span>' + soonLabel(ev) + '</span>';
+  }
+  // one city-page card, as it looks in the list
+  function cardHTML(ev){
+    var tz = CITY.tz, color = CAT_COLOR[ev.cat] || 'var(--line)';
+    var windows = ev.rows.map(function(r){ return '<span>' + esc(fmtRange(r.start_time, r.end_time, tz)) + '</span>'; }).join('');
+    var avail = '';
+    if (ev.total){
+      var left = ev.total - (ev.claimed || 0), cls = left / ev.total <= 0.15 ? 'low' : 'ok';
+      avail = '<span class="avail ' + cls + '">' + (left <= 0 ? 'All claimed' : left + ' left of ' + ev.total) + '</span>';
+    }
+    return '<div class="card' + (ev.sponsored ? ' sponsored' : '') + '"' + (ev.sponsored ? '' : ' style="border-left-color:' + color + '"') + '>'
+      + (ev.sponsored ? '<div class="sponsored-flag">Sponsored</div>' : '')
+      + '<div class="card-main no-media"><div class="card-content"><div class="card-top"><div class="tag-row"><span class="tag cat" style="color:' + color + '">' + esc(CAT_LABEL[ev.cat] || 'Misc.') + '</span></div>' + badgeHTML(ev) + '</div>'
+      + '<div class="card-text"><div class="card-what">' + esc(stripFree(ev.what)) + '</div><div class="card-brand">' + esc(ev.brand) + '</div></div></div></div>'
+      + '<div class="card-meta"><span>' + esc(placeLabel(ev.address, ev.neighbourhood)) + '</span>' + windows + avail + '</div></div>';
+  }
+  function zonedTime(k, hour, tz){
+    var g = Date.parse(k + 'T' + String(hour).padStart(2, '0') + ':00:00Z'), p = {};
+    new Intl.DateTimeFormat('en-US', { timeZone:tz, hourCycle:'h23', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit' })
+      .formatToParts(new Date(g)).forEach(function(x){ p[x.type] = x.value; });
+    return new Date(g - (Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - g));
+  }
+  // a placeholder listing that shows what a sponsored card looks like (clearly labelled as a sample)
+  function sampleSponsored(){
+    var k = dayKey(Date.now(), CITY.tz);
+    var a = zonedTime(k, 12, CITY.tz).toISOString(), b = zonedTime(k, 18, CITY.tz).toISOString();
+    return { city:CITY, cat:'food', status:'today', brand:'Your brand', what:'Your free sample or event', neighbourhood:'Your neighbourhood',
+             address:'Your address', sponsored:true, ref:{ start_time:a, end_time:b }, rows:[{ start_time:a, end_time:b }] };
+  }
+  var adMap = null, libReady = false;
+  function initAdMap(){
+    if (adMap || !window.maplibregl || !$('wbMap')) return;
+    try {
+      adMap = new maplibregl.Map({
+        container: 'wbMap',
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: [CITY.lng, CITY.lat],
+        zoom: 12.4,
+        cooperativeGestures: true,
+        attributionControl: { compact: true }
+      });
+      adMap.addControl(new maplibregl.NavigationControl(), 'top-left');
+      // real listings as category-coloured pins, and one larger amber pin for the sponsored listing
+      events.filter(function(e){ return typeof e.lat === 'number' && typeof e.lng === 'number'; }).slice(0, 14).forEach(function(e){
+        var el = document.createElement('div');
+        el.className = 'pin';
+        el.style.background = CAT_COLOR[e.cat] || '#8B6F47';
+        new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([e.lng, e.lat]).addTo(adMap);
+      });
+      var star = document.createElement('div');
+      star.className = 'pin sponsored';
+      new maplibregl.Marker({ element: star, anchor: 'center' }).setLngLat([CITY.lng, CITY.lat]).addTo(adMap);
+    } catch (e) { adMap = null; }
+  }
+  // the map library is fetched after the page has painted, so it never delays first paint
+  function loadMapLib(){
+    var css = document.createElement('link');
+    css.rel = 'stylesheet'; css.href = 'https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css';
+    document.head.appendChild(css);
+    var js = document.createElement('script');
+    js.src = 'https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js';
+    js.onload = initAdMap;
+    document.head.appendChild(js);
+  }
+  function put(id, html){
+    var box = $(id);
+    box.innerHTML = html;
+    box.hidden = false;
+  }
+  function fillBrands(){
+    // 1. first in line: the sponsored card on top, a free listing below it
+    var plain = events.filter(function(e){ return e.rows.length <= 2 && !e.sponsored; })[0];
+    put('wbSponsored', cardHTML(sampleSponsored()) + (plain ? cardHTML(plain) : '')
+      + '<div class="sample-note">Sample sponsored listing, sorted above the free ones</div>');
+    // 2. stands out on the map: a larger amber pin among the category-coloured ones
+    put('wbFoot', '<div class="map-box" id="wbMap"></div><div class="sample-note">Sample sponsored pin, among real listings</div>');
+    // 3. seen under every filter: the featured card with a filter row above it
+    var slotCats = ['food', 'beauty', 'festival'];
+    put('wbSlot', '<div class="chip-row"><div class="cat-chip">All categories</div>'
+      + slotCats.map(function(c, i){
+          var on = i === 1;
+          return '<div class="cat-chip' + (on ? ' active' : '') + '"' + (on ? ' style="background:' + CAT_COLOR[c] + '"' : '') + '>' + CAT_LABEL[c] + '</div>';
+        }).join('') + '</div>'
+      + '<div class="card sponsored"><div class="sponsored-flag">Advertisement</div>'
+      + '<div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>'
+      + '<div class="card-what">Your message, front and centre</div>'
+      + '<div class="card-brand">Your brand, your offer and your link.</div>'
+      + '<div class="card-meta"><span class="ad-inquire-link">Your call to action &rarr;</span></div></div>'
+      + '<div class="sample-note">Sample featured card, shown with every filter</div>');
+    // 4. your own message: it does not have to be a dated event
+    function ad(what, brand){
+      return '<div class="card sponsored"><div class="sponsored-flag">Advertisement</div>'
+        + '<div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>'
+        + '<div class="card-what">' + what + '</div><div class="card-brand">' + brand + '</div>'
+        + '<div class="card-meta"><span class="ad-inquire-link">Your call to action &rarr;</span></div></div>';
+    }
+    put('wbLocal', ad('Grand opening this weekend', 'Your store, your address, your welcome offer')
+      + ad('New range now in store', 'Your product, your story, your link')
+      + '<div class="sample-note">Samples: no date, time or event needed</div>');
+  }
+
+  function start(){
+    loadTotals();
+    loadEvents().then(function(){
+      if (events.length) showStat('statLive', events.length);
+      fillBrands();
+      loadMapLib();
+    });
+  }
+  if (document.readyState === 'complete') start(); else window.addEventListener('load', start);
+})();
 </script>
 </body>
 </html>

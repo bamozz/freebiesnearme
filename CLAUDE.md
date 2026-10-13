@@ -26,6 +26,10 @@ The site runs in two cities, each under its own URL prefix: `/toronto` and `/new
 - `feedback.city_slug`: the sitewide feedback form asks "Which city is this about?" (Toronto, New York or `other`), pre-filled from `?city=`, the referring city page, the last city used, then the time zone. Advertiser inquiries come from each city's own `/advertise` page, which sends its slug, and `api/submit-advertise.js` validates it against `ALLOWED_CITY_SLUGS`.
 - `listings.city_slug` defaults to `toronto` in the database, so a listing for another city must set it explicitly (the submit form and API do; routine SQL inserts must too).
 
+## Brand pitch
+
+The pitch to advertisers (headline, the four benefit cards, their live previews, stats and the "coming soon" premium teaser) lives in three self-contained places: the `.brands` section of `public/home.html` and `public/toronto/advertise.html` / `public/new-york/advertise.html` (the two advertise pages differ only by city name, slug, colours, map centre and time zone). Edit all three together so the message stays the same, and mirror the featured ad card in each city's `index.html`. `public/audience.js` holds the one real "hunters a month" figure (null hides the tile) that all three read.
+
 ## Changelog
 
 Whenever you ship a user-facing fix, feature, or improvement, add an entry to the top of the `CHANGELOG` array in `public/toronto/changelog.html` (newest first), and in `public/new-york/changelog.html` too when the change applies to the whole site rather than one city's data. Write it in plain language for site visitors, not commit-message style, grouped into New/Improved/Fixed sections. Skip pure internal/infra changes that a visitor wouldn't notice or care about.

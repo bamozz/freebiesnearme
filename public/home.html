@@ -642,6 +642,7 @@
   </div>
 </footer>
 
+<script src="/audience.js"></script>
 <script>
 (function(){
   // ---- cities: add a new city here, in vercel.json and in lib/cities.ts ----
@@ -651,10 +652,9 @@
   ];
 
   // ---- audience figure shown to advertisers ----
-  // Paste the real number of monthly visitors here (Google Analytics: Reports >
-  // Acquisition > Users, last 30 days). Leave null to hide the tile; the page
-  // never invents a number. Example: { huntersPerMonth: 12400, label: 'hunters a month' }
-  var AUDIENCE = { huntersPerMonth: null, label: 'hunters a month' };
+  // Set in /audience.js, so the front page and every advertise page show the same number.
+  // Left null there, the tile stays hidden; the page never invents a number.
+  var AUDIENCE = window.FNM_AUDIENCE || { huntersPerMonth: null, label: 'hunters a month' };
 
   var SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';

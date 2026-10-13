@@ -456,6 +456,9 @@
   }
   .ad-inquire-link{color:var(--muted);font-weight:700;text-decoration:none;}
   .ad-inquire-link:hover{color:var(--ink);text-decoration:underline;}
+  /* the featured card's call to action: the same "Advertise in <city>" button as the front page and the advertise page */
+  .ad-cta{align-self:flex-start;display:inline-block;text-decoration:none;font-weight:700;font-size:12.5px;padding:8px 14px;border-radius:999px;background:var(--city-primary);color:#fff;}
+  .ad-cta:hover{background:var(--city-primary-dark);}
   .avail.low{color:var(--coral);}
   .avail.ok{color:var(--teal);}
 
@@ -1697,9 +1700,9 @@ function renderList(){
       adCard.innerHTML = `
         <div class="sponsored-flag">Advertisement</div>
         <div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>
-        <div class="card-what">This space is claimable</div>
-        <div class="card-brand">Brands can place a featured listing here to reach hunters browsing by location.</div>
-        <div class="card-meta"><a href="/toronto/advertise" class="ad-inquire-link">Inquire about ad placement &rarr;</a></div>
+        <div class="card-what">Let hunters find yours first</div>
+        <div class="card-brand">A featured card shows under every filter, in front of everyone browsing Toronto.</div>
+        <div class="card-meta"><a href="/toronto/advertise" class="ad-cta">Advertise in Toronto &rarr;</a></div>
       `;
       wrap.appendChild(adCard);
     }
