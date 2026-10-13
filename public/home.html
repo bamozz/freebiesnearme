@@ -119,7 +119,7 @@
   .hero h1 em{font-style:normal;color:var(--teal);}
   .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:760px;}
   /* the same two-line headline on every screen: on tablets and phones the type scales so line one fits */
-  @media (max-width:759px){ .hero h1{font-size:clamp(18px,calc((100vw - 32px) / 18),32px);white-space:nowrap;} }
+  @media (max-width:759px){ :root{--h1:clamp(18px,calc((100vw - 32px) / 18),32px);} .hero h1{font-size:var(--h1);white-space:nowrap;} }
   .br-wide,.br-lg{display:none;}
   @media (min-width:760px){ .br-wide{display:inline;} }
   /* a longer first line needs a wider card before it can break at the comma */
@@ -469,6 +469,13 @@
     .stat{flex-direction:column;align-items:flex-start;gap:6px;padding:14px;}
     .stat b{font-size:26px;}
     .stat span{font-size:13px;}
+  }
+  /* on tablets and phones the headline is held to line one's width, so the section headings and card titles
+     step down from it: the headline stays the largest type on the page at every width */
+  @media (max-width:759px){
+    .sec-head h2,.why .sec-head h2,.brands .sec-head h2{font-size:calc(var(--h1) * .9);}
+    .why-grid h3,.pt-head h3{font-size:calc(var(--h1) * .8);min-height:0;}
+    .why-grid p,.pt-head p{font-size:14.5px;}
   }
 </style>
 </head>
