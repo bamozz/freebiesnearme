@@ -1101,7 +1101,7 @@
     CITIES.forEach(function(c){
       if (liveTab === 'all' || liveTab === c.slug){
         links.push('<a class="go-link" style="--c:' + c.color + ';--t:' + (c.slug === 'new-york' ? '#C24E00' : c.color) + '" href="/' + c.slug
-          + '" data-ev="city_select" data-city="' + c.slug + '" data-loc="explore">Explore ' + c.name + ' freebies &rarr;</a>');
+          + '" data-ev="city_select" data-city="' + c.slug + '" data-loc="explore">Explore all ' + c.name + ' freebies &rarr;</a>');
       }
     });
     $('goRow').innerHTML = links.join('');
