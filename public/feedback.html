@@ -155,6 +155,9 @@
   .top-city:hover{background:rgba(21,27,33,0.06);}
   .top-link{font-size:14px;font-weight:700;text-decoration:none;padding:9px 16px;border:0;border-radius:999px;background:#0E9C82;color:#fff;white-space:nowrap;}
   .top-link:hover{background:#0A7A66;}
+  /* on tablets and phones the header keeps the one button that matters, Advertise with us; the city
+     links are one tap away on the page itself and in the footer, and would not fit beside it */
+  @media (max-width:640px){ .nav-actions .top-city{display:none;} }
   footer{background:var(--paper-alt);border-top:1px solid var(--line);margin-top:0;line-height:1.5;}
   .sf{max-width:1220px;margin:0 auto;padding:36px 24px 32px;display:grid;grid-template-columns:1.5fr repeat(3,minmax(0,1fr));gap:28px 24px;}
   .sf-brand .logo{font-size:18px;}
@@ -172,8 +175,6 @@
     .sf{padding-left:16px;padding-right:16px;}
     .site-top{padding:14px 16px;gap:8px;}
     .site-top .logo{font-size:17px;}
-    .nav-actions .top-link{display:none;}
-    .top-city{padding:8px 13px;font-size:13.5px;}
   }
   .logo{font-size:20px;}
 </style>
