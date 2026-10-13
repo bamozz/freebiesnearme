@@ -232,13 +232,12 @@
   .pitch-main .why-body{padding:20px 22px 22px;gap:0;}
   .pitch-main .why-visual{padding:18px;}
   .inquire-card{background:#fff;color:var(--ink);border-radius:16px;padding:26px 26px 28px;scroll-margin-top:84px;}
-  .inquire-card .kicker{color:var(--teal-text);margin-bottom:8px;}
   .inquire-card h2{margin:0;font-size:22px;line-height:1.2;letter-spacing:-0.01em;}
   .inquire-card .sub{margin:6px 0 20px;font-size:14px;color:var(--muted);}
   @media (min-width:1180px){
     .pitch-grid{grid-template-columns:minmax(0,1fr) 400px;gap:24px;}
     /* the teaser stacks inside the narrower left column */
-    .pitch-main .premium-tease{display:flex;flex-direction:column;gap:20px;}
+    .pitch-main .premium-tease{display:flex;flex-direction:column;align-items:stretch;gap:20px;}
     /* the form stays in view while the cards scroll past, when the window is tall enough */
     .inquire-card{position:sticky;top:84px;}
   }
@@ -449,7 +448,6 @@
       </div>
 
       <aside class="inquire-card" id="inquire" aria-label="Send an advertising inquiry">
-        <div class="kicker">Get in touch</div>
         <h2 class="display">Tell us what you would like to promote</h2>
         <p class="sub">Send an inquiry and we will email you rates and next steps for Toronto.</p>
         <form id="advertiseForm">
@@ -859,8 +857,7 @@
   }
   function fillBrands(){
     // 1. first in line: the sponsored card on top, a free listing below it
-    var plain = events.filter(function(e){ return e.rows.length <= 2 && !e.sponsored; })[0];
-    put('wbSponsored', cardHTML(sampleSponsored()) + (plain ? cardHTML(plain) : '')
+    put('wbSponsored', cardHTML(sampleSponsored())
       + '<div class="sample-note">Sample sponsored listing, sorted above the free ones</div>');
     // 2. stands out on the map: a larger amber pin among the category-coloured ones
     put('wbFoot', '<div class="map-box" id="wbMap"></div><div class="sample-note">Sample sponsored pin, among real listings</div>');
@@ -885,8 +882,7 @@
         + '<div class="card-meta"><span class="ad-inquire-link">Your call to action &rarr;</span></div></div>';
     }
     put('wbLocal', ad('Grand opening this weekend', 'Your store, your address, your welcome offer')
-      + ad('New range now in store', 'Your product, your story, your link')
-      + '<div class="sample-note">Samples: no date, time or event needed</div>');
+      + '<div class="sample-note">Sample: no date, time or event needed</div>');
   }
 
   function start(){
