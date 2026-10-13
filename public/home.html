@@ -80,8 +80,10 @@
   .hero h1{font-size:clamp(32px,calc((100vw - 48px) / 19.5),58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;}
   .hero h1 em{font-style:normal;color:var(--teal);}
   .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:760px;}
-  .br-wide{display:none;}
+  .br-wide,.br-lg{display:none;}
   @media (min-width:760px){ .br-wide{display:inline;} }
+  /* a longer first line needs a wider card before it can break at the comma */
+  @media (min-width:1180px){ .br-lg{display:inline;} }
   /* descriptions wrap into even lines instead of leaving a stray word on the last one */
   .hero p,.sec-head p,.why-text p,.brands .lead,.install-text span,.perks li span,.stat span,.live-empty,.lcard .what,.cc .card-description,.cc .live-note{text-wrap:balance;}
   /* ===== Globe + city cards ===== */
@@ -499,7 +501,7 @@
       <div class="why-visual cc" id="wvCrowd" aria-hidden="true" hidden></div>
       <div class="why-body">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 20v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/></svg></div>
-        <div class="why-text"><h3 class="display">Hunters tell hunters</h3><p>Rate what was worth the trip and flag what ran out, so nobody walks to an empty table.</p></div>
+        <div class="why-text"><h3 class="display">Hunters tell hunters</h3><p>Rate what was worth the trip and flag what ran out,<br class="br-lg"> so nobody walks to an empty table.</p></div>
       </div>
     </div>
   </div>
