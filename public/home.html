@@ -152,11 +152,13 @@
   /* city tabs: they pick the city for the globe and the list at once */
   .city-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
   .city-tab{
-    position:relative;text-align:left;background:#fff;border:1.5px solid var(--c,var(--ink));border-radius:14px;padding:12px 16px;
+    position:relative;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 16px;
     cursor:pointer;font-family:'Inter',sans-serif;color:var(--ink);overflow:hidden;transition:box-shadow .15s ease,border-color .15s ease;
   }
   .city-tab:hover{box-shadow:0 6px 18px rgba(21,27,33,0.10);}
-  .city-tab[aria-pressed="true"]{box-shadow:0 0 0 2px var(--c,var(--ink));}
+  /* inactive tabs keep a grey border; the active one takes its city colour on the border and the text, at the same thickness */
+  .city-tab[aria-pressed="true"]{border-color:var(--c,var(--ink));}
+  .city-tab[aria-pressed="true"] .ct-name,.city-tab[aria-pressed="true"] .ct-sub{color:var(--t,var(--c,var(--ink)));}
   .ct-name{display:block;font:700 18px 'Space Grotesk',sans-serif;letter-spacing:-0.01em;}
   .ct-sub{display:block;margin-top:2px;font-size:12.5px;line-height:1.35;font-weight:600;color:var(--muted);}
   .ct-you{position:absolute;top:9px;right:10px;font-size:10.5px;font-weight:700;color:#fff;background:var(--c,var(--ink));padding:2px 8px;border-radius:999px;}
