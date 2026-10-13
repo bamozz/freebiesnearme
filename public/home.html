@@ -374,6 +374,13 @@
   .brands-grid .why-visual{border-bottom:0;border-top:0;}
   .brands .cc #wbMap{height:180px;min-height:0;}
   .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 26px;}
+  /* the brand cards are grouped by what a brand can buy: a sponsored listing or a featured ad card */
+  .brands .placement + .placement{margin-top:30px;}
+  .brands .placement-head{margin:0 0 14px;}
+  .brands .placement-title{margin:0;font-size:22px;line-height:1.25;letter-spacing:-0.01em;color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;}
+  .brands .pl-pill{font:700 11.5px 'Inter',sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#1A1204;background:var(--amber);padding:3px 10px;border-radius:999px;}
+  .brands .placement-head p{margin:6px 0 0;font-size:14.5px;line-height:1.5;color:#B6C4DA;text-wrap:balance;}
+  .brands .placement ~ .premium-tease{margin-top:30px;}
   /* a teaser for what is planned: clearly marked as coming soon */
   .premium-tease{
     margin-top:18px;padding:26px 28px;border-radius:16px;border:1px solid rgba(240,164,48,0.5);
@@ -572,32 +579,47 @@
 
     <div class="stats-note" id="statsNote">Totals across Toronto and New York</div>
 
-    <div class="why-grid brands-grid">
-      <div>
-        <div class="why-visual cc" id="wbSponsored" aria-hidden="true" hidden></div>
-        <div class="why-body">
-          <div class="why-text"><h3 class="display">First in line</h3><p>Your listing sorts first in its category,<br class="br-wide"> so hunters see you before anyone else.</p></div>
+    <section class="placement" aria-labelledby="plSponsored">
+      <div class="placement-head">
+        <h3 class="display placement-title" id="plSponsored">Sponsored listing <span class="pl-pill">Boosts an event you submit</span></h3>
+        <p>For something hunters can go to or claim. Your listing is upgraded, so it leads the list and stands out on the map.</p>
+      </div>
+      <div class="why-grid brands-grid">
+        <div>
+          <div class="why-visual cc" id="wbSponsored" aria-hidden="true" hidden></div>
+          <div class="why-body">
+            <div class="why-text"><h3 class="display">First in line</h3><p>Your listing sorts first in its category,<br class="br-wide"> so hunters see you before anyone else.</p></div>
+          </div>
+        </div>
+        <div>
+          <div class="why-visual cc" id="wbFoot" aria-hidden="true" hidden></div>
+          <div class="why-body">
+            <div class="why-text"><h3 class="display">Stands out on the map</h3><p>Your pin turns amber,<br class="br-wide"> easy to spot among the rest.</p></div>
+          </div>
         </div>
       </div>
-      <div>
-        <div class="why-visual cc" id="wbFoot" aria-hidden="true" hidden></div>
-        <div class="why-body">
-          <div class="why-text"><h3 class="display">Stands out on the map</h3><p>Your pin turns amber,<br class="br-wide"> easy to spot among the rest.</p></div>
+    </section>
+
+    <section class="placement" aria-labelledby="plFeatured">
+      <div class="placement-head">
+        <h3 class="display placement-title" id="plFeatured">Featured ad card <span class="pl-pill">Stands alone, no event needed</span></h3>
+        <p>For a launch, a sale or a new store. A separate card with your own message, shown to everyone browsing, whatever they filter by.</p>
+      </div>
+      <div class="why-grid brands-grid">
+        <div>
+          <div class="why-visual cc" id="wbSlot" aria-hidden="true" hidden></div>
+          <div class="why-body">
+            <div class="why-text"><h3 class="display">Seen under every filter</h3><p>Your message shows in every list,<br class="br-wide"> whatever filter hunters pick.</p></div>
+          </div>
+        </div>
+        <div>
+          <div class="why-visual cc" id="wbLocal" aria-hidden="true" hidden></div>
+          <div class="why-body">
+            <div class="why-text"><h3 class="display">Your own message</h3><p>Promote a launch, a sale or a new store,<br class="br-wide"> with no dated event needed.</p></div>
+          </div>
         </div>
       </div>
-      <div>
-        <div class="why-visual cc" id="wbSlot" aria-hidden="true" hidden></div>
-        <div class="why-body">
-          <div class="why-text"><h3 class="display">Seen under every filter</h3><p>Your message shows in every list,<br class="br-wide"> whatever filter hunters pick.</p></div>
-        </div>
-      </div>
-      <div>
-        <div class="why-visual cc" id="wbLocal" aria-hidden="true" hidden></div>
-        <div class="why-body">
-          <div class="why-text"><h3 class="display">Your own message</h3><p>Promote a launch, a sale or a new store,<br class="br-wide"> with no dated event needed.</p></div>
-        </div>
-      </div>
-    </div>
+    </section>
 
     <div class="premium-tease">
       <div class="pt-head">
