@@ -156,6 +156,7 @@
   .sec-head h2{margin:0;font-size:clamp(24px,3.2vw,34px);line-height:1.1;letter-spacing:-0.015em;}
   .sec-head p{margin:6px 0 0;font-size:15px;color:var(--muted);max-width:560px;}
   .why .sec-head p{max-width:none;}
+  .brands .sec-head p{max-width:none;}
 
   /* ===== Free right now (right-hand panel) ===== */
   /* the cards share whatever height the globe frame has, so the two sides end on the same line */
@@ -506,8 +507,8 @@
     <div class="sec-head">
       <div>
         <div class="kicker">For brands</div>
-        <h2 class="display">Hunters are looking for their next freebie,<br> let them find yours <em>first</em></h2>
-        <p class="lead" id="brandsLead">Brands are already in front of hunters in Toronto and New York,<br class="br-wide"> and sponsored listings sort first. Put yours there too.</p>
+        <h2 class="display">Starting out, with no audience yet,<br> let hunters find you <em>first</em></h2>
+        <p class="lead" id="brandsLead">Hunters are already here, looking for their next freebie to try,<br class="br-wide"> and a sponsored listing puts your offer in front of them from day one.</p>
       </div>
     </div>
 
@@ -763,9 +764,6 @@
       if (nb >= 10){
         $('statBrandsNum').textContent = nf.format(nb);
         $('statBrands').hidden = false;
-        $('brandsLead').innerHTML = nf.format(nb) + ' brands are already in front of hunters in '
-          + CITIES.map(function(c){ return c.name; }).join(' and ')
-          + ',<br class="br-wide"> and sponsored listings sort first. Put yours there too.';
       }
       if (rows.length >= 25){
         $('statListingsNum').textContent = nf.format(rows.length);
