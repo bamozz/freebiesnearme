@@ -118,6 +118,9 @@
   .hero h1{font-size:clamp(32px,calc((100vw - 48px) / 19.5),58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;}
   .hero h1 em{font-style:normal;color:var(--teal);}
   .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:760px;}
+  /* the headline is one line on tablets and phones: the break goes, the type scales to fit, and on a phone "are happening" drops out */
+  @media (max-width:759px){ .hero h1{font-size:clamp(18px,calc((100vw - 48px) / 26.5),32px);white-space:nowrap;} }
+  @media (max-width:520px){ .h1-more{display:none;} .hero h1{font-size:calc((100vw - 32px) / 19);} }
   .br-wide,.br-lg{display:none;}
   @media (min-width:760px){ .br-wide{display:inline;} }
   /* a longer first line needs a wider card before it can break at the comma */
@@ -380,7 +383,7 @@
   .logo .accent{color:var(--teal);}
   .site-top{max-width:1220px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;line-height:1.5;}
   .site-top .logo,.sf-brand .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;text-decoration:none;color:var(--ink);letter-spacing:-0.01em;}
-  .site-top .logo{font-size:20px;}
+  .site-top .logo{font-size:20px;white-space:nowrap;}
   .nav-actions{display:flex;align-items:center;gap:8px;}
   .top-city{font-size:14px;font-weight:600;text-decoration:none;padding:9px 12px;border-radius:999px;background:transparent;color:var(--ink);white-space:nowrap;}
   .top-city:hover{background:rgba(21,27,33,0.06);}
@@ -401,7 +404,8 @@
   }
   @media (max-width:520px){
     .sf{padding-left:16px;padding-right:16px;}
-    .site-top{padding:14px 16px;}
+    .site-top{padding:14px 16px;gap:8px;}
+    .site-top .logo{font-size:17px;}
     .nav-actions .top-link{display:none;}
     .top-city{padding:8px 13px;font-size:13.5px;}
   }
@@ -451,7 +455,7 @@
 </header>
 
 <section class="wrap hero">
-  <h1 class="display">Free things are happening near you,<br> <em>never miss them</em></h1>
+  <h1 class="display">Free things <span class="h1-more">are happening </span>near you,<br class="br-wide"> <em>never miss them</em></h1>
   <p>Brands get found while hunters discover free things to try and do.<br class="br-wide"> Pick your city to start.</p>
 </section>
 
