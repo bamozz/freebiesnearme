@@ -551,6 +551,9 @@
   .tab-item.on{color:var(--city-primary-text);}
   .btn-solid{background:var(--city-primary);}
   .btn-solid:hover{background:var(--city-primary-dark);}
+  /* the other calls to action take the city colour too: submit, install, map popup */
+  .submit-btn,.install-banner-btn,.popup-btn{background:var(--city-primary);}
+  .submit-btn:hover:not(:disabled),.install-banner-btn:hover:not(:disabled),.popup-btn:hover{background:var(--city-primary-dark);}
   .city-name{color:var(--city-primary);}
   .logo-city{font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--city-primary-text);}
   .logo .accent{color:var(--teal);}
