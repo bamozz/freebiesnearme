@@ -118,8 +118,8 @@
   .hero h1{font-size:clamp(32px,calc((100vw - 48px) / 19.5),58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;}
   .hero h1 em{font-style:normal;color:var(--teal);}
   .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:760px;}
-  /* the same two-line headline on every screen: on tablets and phones the type scales so line one fits */
-  @media (max-width:759px){ :root{--h1:clamp(18px,calc((100vw - 32px) / 18),32px);} .hero h1{font-size:var(--h1);white-space:nowrap;} }
+  /* tablets and phones: a fixed 36px headline over 28px section headings, the headline wrapping as it needs to */
+  @media (max-width:759px){ .hero h1{font-size:36px;text-wrap:balance;} }
   .br-wide,.br-lg{display:none;}
   @media (min-width:760px){ .br-wide{display:inline;} }
   /* a longer first line needs a wider card before it can break at the comma */
@@ -462,12 +462,9 @@
     .stat b{font-size:26px;}
     .stat span{font-size:13px;}
   }
-  /* on tablets and phones the headline is held to line one's width, so the section headings and card titles
-     step down from it: the headline stays the largest type on the page at every width */
+  /* tablets and phones: every section heading is 28px (the headline is 36px) */
   @media (max-width:759px){
-    .sec-head h2,.why .sec-head h2,.brands .sec-head h2{font-size:calc(var(--h1) * .9);}
-    .why-grid h3,.pt-head h3{font-size:calc(var(--h1) * .8);min-height:0;}
-    .why-grid p,.pt-head p{font-size:14.5px;}
+    .sec-head h2,.why .sec-head h2,.brands .sec-head h2{font-size:28px;}
   }
 </style>
 </head>
@@ -555,7 +552,7 @@
     <div class="sec-head">
       <div>
         <div class="kicker">For brands</div>
-        <h2 class="display">Hunters are always looking for the next freebie,<br> let them find yours <em>first</em></h2>
+        <h2 class="display">Hunters are always looking for the next freebie,<br class="br-wide"> let them find yours <em>first</em></h2>
         <p class="lead" id="brandsLead">Whether you are just starting out or branching out,<br class="br-wide"> a sponsored listing puts your offer in front of them from day one.</p>
       </div>
     </div>

@@ -74,7 +74,7 @@
   }
   .nav-inner{
     max-width:1220px;margin:0 auto;padding:16px 28px;
-    display:flex;align-items:center;justify-content:space-between;
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;row-gap:10px;
   }
   .logo{display:flex;align-items:baseline;gap:0.25em;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;text-decoration:none;color:var(--ink);white-space:nowrap;}
   .btn-solid{
@@ -282,6 +282,18 @@
     .pt-item h4{font-size:12.5px;line-height:1.2;white-space:nowrap;}
     .pt-item p{font-size:12px;line-height:1.45;}
   }
+
+  /* tablets and phones: the headline breaks into two balanced lines at most, and the headings
+     below it step down from it so it stays the largest type on the page */
+  @media (max-width:759px){
+    :root{--h1:min(clamp(28px,4vw,44px),calc((100vw - 56px) / 18.2));}
+    .brands h1{font-size:var(--h1);}
+    .inquire h2{font-size:calc(var(--h1) * .9);}
+    .why-grid h3,.pt-head h3{font-size:calc(var(--h1) * .8);min-height:0;}
+  }
+  @media (max-width:520px){
+    :root{--h1:calc((100vw - 32px) / 18.2);}
+  }
   /* ===== New York flag colours: orange, blue, white ===== */
   :root{--city-primary:#FF6600;--city-primary-dark:#CC5200;--city-primary-text:#C24E00;}
   nav{box-shadow:inset 0 3px 0 var(--city-primary);}
@@ -369,7 +381,7 @@
     <div class="sec-head">
       <div>
         <div class="kicker">Advertise in New York</div>
-        <h1 class="display">Hunters are always looking for the next freebie,<br> let them find yours <em>first</em></h1>
+        <h1 class="display">Hunters are always looking for the next freebie,<br class="br-wide"> let them find yours <em>first</em></h1>
         <p class="lead">Whether you are just starting out or branching out,<br class="br-wide"> a sponsored listing puts your offer in front of them from day one.</p>
       </div>
     </div>
