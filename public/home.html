@@ -316,9 +316,9 @@
   .brands{background:var(--ink);color:#fff;padding:84px 0 92px;}
   .brands .sec-head{margin-bottom:26px;}
   .brands .kicker{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;}
-  .brands .sec-head h2{margin:0;color:#fff;font-size:clamp(28px,4vw,44px);line-height:1.06;letter-spacing:-0.02em;}
+  .brands .sec-head h2{margin:0;color:#fff;font-size:clamp(28px,4vw,44px);line-height:1.06;letter-spacing:-0.02em;text-wrap:balance;}
   .brands .lead{margin:10px 0 0;font-size:clamp(15px,1.5vw,17.5px);color:#B6C4DA;}
-  .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 18px;}
+  .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 18px;}
   .stat{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:14px 16px;}
   .stat b{display:block;font:700 28px 'Space Grotesk',sans-serif;letter-spacing:-0.01em;}
   .stat span{display:block;font-size:13px;line-height:1.4;color:#B6C4DA;margin-top:2px;text-wrap:balance;}
@@ -327,7 +327,7 @@
   .brands .why-grid > div{color:var(--ink);}
   .brands .cc #wbMap{height:180px;min-height:0;}
   .brands .ico{background:var(--amber-dim);color:#9C6B14;}
-  .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px;}
+  .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 26px;}
   .btn-city{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:14.5px;padding:12px 20px;border-radius:999px;color:#fff;background:var(--c);border:0;}
   .btn-city:hover,.btn-city:focus-visible{filter:brightness(1.12);}
 
@@ -362,6 +362,7 @@
   }
 
   @media (max-width:900px){
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr));}
     .explore-grid{grid-template-columns:1fr;}
     .globe-wrap{min-height:380px;}
   }
@@ -487,16 +488,22 @@
     <div class="sec-head">
       <div>
         <div class="kicker">For brands</div>
-        <h2 class="display">Reach people who came here to get something free</h2>
-        <p class="lead">Everyone here is hunting for something to try today, the moment a new offer is easiest to say yes to.</p>
+        <h2 class="display">If your offer is not here, hunters are choosing someone else's</h2>
+        <p class="lead" id="brandsLead">Brands are already in front of hunters in Toronto and New York, and sponsored listings sort first. Every day you are not listed, that attention goes to them.</p>
       </div>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn-city" style="--c:#274490" href="/toronto/advertise" data-ev="advertise_click" data-city="toronto" data-loc="brands">Advertise in Toronto &rarr;</a>
+      <a class="btn-city" style="--c:#FF6600" href="/new-york/advertise" data-ev="advertise_click" data-city="new-york" data-loc="brands">Advertise in New York &rarr;</a>
     </div>
 
     <div class="stats" id="stats">
       <div class="stat" id="statHunters" hidden><b id="statHuntersNum"></b><span id="statHuntersLabel">hunters a month</span></div>
       <div class="stat" id="statBrands" hidden><b id="statBrandsNum"></b><span id="statBrandsLabel">brands already listed across our cities</span></div>
       <div class="stat" id="statLive" hidden><b id="statLiveNum"></b><span id="statLiveLabel">free events across our cities, today and coming up</span></div>
-      <div class="stat" id="statCities"><b id="statCitiesNum">2</b><span>cities live, more on the way</span></div>
+      <div class="stat" id="statListings" hidden><b id="statListingsNum"></b><span id="statListingsLabel">listings published to date</span></div>
+      <div class="stat" id="statHoods" hidden><b id="statHoodsNum"></b><span id="statHoodsLabel">neighbourhoods covered</span></div>
     </div>
 
     <div class="why-grid brands-grid">
@@ -530,10 +537,6 @@
       </div>
     </div>
 
-    <div class="cta-row">
-      <a class="btn-city" style="--c:#274490" href="/toronto/advertise" data-ev="advertise_click" data-city="toronto" data-loc="brands">Advertise in Toronto &rarr;</a>
-      <a class="btn-city" style="--c:#FF6600" href="/new-york/advertise" data-ev="advertise_click" data-city="new-york" data-loc="brands">Advertise in New York &rarr;</a>
-    </div>
   </div>
 </section>
 </main>
@@ -693,7 +696,7 @@
     if (!known) return;
     var allSub = document.querySelector('.city-tab[data-tab="all"] .ct-sub');
     if (allSub && today + soon) allSub.textContent = nf.format(today + soon) + ' free events';
-    if (today + soon){ $('statLiveNum').textContent = nf.format(today + soon); $('statLive').hidden = false; }
+    if (today + soon){ $('statLiveNum').textContent = nf.format(today + soon); $('statLive').hidden = false; limitStats(); }
   }
   function loadUpcoming(){
     // rows from yesterday on: enough to cover anything running today or later
@@ -713,18 +716,36 @@
       fillBrands();
     }).catch(function(){});
   }
+  // never more than four stats, the strongest first (the DOM order is the priority order)
+  function limitStats(){
+    var shown = [].filter.call(document.querySelectorAll('#stats .stat'), function(t){ return !t.hidden; });
+    while (shown.length > 4) shown.pop().hidden = true;
+  }
   function loadTotals(){
-    // distinct brands that have had a listing approved: the strongest proof for a new advertiser
-    return sbGet('listings?select=brand&moderation_status=eq.approved&limit=5000').then(function(rows){
-      var seen = {}, n = 0;
+    // proof for a new advertiser: brands already listed, listings published, neighbourhoods covered
+    return sbGet('listings?select=brand,neighbourhood&moderation_status=eq.approved&limit=5000').then(function(rows){
+      var brands = {}, hoods = {}, nb = 0, nh = 0;
       rows.forEach(function(r){
-        var k = String(r.brand || '').trim().toLowerCase();
-        if (k && !seen[k]){ seen[k] = true; n++; }
+        var b = String(r.brand || '').trim().toLowerCase(), h = String(r.neighbourhood || '').trim().toLowerCase();
+        if (b && !brands[b]){ brands[b] = true; nb++; }
+        if (h && !hoods[h]){ hoods[h] = true; nh++; }
       });
-      if (n >= 10){
-        $('statBrandsNum').textContent = nf.format(n);
+      if (nb >= 10){
+        $('statBrandsNum').textContent = nf.format(nb);
         $('statBrands').hidden = false;
+        $('brandsLead').textContent = nf.format(nb) + ' brands are already in front of hunters in '
+          + CITIES.map(function(c){ return c.name; }).join(' and ')
+          + ', and sponsored listings sort first. Every day you are not listed, that attention goes to them.';
       }
+      if (rows.length >= 25){
+        $('statListingsNum').textContent = nf.format(rows.length);
+        $('statListings').hidden = false;
+      }
+      if (nh >= 5){
+        $('statHoodsNum').textContent = nf.format(nh);
+        $('statHoods').hidden = false;
+      }
+      limitStats();
     }).catch(function(){});
   }
 
@@ -1113,12 +1134,13 @@
   var scope = CITIES.length === 2 ? 'both cities' : 'all ' + CITIES.length + ' cities';
   $('statBrandsLabel').textContent = 'brands already listed across ' + scope;
   $('statLiveLabel').textContent = 'free events across ' + scope + ', today and coming up';
-  $('statCitiesNum').textContent = CITIES.length;
+  $('statListingsLabel').textContent = 'listings published to date across ' + scope;
+  $('statHoodsLabel').textContent = 'neighbourhoods covered across ' + scope;
   if (AUDIENCE && typeof AUDIENCE.huntersPerMonth === 'number' && AUDIENCE.huntersPerMonth > 0){
     $('statHuntersNum').textContent = nf.format(AUDIENCE.huntersPerMonth);
     $('statHuntersLabel').textContent = AUDIENCE.label || 'hunters a month';
     $('statHunters').hidden = false;
-    $('statCities').hidden = true;   // keep to the three strongest
+    limitStats();   // keep to the four strongest
   }
 
   // ---- installable web app (no app store) ----
