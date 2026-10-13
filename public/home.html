@@ -206,7 +206,8 @@
     transition:box-shadow .15s ease,transform .15s ease;
   }
   .lcard:hover{box-shadow:0 8px 24px rgba(21,27,33,0.10);transform:translateY(-2px);}
-  .lcard .img{position:relative;flex:0 0 96px;min-height:96px;background:var(--paper-alt);overflow:hidden;}
+  /* always a square: as tall as the card, with the width following the height */
+  .lcard .img{position:relative;flex:0 0 auto;align-self:stretch;aspect-ratio:1/1;min-height:96px;background:var(--paper-alt);overflow:hidden;}
   .lcard .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
   /* portrait posters and logos: the whole image, sat on a soft blurred copy of itself so there are no bare bars */
   .lcard .img::before{content:"";position:absolute;inset:-24px;background:var(--bg) center/cover no-repeat;filter:blur(20px) saturate(1.15);opacity:0;}
