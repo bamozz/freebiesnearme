@@ -80,8 +80,8 @@
   .hero h1{font-size:clamp(32px,calc((100vw - 48px) / 19.5),58px);line-height:1.04;margin:0 0 12px;font-weight:700;letter-spacing:-0.02em;}
   .hero h1 em{font-style:normal;color:var(--teal);}
   .hero p{margin:0;font-size:clamp(15px,1.6vw,18px);color:var(--muted);max-width:760px;}
-  .hero p .br-wide{display:none;}
-  @media (min-width:760px){ .hero p .br-wide{display:inline;} }
+  .br-wide{display:none;}
+  @media (min-width:760px){ .br-wide{display:inline;} }
   /* descriptions wrap into even lines instead of leaving a stray word on the last one */
   .hero p,.sec-head p,.why-text p,.brands .lead,.install-text span,.perks li span,.stat span,.live-empty,.lcard .what,.cc .card-description,.cc .live-note{text-wrap:balance;}
   /* ===== Globe + city cards ===== */
@@ -508,7 +508,7 @@
       <div>
         <div class="kicker">For brands</div>
         <h2 class="display">Hunters are looking for their next freebie,<br> let them find yours <em>first</em></h2>
-        <p class="lead" id="brandsLead">Brands are already in front of hunters in Toronto and New York, and sponsored listings sort first. Put yours there too.</p>
+        <p class="lead" id="brandsLead">Brands are already in front of hunters in Toronto and New York,<br class="br-wide"> and sponsored listings sort first. Put yours there too.</p>
       </div>
     </div>
 
@@ -764,9 +764,9 @@
       if (nb >= 10){
         $('statBrandsNum').textContent = nf.format(nb);
         $('statBrands').hidden = false;
-        $('brandsLead').textContent = nf.format(nb) + ' brands are already in front of hunters in '
+        $('brandsLead').innerHTML = nf.format(nb) + ' brands are already in front of hunters in '
           + CITIES.map(function(c){ return c.name; }).join(' and ')
-          + ', and sponsored listings sort first. Put yours there too.';
+          + ',<br class="br-wide"> and sponsored listings sort first. Put yours there too.';
       }
       if (rows.length >= 25){
         $('statListingsNum').textContent = nf.format(rows.length);
