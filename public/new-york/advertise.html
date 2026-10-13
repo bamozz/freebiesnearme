@@ -222,6 +222,8 @@
   .pt-head p{margin:0;font-size:15px;line-height:1.55;color:#B6C4DA;text-wrap:balance;}
   .pt-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
   .pt-item{display:flex;flex-direction:column;gap:8px;}
+  .pt-ico{width:38px;height:38px;border-radius:10px;background:rgba(240,164,48,0.16);color:var(--amber);display:flex;align-items:center;justify-content:center;}
+  .pt-ico svg{width:20px;height:20px;}
   .pt-item h4{margin:0;font:700 16px 'Space Grotesk',sans-serif;color:#fff;}
   .pt-item p{margin:0;font-size:13.5px;line-height:1.55;color:#B6C4DA;}
 
@@ -275,6 +277,8 @@
     /* the three benefits stay in one row on phones, with the type tightened to fit */
     .premium-tease{padding:20px 16px;}
     .pt-items{gap:10px;}
+    .pt-ico{width:32px;height:32px;}
+    .pt-ico svg{width:17px;height:17px;}
     .pt-item h4{font-size:12.5px;line-height:1.2;white-space:nowrap;}
     .pt-item p{font-size:12px;line-height:1.45;}
   }
@@ -417,9 +421,9 @@
         <p>Hunters will be able to go premium,<br class="br-wide"> and brands get three new ways to reach them.</p>
       </div>
       <div class="pt-items">
-        <div class="pt-item"><h4>Priority alerts</h4><p>Reach premium members first,<br class="br-wide"> the moment you go live.</p></div>
-        <div class="pt-item"><h4>Early access</h4><p>Give them limited drops first,<br class="br-wide"> for a strong start.</p></div>
-        <div class="pt-item"><h4>Exclusive deals</h4><p>Offer perks only they can claim,<br class="br-wide"> and turn fans into regulars.</p></div>
+        <div class="pt-item"><div class="pt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div><h4>Priority alerts</h4><p>Reach premium members first,<br class="br-wide"> the moment you go live.</p></div>
+        <div class="pt-item"><div class="pt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4.2L18.5 21 12 16.8 5.5 21l2-7.8L2 9h7l3-7z"/></svg></div><h4>Early access</h4><p>Give them limited drops first,<br class="br-wide"> for a strong start.</p></div>
+        <div class="pt-item"><div class="pt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></div><h4>Exclusive deals</h4><p>Offer perks only they can claim,<br class="br-wide"> and turn fans into regulars.</p></div>
       </div>
     </div>
   </div>
