@@ -462,7 +462,6 @@
     .brands{padding:60px 0 64px;}
     .why-band{padding:56px 0 60px;}
     .explore{padding-bottom:56px;}
-    .btn-city{flex:1 1 100%;justify-content:center;}
     /* 2x2 on phones: the number sits above its label */
     .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
     .stat{flex-direction:column;align-items:flex-start;gap:6px;padding:14px;}
@@ -472,6 +471,16 @@
   /* tablets and phones: every section heading is 28px (the headline is 36px) */
   @media (max-width:759px){
     .sec-head h2,.why .sec-head h2,.brands .sec-head h2{font-size:28px;}
+    /* the two Advertise in <city> buttons sit side by side, equal width, the label wrapping if it must */
+    .cta-row{flex-wrap:nowrap;}
+    .btn-city{flex:1 1 0;min-width:0;justify-content:center;text-align:center;padding:12px 12px;}
+  }
+  @media (max-width:520px){
+    .btn-city{font-size:13.5px;padding:12px 8px;line-height:1.25;}
+  }
+  /* on narrow phones both labels break the same way: "Advertise in" over "<city> ->" */
+  @media (max-width:420px){
+    .btn-city .cta-city{display:block;}
   }
 </style>
 </head>
@@ -565,8 +574,8 @@
     </div>
 
     <div class="cta-row">
-      <a class="btn-city" style="--c:#274490" href="/toronto/advertise" data-ev="advertise_click" data-city="toronto" data-loc="brands">Advertise in Toronto &rarr;</a>
-      <a class="btn-city" style="--c:#FF6600" href="/new-york/advertise" data-ev="advertise_click" data-city="new-york" data-loc="brands">Advertise in New York &rarr;</a>
+      <a class="btn-city" style="--c:#274490" href="/toronto/advertise" data-ev="advertise_click" data-city="toronto" data-loc="brands">Advertise in <span class="cta-city">Toronto &rarr;</span></a>
+      <a class="btn-city" style="--c:#FF6600" href="/new-york/advertise" data-ev="advertise_click" data-city="new-york" data-loc="brands">Advertise in <span class="cta-city">New York &rarr;</span></a>
     </div>
 
     <div class="stats" id="stats">
