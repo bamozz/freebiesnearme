@@ -234,11 +234,6 @@
   /* text first, preview after, on every screen */
   .why-grid > div{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column-reverse;}
   .why-body{display:flex;gap:20px;align-items:flex-start;padding:24px 28px 26px;}
-  .why-grid .ico{
-    flex:0 0 auto;width:54px;height:54px;border-radius:14px;background:var(--teal-dim);color:var(--teal-text);
-    display:flex;align-items:center;justify-content:center;
-  }
-  .why-grid .ico svg{width:27px;height:27px;}
   .why-grid h3{margin:0 0 6px;font-size:20px;line-height:1.2;font-family:'Space Grotesk',sans-serif;min-height:1.2em;}
   .why-grid p{margin:0;font-size:15.5px;line-height:1.55;color:var(--muted);min-height:3.1em;}
   /* ===== Components copied from the city pages, so these previews look exactly like the live sites ===== */
@@ -345,11 +340,10 @@
   .cc .cat-chip.active{color:#fff;border-color:transparent;}
   .cc .cat-chip.location.active{background:var(--city-primary);}
   .cc .sample-note{font-size:11.5px;color:var(--muted);padding:0 2px;}
-  /* hunters cards: the text block is solid theme green with white type and a white icon tile */
+  /* hunters cards: the text block is solid theme green with white type */
   .why-grid:not(.brands-grid) .why-body{background:var(--teal);}
   .why-grid:not(.brands-grid) .why-text h3{color:#fff;}
   .why-grid:not(.brands-grid) .why-text p{color:rgba(255,255,255,0.95);}
-  .why-grid:not(.brands-grid) .ico{background:#fff;color:var(--teal);}
   .why-grid:not(.brands-grid) .why-visual{border-bottom:0;border-top:0;}
   .why .kicker{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-text);margin-bottom:10px;}
   .why .sec-head{margin-bottom:28px;}
@@ -379,7 +373,6 @@
   .brands-grid .why-text h3,.brands-grid .why-text p{color:#fff;}
   .brands-grid .why-visual{border-bottom:0;border-top:0;}
   .brands .cc #wbMap{height:180px;min-height:0;}
-  .brands .ico{background:var(--amber-dim);color:#9C6B14;}
   .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 26px;}
   /* a teaser for what is planned: clearly marked as coming soon */
   .premium-tease{
@@ -395,8 +388,6 @@
   .pt-head p{margin:0;font-size:15px;line-height:1.55;color:#B6C4DA;}
   .pt-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
   .pt-item{display:flex;flex-direction:column;gap:8px;}
-  .pt-ico{width:38px;height:38px;border-radius:10px;background:rgba(240,164,48,0.16);color:var(--amber);display:flex;align-items:center;justify-content:center;}
-  .pt-ico svg{width:20px;height:20px;}
   .pt-item h4{margin:0;font:700 16px 'Space Grotesk',sans-serif;color:#fff;}
   .pt-item p{margin:0;font-size:13.5px;line-height:1.55;color:#B6C4DA;}
   .btn-city{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:14.5px;padding:12px 20px;border-radius:999px;color:#fff;background:var(--c);border:0;}
@@ -449,8 +440,6 @@
     /* the three benefits stay in one row on phones, with the type tightened to fit */
     .premium-tease{padding:20px 16px;}
     .pt-items{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
-    .pt-ico{width:32px;height:32px;}
-    .pt-ico svg{width:17px;height:17px;}
     .pt-item h4{font-size:12.5px;line-height:1.2;white-space:nowrap;}
     .pt-item p{font-size:12px;line-height:1.45;}
     .why-grid{grid-template-columns:1fr;}
@@ -459,8 +448,6 @@
     .cc .card-main{grid-template-columns:clamp(92px,30%,130px) minmax(0,1fr);}
     .cc .door-views{grid-template-columns:1fr;}
     .cc .map-box{min-height:200px;}
-    .why-grid .ico{width:44px;height:44px;}
-    .why-grid .ico svg{width:22px;height:22px;}
     .brands{padding:60px 0 64px;}
     .why-band{padding:56px 0 60px;}
     .explore{padding-bottom:56px;}
@@ -535,28 +522,24 @@
     <div>
       <div class="why-visual cc" id="wvClock" aria-hidden="true" hidden></div>
       <div class="why-body">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
         <div class="why-text"><h3 class="display">A clock on every freebie</h3><p>See what is on now and what is coming up,<br class="br-wide"> so you never miss any.</p></div>
       </div>
     </div>
     <div>
       <div class="why-visual cc" id="wvFree" aria-hidden="true" hidden></div>
       <div class="why-body">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
         <div class="why-text"><h3 class="display">Actually free</h3><p>If you have to buy something to get it,<br class="br-wide"> it does not make the list.</p></div>
       </div>
     </div>
     <div>
       <div class="why-visual cc" id="wvDoor" aria-hidden="true" hidden></div>
       <div class="why-body">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
         <div class="why-text"><h3 class="display">Map and calendar, your pick</h3><p>Browse the map or the calendar,<br class="br-wide"> then add it or get directions in one tap.</p></div>
       </div>
     </div>
     <div>
       <div class="why-visual cc" id="wvCrowd" aria-hidden="true" hidden></div>
       <div class="why-body">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 20v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/></svg></div>
         <div class="why-text"><h3 class="display">Hunters tell hunters</h3><p>Rate what was worth the trip and flag what ran out,<br class="br-lg"> so nobody walks to an empty table.</p></div>
       </div>
     </div>
@@ -592,28 +575,24 @@
       <div>
         <div class="why-visual cc" id="wbSponsored" aria-hidden="true" hidden></div>
         <div class="why-body">
-          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z"/></svg></div>
           <div class="why-text"><h3 class="display">First in line</h3><p>Your listing sorts first in its category,<br class="br-wide"> so hunters see you before anyone else.</p></div>
         </div>
       </div>
       <div>
         <div class="why-visual cc" id="wbFoot" aria-hidden="true" hidden></div>
         <div class="why-body">
-          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
           <div class="why-text"><h3 class="display">Stands out on the map</h3><p>Your pin turns amber,<br class="br-wide"> easy to spot among the rest.</p></div>
         </div>
       </div>
       <div>
         <div class="why-visual cc" id="wbSlot" aria-hidden="true" hidden></div>
         <div class="why-body">
-          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M15 9a4 4 0 010 6M18 6a8 8 0 010 12"/></svg></div>
           <div class="why-text"><h3 class="display">Seen under every filter</h3><p>Your message shows in every list,<br class="br-wide"> whatever filter hunters pick.</p></div>
         </div>
       </div>
       <div>
         <div class="why-visual cc" id="wbLocal" aria-hidden="true" hidden></div>
         <div class="why-body">
-          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
           <div class="why-text"><h3 class="display">Your own message</h3><p>Promote a launch, a sale or a new store,<br class="br-wide"> with no dated event needed.</p></div>
         </div>
       </div>
@@ -626,9 +605,9 @@
         <p>Hunters will be able to go premium,<br class="br-wide"> and brands get three new ways to reach them.</p>
       </div>
       <div class="pt-items">
-        <div class="pt-item"><div class="pt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div><h4>Priority alerts</h4><p>Reach premium members first,<br class="br-wide"> the moment you go live.</p></div>
-        <div class="pt-item"><div class="pt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4.2L18.5 21 12 16.8 5.5 21l2-7.8L2 9h7l3-7z"/></svg></div><h4>Early access</h4><p>Give them limited drops first,<br class="br-wide"> for a strong start.</p></div>
-        <div class="pt-item"><div class="pt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg></div><h4>Exclusive deals</h4><p>Offer perks only they can claim,<br class="br-wide"> and turn fans into regulars.</p></div>
+        <div class="pt-item"><h4>Priority alerts</h4><p>Reach premium members first,<br class="br-wide"> the moment you go live.</p></div>
+        <div class="pt-item"><h4>Early access</h4><p>Give them limited drops first,<br class="br-wide"> for a strong start.</p></div>
+        <div class="pt-item"><h4>Exclusive deals</h4><p>Offer perks only they can claim,<br class="br-wide"> and turn fans into regulars.</p></div>
       </div>
     </div>
   </div>
@@ -905,9 +884,9 @@
     var actions = '';
     if (o.actions){
       var a = [];
-      if (ev.signup_url) a.push('<span>&#128221; Register</span>');
-      if (hasClock(ms(ev.ref.start_time), tz)) a.push('<span>&#128197; Add to calendar</span>');
-      a.push('<span>&#128205; Get directions</span>');
+      if (ev.signup_url) a.push('<span>Register</span>');
+      if (hasClock(ms(ev.ref.start_time), tz)) a.push('<span>Add to calendar</span>');
+      a.push('<span>Get directions</span>');
       actions = '<div class="card-actions">' + a.join('') + '</div>';
     }
     var report = '';
