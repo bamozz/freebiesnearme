@@ -1036,7 +1036,7 @@
           return '<div class="cat-chip' + (on ? ' active' : '') + '"' + (on ? ' style="background:' + CAT_COLOR[c] + '"' : '') + '>' + CAT_LABEL[c] + '</div>';
         }).join('') + '</div>'
       + '<div class="card sponsored"><div class="sponsored-flag">Advertisement</div>'
-      + '<div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>'
+      + '<div class="card-top"><span class="tag cat" style="color:#9C6B14;background:#fff">Featured spot</span></div>'
       + '<div class="card-what">Your message, front and centre</div>'
       + '<div class="card-brand">Your brand, your offer and your link.</div>'
       + '<div class="card-meta"><span class="ad-inquire-link">Your call to action &rarr;</span></div></div>'
@@ -1044,7 +1044,7 @@
     // 4. your own message: it does not have to be a dated event
     function ad(what, brand){
       return '<div class="card sponsored"><div class="sponsored-flag">Advertisement</div>'
-        + '<div class="card-top"><span class="tag cat" style="color:#9C6B14">Featured spot</span></div>'
+        + '<div class="card-top"><span class="tag cat" style="color:#9C6B14;background:#fff">Featured spot</span></div>'
         + '<div class="card-what">' + what + '</div><div class="card-brand">' + brand + '</div>'
         + '<div class="card-meta"><span class="ad-inquire-link">Your call to action &rarr;</span></div></div>';
     }
