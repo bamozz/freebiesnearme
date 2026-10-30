@@ -6,7 +6,7 @@ Toronto free giveaways/events site. Two layers:
 - `public/{feedback,about,privacy,terms}.html` — sitewide pages with one address for every city (`/feedback`, `/about`, `/privacy`, `/terms`), neutral brand chrome, no city in the URL. The old `/toronto/...` and `/new-york/...` addresses 301 to them (see `vercel.json`).
 - `app/` — a Next.js App Router layer for pSEO hub pages (`/toronto/{category}` and `/toronto/{neighbourhood}`), backed by `app/[city]/[hub]/page.tsx`. Shared logic/branding lives in `lib/` (`categories.ts`, `listing-display.ts`, `datetime.ts`, `jsonld.ts`) and `app/globals.css`/`app/layout.tsx`.
 
-Data lives in Supabase. Writes to `listings` only happen through `api/submit-listing.js` (service role key, Turnstile-gated) — the anon key used client-side is read-only by RLS design, so don't try to insert/update via the anon key.
+Data lives in Supabase. Writes to `listings` only happen through `api/submit-listing.js` (service role key, Turnstile-gated) and `api/screener-insert.js` (service role key, bearer token in `SCREENER_INSERT_TOKEN`; the scheduled Toronto/NYC screener routine posts verified rows here, they go live as approved) — the anon key used client-side is read-only by RLS design, so don't try to insert/update via the anon key. `api/screener-insert.js` only inserts; its row rules (short event name in `brand`, plain `what`/`description` with no hedging, Eastern-time sanity check, city bounds, no brand already on the calendar) live in `api/_lib/screener-rows.js`. Send `"dryRun": true` to check rows without inserting.
 
 ## Environments
 
