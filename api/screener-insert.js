@@ -9,12 +9,21 @@
 //   Authorization: Bearer <SCREENER_INSERT_TOKEN>
 //   { "rows": [ {brand, category, neighbourhood, address, lat, lng, what,
 //                description, start_time, end_time, total_count, signup_url,
-//                city_slug, neighbourhood_slug}, ... ],
+//                city_slug, neighbourhood_slug,
+//                image_url, image_source, image_fit}, ... ],
 //     "dryRun": true }   // optional: validate and de-duplicate, insert nothing
 //
-// Responds { dryRun, inserted: [...], rejected: [{ index, brand, reasons }] }.
+// Every listing should have a picture: image_url is the image on the
+// organizer's own page, image_source the page it came from, image_fit
+// "contain" for posters, logos and portrait images (leave it out for photos).
+// An image link that does not load as a picture rejects its row. A row with no
+// image is still inserted, and is listed under noImage so the routine can say so.
+//
+// Responds { dryRun, inserted: [...], rejected: [{ index, brand, reasons }],
+//            noImage: [{ index, brand }] }.
 
 import { createHash, timingSafeEqual } from 'node:crypto';
+import { checkImages } from './_lib/image-check.js';
 import { MAX_ROWS, screenBatch } from './_lib/screener-rows.js';
 
 function tokenMatches(header, expected) {
@@ -68,16 +77,30 @@ export default async function handler(req, res) {
   }
   const existing = await existingRes.json();
 
-  const { accepted, rejected } = screenBatch(rows, existing);
+  const screened = screenBatch(rows, existing);
+  const { rejected } = screened;
+
+  // Only rows that passed every other check are worth fetching an image for.
+  const imageChecks = await checkImages(screened.accepted.map(({ row }) => row.image_url));
+  const accepted = [];
+  screened.accepted.forEach((entry, i) => {
+    if (imageChecks[i].ok) {
+      accepted.push(entry);
+    } else {
+      rejected.push({ index: entry.index, brand: entry.row.brand, reasons: [imageChecks[i].reason] });
+    }
+  });
+  const noImage = accepted.filter(({ row }) => !row.image_url).map(({ index, row }) => ({ index, brand: row.brand }));
 
   if (dryRun || !accepted.length) {
-    console.log('screener-insert', { dryRun, accepted: accepted.length, rejected: rejected.length });
+    console.log('screener-insert', { dryRun, accepted: accepted.length, rejected: rejected.length, noImage: noImage.length });
     return res.status(200).json({
       dryRun,
       inserted: dryRun
         ? accepted.map(({ index, row }) => ({ index, brand: row.brand, city_slug: row.city_slug, start_time: row.start_time }))
         : [],
       rejected,
+      noImage,
     });
   }
 
@@ -93,7 +116,7 @@ export default async function handler(req, res) {
   }
   const inserted = await insertRes.json();
 
-  console.log('screener-insert', { dryRun: false, inserted: inserted.length, rejected: rejected.length });
+  console.log('screener-insert', { dryRun: false, inserted: inserted.length, rejected: rejected.length, noImage: noImage.length });
   return res.status(200).json({
     dryRun: false,
     inserted: inserted.map((r) => ({
@@ -106,5 +129,6 @@ export default async function handler(req, res) {
       moderation_status: r.moderation_status,
     })),
     rejected,
+    noImage,
   });
 }
