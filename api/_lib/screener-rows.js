@@ -36,6 +36,13 @@ const CITY_BOUNDS = {
 // Both cities are Eastern time.
 const LOCAL_TZ = 'America/New_York';
 
+// Posters, logos and portrait images are shown whole on a tinted background;
+// photos fill the card, so a photo leaves image_fit out.
+const IMAGE_FITS = ['contain'];
+
+// Instagram and Facebook image links expire and refuse other sites.
+const BLOCKED_IMAGE_HOSTS = /(^|\.)(fbcdn\.net|cdninstagram\.com|instagram\.com|facebook\.com|fbsbx\.com)$/i;
+
 const MAX_ROWS = 30;
 const MAX_EVENT_HOURS = 36;
 const MAX_DAYS_AHEAD = 75;
@@ -88,6 +95,21 @@ function parseTime(value) {
 function isHttpsUrl(value) {
   try {
     return new URL(value).protocol === 'https:';
+  } catch (e) {
+    return false;
+  }
+}
+
+// An https link to a named public host: no localhost, no IP address, no
+// internal names, so the image check never fetches anything private.
+function isPublicHttpsUrl(value, maxLength) {
+  if (typeof value !== 'string' || value.length === 0 || value.length > maxLength) return false;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:') return false;
+    const host = url.hostname;
+    if (!host.includes('.') || /^[\d.]+$/.test(host) || host.includes(':')) return false;
+    return !/(^|\.)(localhost|local|internal|lan)$/i.test(host);
   } catch (e) {
     return false;
   }
@@ -175,6 +197,27 @@ export function validateRow(input, now = new Date()) {
     errors.push('neighbourhood_slug must be lowercase letters, numbers and dashes');
   }
 
+  // The image is optional, but a row with one must say where it came from.
+  // Whether the link really loads is checked by api/_lib/image-check.js.
+  const imageUrl = text(p.image_url);
+  const imageSource = text(p.image_source);
+  const imageFit = text(p.image_fit);
+  if (imageUrl) {
+    if (!isPublicHttpsUrl(imageUrl, 600)) {
+      errors.push('image_url must be a public https link of 600 characters or fewer');
+    } else if (BLOCKED_IMAGE_HOSTS.test(new URL(imageUrl).hostname)) {
+      errors.push('image_url must not point at Instagram or Facebook; use the image on the organizer\'s own page');
+    }
+    if (!isPublicHttpsUrl(imageSource, 500)) {
+      errors.push('image_source must be the https page the image was found on');
+    }
+  } else if (imageSource || imageFit) {
+    errors.push('image_source and image_fit need an image_url');
+  }
+  if (imageFit && !IMAGE_FITS.includes(imageFit)) {
+    errors.push('image_fit must be "contain" (posters, logos, portrait images) or left out (photos)');
+  }
+
   if (errors.length) return { errors };
 
   return {
@@ -195,7 +238,9 @@ export function validateRow(input, now = new Date()) {
       submitted_by: 'hunter',
       submitter_contact: null,
       moderation_status: 'approved',
-      image_url: null,
+      image_url: imageUrl || null,
+      image_source: imageUrl ? imageSource : null,
+      image_fit: imageUrl && imageFit ? imageFit : null,
       insta_url: null,
       signup_url: p.signup_url ? String(p.signup_url).trim() : null,
       city_slug: p.city_slug,
