@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { createServerClient } from '@/lib/supabase';
+import { CATEGORIES } from '@/lib/categories';
 import { CITIES } from '@/lib/cities';
 import { liveHubListings } from '@/lib/hub-live';
 import type { Listing } from '@/types/pseo_types';
@@ -15,15 +16,16 @@ export const dynamic = 'force-dynamic';
 
 // Core static pages use their real live paths (/toronto, /toronto/map,
 // /toronto/submit). The front page at / is the city picker and a real page in
-// its own right, so it is listed alongside each city's home. Pages whose
-// content changes every day carry a lastModified date so crawlers revisit them.
+// its own right, so it is listed alongside each city's home. None of these
+// carry a lastModified: their content changes all the time but nothing records
+// when, and the time of generation is not a real change date. Only the hubs
+// below get one, from a real timestamp.
 function staticRoutes(): MetadataRoute.Sitemap {
-  const now = new Date();
-  const root = { url: `${BASE_URL}/`, lastModified: now, changeFrequency: 'daily' as const, priority: 1.0 };
+  const root = { url: `${BASE_URL}/`, changeFrequency: 'daily' as const, priority: 1.0 };
   const cities = Object.keys(CITIES).flatMap((slug) => [
-    { url: `${BASE_URL}/${slug}`, lastModified: now, changeFrequency: 'daily' as const, priority: 1.0 },
-    { url: `${BASE_URL}/${slug}/map`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.8 },
-    { url: `${BASE_URL}/${slug}/calendar`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.8 },
+    { url: `${BASE_URL}/${slug}`, changeFrequency: 'daily' as const, priority: 1.0 },
+    { url: `${BASE_URL}/${slug}/map`, changeFrequency: 'daily' as const, priority: 0.8 },
+    { url: `${BASE_URL}/${slug}/calendar`, changeFrequency: 'daily' as const, priority: 0.8 },
     { url: `${BASE_URL}/${slug}/submit`, changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: `${BASE_URL}/${slug}/advertise`, changeFrequency: 'monthly' as const, priority: 0.6 },
     { url: `${BASE_URL}/${slug}/changelog`, changeFrequency: 'weekly' as const, priority: 0.3 },
@@ -68,23 +70,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (row.neighbourhood_slug !== row.category_slug) addToHub(row.city_slug, row.neighbourhood_slug, row);
     }
 
-    // A hub goes in the sitemap only when its page would list at least one
-    // listing that has not wrapped up, using the same rule the page uses
-    // (lib/hub-live.ts). A hub with nothing live renders the empty state and
-    // is noindex, so it stays out. lastModified is the time the newest listing
-    // was added to that hub (listings.created_at), a real timestamp; there is
-    // no listing update time in the database.
+    // Category hubs (food-drink, wellness and so on) are evergreen search
+    // targets, so every category of every city is always listed and stays
+    // indexable, even with nothing live. A neighbourhood or venue hub goes in
+    // only when its page would list at least one listing that has not wrapped
+    // up, using the same rule the page uses (lib/hub-live.ts); with nothing
+    // live it renders the empty state, is noindex and stays out.
+    // lastModified is the time the newest listing was added to that hub
+    // (listings.created_at), a real timestamp; there is no listing update time
+    // in the database. A category with no rows at all gets none.
+    const newestCreated = (rows: Listing[]) =>
+      rows.reduce((max, row) => (row.created_at > max ? row.created_at : max), rows[0].created_at);
     const hubRoutes: MetadataRoute.Sitemap = [];
-    for (const [path, rows] of [...hubs.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+    const categoryPaths = new Set<string>();
+    for (const city of Object.keys(CITIES)) {
+      for (const category of CATEGORIES) {
+        const path = `${city}/${category.slug}`;
+        categoryPaths.add(path);
+        const rows = hubs.get(path) ?? [];
+        hubRoutes.push({
+          url: `${BASE_URL}/${path}`,
+          lastModified: rows.length ? new Date(newestCreated(rows)) : undefined,
+          changeFrequency: 'daily',
+          priority: 0.8,
+        });
+      }
+    }
+    for (const [path, rows] of hubs.entries()) {
+      if (categoryPaths.has(path)) continue;
       if (liveHubListings(rows).length === 0) continue;
-      const newest = rows.reduce((max, row) => (row.created_at > max ? row.created_at : max), rows[0].created_at);
       hubRoutes.push({
         url: `${BASE_URL}/${path}`,
-        lastModified: newest ? new Date(newest) : undefined,
+        lastModified: new Date(newestCreated(rows)),
         changeFrequency: 'daily',
         priority: 0.8,
       });
     }
+    hubRoutes.sort((a, b) => a.url.localeCompare(b.url));
     routes.push(...hubRoutes);
   } catch (err) {
     // Database unreachable, env vars missing, etc. - never let sitemap
