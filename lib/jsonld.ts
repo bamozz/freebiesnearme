@@ -1,11 +1,11 @@
 import type { Listing } from '@/types/pseo_types';
 import { assumedEndIso } from '@/lib/datetime';
 
-// Site-wide fallback so every Event still has an "image" field even when a
-// listing has none - Google Search Console flags a fully-missing image
-// field, and this is the same asset already used for og:image sitewide.
-const DEFAULT_EVENT_IMAGE = 'https://www.freebiesnearme.app/toronto/assets/og-image.png';
-
+// "image" is output only for a listing whose picture is cleared for display
+// (lib/image-hosts.ts; the caller passes rows already run through
+// withClearedImages). Every other Event omits the field. The sitewide
+// og-image fallback that used to fill it was removed with the image rights
+// change: it also went on listings that never had a picture.
 export function buildHubItemList(listings: Listing[], hubLabel: string, hubUrl: string) {
   const itemListElement = listings.map((listing, index) => {
     const left = listing.total_count != null ? listing.total_count - listing.claimed_count : null;
@@ -20,7 +20,7 @@ export function buildHubItemList(listings: Listing[], hubLabel: string, hubUrl: 
         '@type': 'Event',
         name: `${listing.brand} - ${listing.what}`,
         description: `${listing.what} - free, hosted by ${listing.brand}, in ${listing.neighbourhood}.`,
-        image: listing.image_url || DEFAULT_EVENT_IMAGE,
+        image: listing.image_url || undefined,
         location: {
           '@type': 'Place',
           name: listing.neighbourhood,

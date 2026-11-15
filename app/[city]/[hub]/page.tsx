@@ -17,7 +17,8 @@ import {
   buildGoogleCalendarUrl,
   icsFilename,
 } from '@/lib/listing-display';
-import { groupListings } from '@/lib/group-listings';
+import { liveHubListings } from '@/lib/hub-live';
+import { withClearedImages } from '@/lib/image-hosts';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
 
@@ -176,7 +177,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq('is_active', true)
     .eq('moderation_status', 'approved')
     .returns<Listing[]>();
-  const activeCount = groupListings(listings ?? []).filter((l) => l.groupStatus !== 'ended').length;
+  const activeCount = liveHubListings(listings ?? []).length;
 
   const where = resolved.type === 'category' ? `${label.toLowerCase()} in ${cityLabel}` : `${label}, ${cityLabel}`;
   const description =
@@ -189,6 +190,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: url },
+    // A hub with nothing live keeps its status code and text but asks search
+    // engines not to index it; the links on it can still be followed. The
+    // sitemap omits the same hubs (lib/hub-live.ts).
+    ...(activeCount === 0 ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
       siteName: 'Freebies Near Me',
@@ -230,7 +235,7 @@ export default async function HubPage({ params }: Props) {
   // multi-location promo (matching group_id, e.g. Krispy Kreme's downtown
   // locations) reads as one card with multiple stops instead of one card
   // per row - see lib/group-listings.ts.
-  const items = groupListings(listings ?? []).filter((listing) => listing.groupStatus !== 'ended');
+  const items = liveHubListings(withClearedImages(listings ?? []));
   // map.html's pins only ever show currently-live events, by design (it
   // answers "what can I go to right now," not "what's coming up"). A hub
   // with only upcoming ("soon") listings would send the map CTA into a

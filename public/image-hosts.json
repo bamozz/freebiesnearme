@@ -1,0 +1,8 @@
+{
+  "note": "Hosts whose pictures may be shown on listing cards and in Event JSON-LD. Only hosts we run, or that have given us written permission, belong here. Adding a host is a one line change and needs the owner's approval. Hosts are matched exactly (no subdomains). Read by the Next pages (lib/image-hosts.ts) and by the static city pages (fetch of /image-hosts.json).",
+  "hosts": [
+    "ulmmxjsvlzmxdvstabwa.supabase.co",
+    "www.freebiesnearme.app",
+    "freebiesnearme.app"
+  ]
+}

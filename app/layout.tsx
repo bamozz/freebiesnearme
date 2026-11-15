@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://www.freebiesnearme.app'),
   description: 'Free giveaways, samples, classes and pop up events in Toronto and New York, checked by our team and updated daily.',
   openGraph: { siteName: 'Freebies Near Me', type: 'website', locale: 'en_CA' },
+  // Tells AdSense which account owns this site. It loads nothing and sets no
+  // cookies, so every visitor gets it. The AdSense script itself is added only
+  // for visitors in Canada or the United States (see the inline gate below).
+  other: { 'google-adsense-account': 'ca-pub-2407639793416759' },
   manifest: '/manifest.json',
   icons: {
     icon: [
@@ -27,11 +31,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759"
-          crossOrigin="anonymous"
-          strategy="beforeInteractive"
+        {/* Google Analytics (base page view only), the same tag as the static
+            pages in public/. */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-SRH6EG57P0" strategy="afterInteractive" />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-SRH6EG57P0');`}
+        </Script>
+        {/* Ads only for Canada and the United States. middleware.ts sets the
+            fbnm_ads cookie from the Cloudflare country header; this snippet
+            adds /ad-loader.js (which loads AdSense) only when it is present.
+            Same snippet as the static pages in public/. */}
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `try{if(/(?:^|;\\s*)fbnm_ads=1(?:;|$)/.test(document.cookie)){var a=document.createElement('script');a.src='/ad-loader.js';a.async=true;document.head.appendChild(a);}}catch(e){}`,
+          }}
         />
         {/* Rendered as plain <link> tags (matching how the static
             public/toronto/*.html pages load these same fonts) rather than
