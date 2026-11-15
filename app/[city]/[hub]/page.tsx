@@ -190,10 +190,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: url },
-    // A hub with nothing live keeps its status code and text but asks search
-    // engines not to index it; the links on it can still be followed. The
-    // sitemap omits the same hubs (lib/hub-live.ts).
-    ...(activeCount === 0 ? { robots: { index: false, follow: true } } : {}),
+    // A neighbourhood or venue hub with nothing live keeps its status code and
+    // text but asks search engines not to index it; the links on it can still
+    // be followed. The sitemap omits the same hubs (lib/hub-live.ts). Category
+    // hubs stay indexable even when empty: they are the evergreen pages for
+    // searches like free food toronto.
+    ...(activeCount === 0 && resolved.type === 'neighbourhood' ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: 'website',
       siteName: 'Freebies Near Me',

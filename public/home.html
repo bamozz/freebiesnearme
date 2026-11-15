@@ -805,6 +805,25 @@
     if (allSub && today + soon) allSub.textContent = nf.format(today + soon) + ' free events';
     if (today + soon){ $('statLiveNum').textContent = nf.format(today + soon); $('statLive').hidden = false; limitStats(); }
   }
+  // Listing pictures are shown only when the file is hosted by us or its host is on the
+  // cleared list in /image-hosts.json (one config file, also read by the city pages and the
+  // Next pages). image_url stays in the database; it is just not displayed. If the list
+  // cannot be read, no listing picture is shown.
+  var clearedHosts = [];
+  function loadImageHosts(){
+    return fetch('/image-hosts.json', { cache:'no-cache' })
+      .then(function(r){ return r.ok ? r.json() : { hosts:[] }; })
+      .then(function(j){ clearedHosts = (j.hosts || []).map(function(h){ return String(h).toLowerCase(); }); })
+      .catch(function(){});
+  }
+  function imageCleared(url){
+    if (!url) return false;
+    if (url.charAt(0) === '/' && url.charAt(1) !== '/') return true;
+    try {
+      var u = new URL(url);
+      return u.protocol === 'https:' && clearedHosts.indexOf(u.hostname.toLowerCase()) !== -1;
+    } catch (e) { return false; }
+  }
   function loadUpcoming(){
     // rows from yesterday on: enough to cover anything running today or later
     var since = new Date(Date.now() - 24*3600*1000).toISOString();
@@ -812,7 +831,14 @@
       + '&moderation_status=eq.approved&is_active=eq.true'
       + '&or=' + encodeURIComponent('(start_time.gte.' + since + ',end_time.gte.' + since + ')')
       + '&order=start_time.asc&limit=2000';
-    return sbGet(q).then(function(rows){
+    return Promise.all([sbGet(q), loadImageHosts()]).then(function(res){
+      var rows = res[0].map(function(r){
+        if (imageCleared(r.image_url)) return r;
+        var copy = {};
+        for (var key in r) copy[key] = r[key];
+        copy.image_url = null;
+        return copy;
+      });
       events = buildEvents(rows);
       CITIES.forEach(function(c){ counts[c.slug] = { today:0, soon:0 }; });
       events.forEach(function(ev){ counts[ev.city.slug][ev.status]++; });
@@ -1093,7 +1119,10 @@
       return e;
     }
     var free = take(pool.filter(function(e){ return e.image_url && e.description && /free/i.test(e.description) && e.status === 'today'; }))
-      || take(pool.filter(function(e){ return e.image_url && e.description; }));
+      || take(pool.filter(function(e){ return e.image_url && e.description; }))
+      // no listing has a cleared picture: the card still shows, without one
+      || take(pool.filter(function(e){ return e.description && /free/i.test(e.description); }))
+      || take(pool.filter(function(e){ return e.description; }));
     var clock = take(pool.filter(function(e){ return e.status === 'soon' && ms(e.ref.start_time) - now <= 3*86400000; }))
       || take(pool.filter(function(e){ return e.status === 'soon'; }));
     var door = take(pool.filter(function(e){ return e.signup_url && typeof e.lat === 'number' && typeof e.lng === 'number'; }))

@@ -15,6 +15,9 @@ export type CityConfig = {
   name: string;
   // Province/state abbreviation used in postal-style addresses ("Toronto, ON").
   region: string;
+  // ISO country code and currency, used by the Event JSON-LD on the hub pages.
+  country: string;
+  currency: string;
   neighbourhoods: Neighbourhood[];
   // Curated subset linked from every page footer, kept short on purpose.
   popularSlugs: string[];
@@ -106,6 +109,8 @@ export const CITIES: Record<string, CityConfig> = {
     slug: 'toronto',
     name: 'Toronto',
     region: 'ON',
+    country: 'CA',
+    currency: 'CAD',
     primary: '#274490',
     primaryDark: '#1C3270',
     primaryText: '#274490',
@@ -125,6 +130,8 @@ export const CITIES: Record<string, CityConfig> = {
     slug: 'new-york',
     name: 'New York',
     region: 'NY',
+    country: 'US',
+    currency: 'USD',
     // NYC flag orange.
     primary: '#FF6600',
     primaryDark: '#CC5200',
