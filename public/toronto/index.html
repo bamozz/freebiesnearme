@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759" crossorigin="anonymous"></script>
+<meta name="google-adsense-account" content="ca-pub-2407639793416759">
+<script>try{if(/(?:^|;\s*)fbnm_ads=1(?:;|$)/.test(document.cookie)){var a=document.createElement('script');a.src='/ad-loader.js';a.async=true;document.head.appendChild(a);}}catch(e){}</script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SRH6EG57P0"></script>
@@ -2032,10 +2033,33 @@ function transformGroup(rows){
 // recomputeEventStatuses() below.
 let rawListingRows = [];
 
+// Listing pictures are shown only when the file is hosted by us or its host is
+// on the cleared list in /image-hosts.json (one config file, also read by the
+// Next pages). image_url stays in the database; it is just not displayed. If
+// the list cannot be read, no listing picture is shown.
+let CLEARED_IMAGE_HOSTS = [];
+async function loadImageHosts(){
+  try {
+    const res = await fetch('/image-hosts.json', { cache: 'no-cache' });
+    if (res.ok) CLEARED_IMAGE_HOSTS = ((await res.json()).hosts || []).map(h => String(h).toLowerCase());
+  } catch (e) {}
+}
+function imageCleared(url){
+  if (!url) return false;
+  if (url.charAt(0) === '/' && url.charAt(1) !== '/') return true;
+  try {
+    const u = new URL(url);
+    return u.protocol === 'https:' && CLEARED_IMAGE_HOSTS.indexOf(u.hostname.toLowerCase()) !== -1;
+  } catch (e) { return false; }
+}
+
 async function loadListings(){
-  const { data, error } = await sb.from('listings').select('*').eq('city_slug', 'toronto').eq('moderation_status', 'approved').eq('is_active', true);
+  const [{ data, error }] = await Promise.all([
+    sb.from('listings').select('*').eq('city_slug', 'toronto').eq('moderation_status', 'approved').eq('is_active', true),
+    loadImageHosts(),
+  ]);
   if (error) return false;
-  rawListingRows = data;
+  rawListingRows = data.map(r => imageCleared(r.image_url) ? r : Object.assign({}, r, { image_url: null }));
   events = groupRows(rawListingRows).map(transformGroup);
   return true;
 }

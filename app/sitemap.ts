@@ -1,13 +1,17 @@
 import type { MetadataRoute } from 'next';
 import { createServerClient } from '@/lib/supabase';
 import { CITIES } from '@/lib/cities';
-import type { PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
+import { liveHubListings } from '@/lib/hub-live';
+import type { Listing } from '@/types/pseo_types';
 
 const BASE_URL = 'https://www.freebiesnearme.app';
 
-// Regenerated at most hourly rather than per-request - sitemaps don't need
-// per-request freshness, and this avoids hitting Supabase on every crawl.
-export const revalidate = 3600;
+// Built on every request, never from Next's route or data cache. The listings
+// read below used to sit in the data cache with the route's one hour
+// revalidate, and production kept serving the hub list from the last deploy
+// (Oct 30) instead of today's data. The sitemap is fetched a few times a day,
+// so one small query per request is cheap.
+export const dynamic = 'force-dynamic';
 
 // Core static pages use their real live paths (/toronto, /toronto/map,
 // /toronto/submit). The front page at / is the city picker and a real page in
@@ -40,38 +44,48 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const supabase = createServerClient();
 
-    const [{ data: categoryStats, error: categoryError }, { data: neighbourhoodStats, error: neighbourhoodError }] =
-      await Promise.all([
-        supabase.from('pseo_category_stats').select('city_slug, category_slug, active_listing_count, latest_addition_at').returns<PseoCategoryStats[]>(),
-        supabase.from('pseo_neighbourhood_stats').select('city_slug, neighbourhood_slug, active_listing_count, latest_addition_at').returns<PseoNeighbourhoodStats[]>(),
-      ]);
+    // The rows the hub pages themselves read: approved and active, every city.
+    const { data, error } = await supabase
+      .from('listings')
+      .select('*')
+      .eq('is_active', true)
+      .eq('moderation_status', 'approved')
+      .returns<Listing[]>();
+    if (error) throw error;
 
-    if (categoryError) console.error('sitemap: pseo_category_stats fetch failed', categoryError);
-    if (neighbourhoodError) console.error('sitemap: pseo_neighbourhood_stats fetch failed', neighbourhoodError);
+    // One bucket per hub (category or neighbourhood), keyed by its URL path.
+    const hubs = new Map<string, Listing[]>();
+    const addToHub = (city: string, slug: string | null, row: Listing) => {
+      if (!slug) return;
+      const key = `${city}/${slug}`;
+      const rows = hubs.get(key);
+      if (rows) rows.push(row);
+      else hubs.set(key, [row]);
+    };
+    for (const row of data ?? []) {
+      if (!CITIES[row.city_slug]) continue;
+      addToHub(row.city_slug, row.category_slug, row);
+      if (row.neighbourhood_slug !== row.category_slug) addToHub(row.city_slug, row.neighbourhood_slug, row);
+    }
 
-    // A hub with zero currently-active listings renders as a bare empty
-    // state (see app/[city]/[hub]/page.tsx) - nothing there for a crawler
-    // to index, so it's left out of the sitemap rather than hardcoding
-    // which slugs to skip.
-    for (const row of categoryStats ?? []) {
-      if (!row.active_listing_count) continue;
-      routes.push({
-        url: `${BASE_URL}/${row.city_slug}/${row.category_slug}`,
-        lastModified: row.latest_addition_at ? new Date(row.latest_addition_at) : undefined,
+    // A hub goes in the sitemap only when its page would list at least one
+    // listing that has not wrapped up, using the same rule the page uses
+    // (lib/hub-live.ts). A hub with nothing live renders the empty state and
+    // is noindex, so it stays out. lastModified is the time the newest listing
+    // was added to that hub (listings.created_at), a real timestamp; there is
+    // no listing update time in the database.
+    const hubRoutes: MetadataRoute.Sitemap = [];
+    for (const [path, rows] of [...hubs.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+      if (liveHubListings(rows).length === 0) continue;
+      const newest = rows.reduce((max, row) => (row.created_at > max ? row.created_at : max), rows[0].created_at);
+      hubRoutes.push({
+        url: `${BASE_URL}/${path}`,
+        lastModified: newest ? new Date(newest) : undefined,
         changeFrequency: 'daily',
         priority: 0.8,
       });
     }
-
-    for (const row of neighbourhoodStats ?? []) {
-      if (!row.active_listing_count) continue;
-      routes.push({
-        url: `${BASE_URL}/${row.city_slug}/${row.neighbourhood_slug}`,
-        lastModified: row.latest_addition_at ? new Date(row.latest_addition_at) : undefined,
-        changeFrequency: 'daily',
-        priority: 0.8,
-      });
-    }
+    routes.push(...hubRoutes);
   } catch (err) {
     // Database unreachable, env vars missing, etc. - never let sitemap
     // generation fail the build or the route; fall back to static-only.

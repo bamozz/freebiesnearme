@@ -4,6 +4,7 @@ import { createServerClient } from '@/lib/supabase';
 import { CATEGORIES } from '@/lib/categories';
 import { getCity, popularNeighbourhoods } from '@/lib/cities';
 import { groupListings } from '@/lib/group-listings';
+import { withClearedImages } from '@/lib/image-hosts';
 import type { Listing } from '@/types/pseo_types';
 import SiteFooter from '@/app/components/SiteFooter';
 import CalendarGrid from './CalendarGrid';
@@ -55,7 +56,7 @@ export default async function CalendarPage({ params }: Props) {
     .order('start_time', { ascending: true })
     .returns<Listing[]>();
 
-  const items = groupListings(listings ?? []).filter((listing) => listing.groupStatus !== 'ended');
+  const items = groupListings(withClearedImages(listings ?? [])).filter((listing) => listing.groupStatus !== 'ended');
   const liveCount = items.filter((listing) => listing.groupStatus === 'live').length;
 
   return (
