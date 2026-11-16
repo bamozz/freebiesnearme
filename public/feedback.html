@@ -332,6 +332,7 @@
   // feedback is about, pre-filled from: ?city=, the page the visitor came
   // from, the last city they opened, then their time zone.
   const citySel = document.getElementById('citySel');
+  let photoRef = null;
   const CITY_SLUGS = ['toronto', 'new-york'];
   function guessCity(){
     const q = new URLSearchParams(location.search).get('city');
@@ -410,7 +411,7 @@
     const payload = {
       type: mode,
       listing_ref: mode === 'issue' ? (document.getElementById('listingRef').value || null) : null,
-      message: message,
+      message: photoRef ? message + '\n\nPhoto: ' + photoRef : message,
       correction: mode === 'issue' ? (document.getElementById('correctInfo').value || null) : null,
       contact: null,
       city_slug: citySel.value,
@@ -431,6 +432,20 @@
       citySel.value = guessCity();
     }
   });
+
+  // ?topic=photo comes from the "Report a photo" link on a picture. It opens the
+  // issue tab with the listing name filled in and remembers the picture's
+  // address, which is added to the message so the right photo can be found.
+  if (new URLSearchParams(location.search).get('topic') === 'photo'){
+    const q = new URLSearchParams(location.search);
+    const listingName = (q.get('listing') || '').slice(0, 120);
+    const photoAddr = (q.get('photo') || '').slice(0, 300);
+    if (listingName) document.getElementById('listingRef').value = listingName;
+    if (/^https?:\/\//i.test(photoAddr)) photoRef = photoAddr;
+    document.querySelector('.sub').textContent = 'Tell us which photo and what is wrong. If a photo is yours and you want it removed, we will remove it.';
+    whatIsWrongInput.placeholder = 'For example: this photo is mine and I want it removed.';
+    document.getElementById('correctInfo').closest('label').style.display = 'none';
+  }
 
   // ?mode=idea opens the "Share an idea" tab (used by the front page's "Suggest a city")
   if (new URLSearchParams(location.search).get('mode') === 'idea'){

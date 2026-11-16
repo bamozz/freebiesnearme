@@ -14,6 +14,35 @@ function countUrls(text) {
 // Cities the site runs in (keep in sync with lib/cities.ts).
 const ALLOWED_CITY_SLUGS = ['toronto', 'new-york'];
 
+// Photos. Nobody can write to the listing-photos bucket directly any more
+// (its insert policy is gone), so this endpoint, holding the service key, is
+// the only way a photo gets stored. The form compresses to a JPEG under
+// about 400 KB; 3 MB is a ceiling against a crafted request, and it matches
+// the bucket's own limit. The body is base64, so 3 MB of file is about 4 MB
+// of request, under the platform's 4.5 MB request cap.
+const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
+
+// Versions of the photo permission wording a visitor can have seen next to
+// the photo field. The version is stored with the listing as the consent
+// record, so only wording that was actually shown is accepted.
+const PHOTO_LICENCE_VERSIONS = ['v1'];
+
+// What the file really is, from its first bytes, never from the name or the
+// type the browser claims.
+function sniffImage(buf) {
+  if (buf.length < 12) return null;
+  if (buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF) {
+    return { type: 'image/jpeg', ext: 'jpg' };
+  }
+  if (buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]))) {
+    return { type: 'image/png', ext: 'png' };
+  }
+  if (buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') {
+    return { type: 'image/webp', ext: 'webp' };
+  }
+  return null;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -80,6 +109,56 @@ export default async function handler(req, res) {
     }
   }
 
+  // Photo (optional). Checked before anything is stored: the visitor must
+  // have seen the permission wording, the file must decode, stay under the
+  // size cap and really be a JPEG, PNG or WebP.
+  let photo = null;
+  if (body.photoBase64) {
+    if (body.photoLicenceConfirmed !== true || !PHOTO_LICENCE_VERSIONS.includes(body.photoLicenceVersion)) {
+      return res.status(400).json({ error: 'Please confirm you have the right to share your photo.', field: 'photo' });
+    }
+    const b64 = String(body.photoBase64);
+    if (b64.length > Math.ceil(MAX_PHOTO_BYTES / 3) * 4 + 4) {
+      return res.status(400).json({ error: 'That photo is too large. Try a smaller one.', field: 'photo' });
+    }
+    if (!/^[A-Za-z0-9+/]+={0,2}$/.test(b64)) {
+      return res.status(400).json({ error: 'We could not read that photo. Try a different one.', field: 'photo' });
+    }
+    const buf = Buffer.from(b64, 'base64');
+    if (!buf.length || buf.length > MAX_PHOTO_BYTES) {
+      return res.status(400).json({ error: 'That photo is too large. Try a smaller one.', field: 'photo' });
+    }
+    const kind = sniffImage(buf);
+    if (!kind) {
+      return res.status(400).json({ error: 'Please add a JPEG, PNG or WebP photo.', field: 'photo' });
+    }
+    photo = { buf, kind, licenceVersion: body.photoLicenceVersion };
+  }
+
+  let imageUrl = null;
+  let photoPath = null;
+  if (photo) {
+    photoPath = `${crypto.randomUUID()}.${photo.kind.ext}`;
+    const uploadRes = await fetch(
+      `${process.env.SUPABASE_URL}/storage/v1/object/listing-photos/${photoPath}`,
+      {
+        method: 'POST',
+        headers: {
+          apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+          'Content-Type': photo.kind.type,
+        },
+        body: photo.buf,
+      }
+    );
+    if (!uploadRes.ok) {
+      const errText = await uploadRes.text().catch(() => '');
+      console.error('Listing photo upload failed', { status: uploadRes.status, body: errText });
+      return res.status(500).json({ error: "Couldn't upload your photo. Try again in a moment." });
+    }
+    imageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/listing-photos/${photoPath}`;
+  }
+
   // Rebuild the payload from scratch server-side rather than trusting the
   // client for anything security- or moderation-relevant.
   const finalPayloads = payloads.map(p => ({
@@ -106,7 +185,16 @@ export default async function handler(req, res) {
     // silently never appearing on any pSEO page regardless of approval.
     is_active: true,
     sponsored: false,
-    image_url: p.image_url || null,
+    // Only a photo this endpoint stored itself. Any image_url the browser
+    // sends is ignored, so a listing can never point at someone else's
+    // picture or an arbitrary address.
+    image_url: imageUrl,
+    ...(imageUrl
+      ? {
+          image_licence_confirmed_at: new Date().toISOString(),
+          image_licence_text_version: photo.licenceVersion,
+        }
+      : {}),
     insta_url: p.insta_url || null,
     signup_url: p.signup_url || null,
     group_id: p.group_id || null,
@@ -130,6 +218,16 @@ export default async function handler(req, res) {
   if (!insertRes.ok) {
     const insertErrText = await insertRes.text().catch(() => '');
     console.error('Supabase insert failed', { status: insertRes.status, body: insertErrText });
+    // Don't leave a stored photo behind for a listing that was not saved.
+    if (photoPath) {
+      await fetch(`${process.env.SUPABASE_URL}/storage/v1/object/listing-photos/${photoPath}`, {
+        method: 'DELETE',
+        headers: {
+          apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+      }).catch(() => {});
+    }
     return res.status(500).json({ error: 'Something went wrong submitting your listing. Please try again.' });
   }
 

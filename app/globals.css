@@ -258,6 +258,12 @@ footer p{font-size:12px;color:var(--muted);margin:0;}
   text-decoration:none;cursor:pointer;
 }
 .lightbox-insta-badge.show{display:inline-flex;}
+.lightbox-report{
+  position:absolute;bottom:14px;left:14px;background:rgba(10,12,14,0.72);backdrop-filter:blur(4px);color:#fff;
+  padding:8px 12px;border-radius:20px;font-size:12px;font-weight:600;line-height:1.2;
+  text-decoration:none;cursor:pointer;
+}
+.lightbox-report:hover{background:rgba(10,12,14,0.9);}
 .lightbox-insta-badge svg{width:24px;height:24px;flex-shrink:0;}
 .lightbox-close{
   position:absolute;top:18px;right:22px;color:#fff;font-size:28px;font-weight:400;

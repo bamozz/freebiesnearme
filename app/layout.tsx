@@ -89,6 +89,9 @@ gtag('config', 'G-SRH6EG57P0');`}
               </svg>
               <span id="lightboxInstaHandle"></span>
             </a>
+            <a className="lightbox-report" id="lightboxReport" href="/feedback">
+              Report a photo
+            </a>
           </div>
         </div>
         <script
@@ -113,9 +116,17 @@ gtag('config', 'G-SRH6EG57P0');`}
     var lightboxImgEl = document.getElementById('lightboxImg');
     var lightboxInstaBadge = document.getElementById('lightboxInstaBadge');
     var lightboxInstaHandle = document.getElementById('lightboxInstaHandle');
+    var lightboxReportEl = document.getElementById('lightboxReport');
     if (!lightboxEl) return;
-    function openLightbox(url, instaUrl){
+    // Report a photo: opens the feedback form on the issue tab with the
+    // listing name and the picture's address filled in.
+    function reportPhotoHref(url, listingRef){
+      var city = location.pathname.split('/')[1] || '';
+      return '/feedback?city=' + encodeURIComponent(city) + '&mode=issue&topic=photo&listing=' + encodeURIComponent(String(listingRef || '').slice(0, 120)) + '&photo=' + encodeURIComponent(String(url || '').slice(0, 300));
+    }
+    function openLightbox(url, instaUrl, listingRef){
       lightboxImgEl.src = url;
+      if (lightboxReportEl) lightboxReportEl.href = reportPhotoHref(url, listingRef);
       var insta = instaMeta(instaUrl);
       lightboxImgEl.style.cursor = insta ? 'pointer' : 'default';
       lightboxImgEl.onclick = insta ? function(){ window.open(insta.url, '_blank', 'noopener'); } : null;
@@ -139,7 +150,9 @@ gtag('config', 'G-SRH6EG57P0');`}
       var thumb = e.target.closest && e.target.closest('.card-media');
       if (thumb && thumb.dataset.image){
         e.stopPropagation();
-        openLightbox(thumb.dataset.image, thumb.dataset.insta || null);
+        var card = thumb.closest('.card');
+        var brandEl = card && card.querySelector('.card-brand');
+        openLightbox(thumb.dataset.image, thumb.dataset.insta || null, brandEl ? brandEl.textContent : '');
       }
     });
     lightboxEl.addEventListener('click', function(e){

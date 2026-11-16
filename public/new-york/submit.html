@@ -205,6 +205,7 @@
     font-size:12px;color:var(--muted);background:var(--paper-alt);border:1.5px dashed #D6D1BF;
     border-radius:8px;padding:10px 12px;margin-top:4px;
   }
+  .note a{color:var(--city-primary-text);text-decoration:underline;font-weight:600;}
   .result{
     margin-top:18px;padding:14px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none;
   }
@@ -358,6 +359,7 @@
     <label class="optional">Add a photo
       <div id="photoFieldWrap"><input type="file" accept="image/*" id="photoInput"></div>
     </label>
+    <div class="note" id="photoNote">By adding a photo you confirm that you took it or have the right to share it, and that anyone clearly shown is fine with it. You let Freebies Near Me show it with your listing, resize or crop it, and keep it while the listing is live. <a href="/feedback?city=new-york">Tell us</a> if you want it removed and we will remove it.</div>
 
     <label class="optional">Link your Instagram story/post
       <input type="text" id="instaUrl" placeholder="https://instagram.com/stories/...">
@@ -495,6 +497,10 @@
         }
         try {
           const blob = await compressImage(file);
+          if (blob.size > 3 * 1024 * 1024){
+            alert('That photo is too large. Try a smaller one.');
+            return;
+          }
           pendingPhoto = {blob, previewUrl: URL.createObjectURL(blob)};
           renderPhotoField();
         } catch (err){
@@ -860,18 +866,24 @@
     btn.disabled = true;
     btn.textContent = 'Submitting...';
 
-    let imageUrl = null;
+    // The photo goes to our server with the rest of the form (the server
+    // checks it and stores it); the browser no longer writes to storage.
+    let photoBase64 = null;
     if (pendingPhoto){
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
-      const { error: uploadError } = await sb.storage.from('listing-photos').upload(path, pendingPhoto.blob, {contentType: 'image/jpeg'});
-      if (uploadError){
+      try {
+        photoBase64 = await new Promise((resolve, reject) => {
+          const fr = new FileReader();
+          fr.onerror = () => reject(new Error('Could not read photo'));
+          fr.onload = () => resolve(String(fr.result).split(',')[1] || '');
+          fr.readAsDataURL(pendingPhoto.blob);
+        });
+      } catch (err){
         btn.disabled = false;
         btn.textContent = 'Submit for review';
         resultEl.className = 'result err';
-        resultEl.textContent = "Couldn't upload your photo. Try again in a moment.";
+        resultEl.textContent = "Couldn't read your photo. Try a different one.";
         return;
       }
-      imageUrl = sb.storage.from('listing-photos').getPublicUrl(path).data.publicUrl;
     }
 
     const instaUrlVal = document.getElementById('instaUrl').value.trim() || null;
@@ -894,7 +906,6 @@
       submitted_by: mode,
       submitter_contact: document.getElementById('contact').value || null,
       moderation_status: 'pending',
-      image_url: imageUrl,
       insta_url: instaUrlVal,
       signup_url: signupUrlVal,
       city_slug: 'new-york',
@@ -923,6 +934,7 @@
           company: document.getElementById('company').value,
           turnstileToken,
           payloads,
+          ...(photoBase64 ? {photoBase64, photoLicenceConfirmed: true, photoLicenceVersion: 'v1'} : {}),
         }),
       });
       json = await res.json();

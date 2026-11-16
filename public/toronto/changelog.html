@@ -271,6 +271,21 @@
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
     {
+      date: 'November 16, 2026',
+      emoji: '\u{1F4F7}',
+      title: 'Safer photo uploads, and a way to report a photo',
+      blurb: "Photos added with a listing are now checked before they are stored, and any photo on the site can be reported in one tap.",
+      sections: [
+        { heading: 'New', tone: 'new', emoji: '\u{1F195}', items: [
+          { label: 'Report a photo', text: 'Open any picture and tap Report a photo. It opens the feedback form with the listing already filled in. If a photo is yours and you want it removed, tell us and we will remove it.' },
+        ]},
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Adding a photo', text: 'The submit form now says plainly what you are agreeing to when you add a photo: that it is yours to share, and that we may show it with your listing while the listing is live.' },
+          { label: 'Photo checks', text: 'Photos are checked on our side before they are saved. Only JPEG, PNG and WebP pictures under 3 MB are accepted, and every listing is still reviewed before it goes live.' },
+        ]},
+      ],
+    },
+    {
       date: 'November 15, 2026',
       emoji: '\u{1F5BC}',
       title: 'Listing pictures now come from sources we have cleared',
