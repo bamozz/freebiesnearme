@@ -24,8 +24,11 @@ const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
 
 // Versions of the photo permission wording a visitor can have seen next to
 // the photo field. The version is stored with the listing as the consent
-// record, so only wording that was actually shown is accepted.
-const PHOTO_LICENCE_VERSIONS = ['v1'];
+// record, so only wording that was actually shown is accepted. Only the
+// current wording is accepted for a new upload: v2 says the photo is kept
+// with the listing after it ends, which is what the site really does. (v1
+// said "while the listing is live" and was never recorded on any listing.)
+const PHOTO_LICENCE_VERSIONS = ['v2'];
 
 // What the file really is, from its first bytes, never from the name or the
 // type the browser claims.
@@ -114,8 +117,14 @@ export default async function handler(req, res) {
   // size cap and really be a JPEG, PNG or WebP.
   let photo = null;
   if (body.photoBase64) {
-    if (body.photoLicenceConfirmed !== true || !PHOTO_LICENCE_VERSIONS.includes(body.photoLicenceVersion)) {
+    if (body.photoLicenceConfirmed !== true) {
       return res.status(400).json({ error: 'Please confirm you have the right to share your photo.', field: 'photo' });
+    }
+    if (!PHOTO_LICENCE_VERSIONS.includes(body.photoLicenceVersion)) {
+      // A page left open from before the wording changed: the visitor has not
+      // seen the current text, so ask for a reload instead of recording consent
+      // to wording they did not read.
+      return res.status(400).json({ error: 'The photo permission text has changed. Please reload the page and try again.', field: 'photo' });
     }
     const b64 = String(body.photoBase64);
     if (b64.length > Math.ceil(MAX_PHOTO_BYTES / 3) * 4 + 4) {

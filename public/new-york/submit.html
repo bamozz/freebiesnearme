@@ -359,7 +359,7 @@
     <label class="optional">Add a photo
       <div id="photoFieldWrap"><input type="file" accept="image/*" id="photoInput"></div>
     </label>
-    <div class="note" id="photoNote">By adding a photo you confirm that you took it or have the right to share it, and that anyone clearly shown is fine with it. You let Freebies Near Me show it with your listing, resize or crop it, and keep it while the listing is live. <a href="/feedback?city=new-york">Tell us</a> if you want it removed and we will remove it.</div>
+    <div class="note" id="photoNote">By adding a photo you confirm that you took it or have the right to share it, and that anyone clearly shown is fine with it. You let Freebies Near Me show it with your listing, resize or crop it, and keep it with the listing, including after the listing ends, until you ask us to remove it. <a href="/feedback?city=new-york">Tell us</a> if you want it removed and we will remove it.</div>
 
     <label class="optional">Link your Instagram story/post
       <input type="text" id="instaUrl" placeholder="https://instagram.com/stories/...">
@@ -934,7 +934,7 @@
           company: document.getElementById('company').value,
           turnstileToken,
           payloads,
-          ...(photoBase64 ? {photoBase64, photoLicenceConfirmed: true, photoLicenceVersion: 'v1'} : {}),
+          ...(photoBase64 ? {photoBase64, photoLicenceConfirmed: true, photoLicenceVersion: 'v2'} : {}),
         }),
       });
       json = await res.json();
