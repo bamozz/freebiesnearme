@@ -26,7 +26,7 @@ export default function SiteFooter({
           <a className="feedback-link" href="/terms">Terms</a>
           <a className="feedback-link" href="/">All cities</a>
         </div>
-        <p>Listings shown are reviewed and confirmed by the Freebies Near Me team.</p>
+        <p>Every listing is checked before it goes live.</p>
         <div className="footer-hubs">
           <p>
             <span>Categories:</span>{' '}

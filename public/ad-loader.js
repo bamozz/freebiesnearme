@@ -25,14 +25,22 @@
   // Turned off: Google's script is not requested and nothing is shown.
   if (hasCookie(OFF)) return;
 
-  var s = document.createElement('script');
-  s.async = true;
-  s.crossOrigin = 'anonymous';
-  s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759';
-  document.head.appendChild(s);
-
-  // First visit, or no choice made yet: say what the ads do and offer the opt out.
-  if (!hasCookie(SEEN)) showNotice();
+  // First visit, or no choice made yet: draw the notice first, then request
+  // Google's script, so the visitor can see what the ads do before anything
+  // is sent to Google. The script is not held back until a click.
+  function start() {
+    if (!hasCookie(SEEN)) showNotice();
+    loadGoogle();
+  }
+  function loadGoogle() {
+    var s = document.createElement('script');
+    s.async = true;
+    s.crossOrigin = 'anonymous';
+    s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2407639793416759';
+    document.head.appendChild(s);
+  }
+  if (document.body) start();
+  else document.addEventListener('DOMContentLoaded', start);
 
   function link(href, text) {
     var a = document.createElement('a');
@@ -44,10 +52,6 @@
   }
 
   function showNotice() {
-    if (!document.body) {
-      document.addEventListener('DOMContentLoaded', showNotice);
-      return;
-    }
     if (document.getElementById('fnmAdNotice')) return;
 
     var css = document.createElement('style');
@@ -83,7 +87,7 @@
     p2.appendChild(link('https://youradchoices.ca/', 'youradchoices.ca'));
     p2.appendChild(document.createTextNode(' (Canada) or '));
     p2.appendChild(link('https://www.aboutads.info/', 'aboutads.info'));
-    p2.appendChild(document.createTextNode(' (United States). Or turn Google ads off here and nothing from Google loads for you. '));
+    p2.appendChild(document.createTextNode(' (United States). Or turn Google ads off here and Google\'s advertising script will not load for you. '));
     var priv = document.createElement('a');
     priv.href = '/privacy';
     priv.textContent = 'Privacy policy';

@@ -672,7 +672,7 @@
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>
     </div>
-    <p class="sf-note">Every listing is reviewed and confirmed by the Freebies Near Me team.</p>
+    <p class="sf-note">Every listing is checked before it goes live.</p>
   </div>
 </footer>
 
@@ -1146,7 +1146,7 @@
     } else put('wvClock', '');
     // 2. actually free: a full card, plus the sentence from the live footers
     put('wvFree', free ? cardHTML(free, { media:true, rating:true, description:true, actions:true, report:'closed' })
-      + '<div class="live-note">Listings shown are reviewed and confirmed by the Freebies Near Me team.</div>' : '', free);
+      + '<div class="live-note">Every listing is checked before it goes live.</div>' : '', free);
     // 3. from map to door: the map and the card's directions row
     doorEvent = door || null;
     put('wvDoor', door ? '<div class="door-views"><div class="map-box" id="wvMap"></div>' + calendarHTML(door.city) + '</div>'
