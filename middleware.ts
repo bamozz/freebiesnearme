@@ -6,13 +6,16 @@ import type { NextRequest } from 'next/server';
 // only the real domain (freebiesnearme.app) should show up in results.
 const isProduction = process.env.VERCEL_ENV === 'production';
 
-// Ads are shown to visitors in Canada and the United States only. The site is
-// behind Cloudflare, which adds the visitor's real country in the CF-IPCountry
-// request header (Vercel's own country header would show the Cloudflare edge
-// location instead). Every page carries a small inline snippet that adds
-// /ad-loader.js (which loads AdSense) only when the fbnm_ads cookie is set, so
-// other countries never get the AdSense address in their HTML. A missing or
-// unknown country (header absent, "XX", "T1") sets no cookie and means no ads.
+// Ads are shown to visitors in Canada (outside Quebec) and the United States
+// only. The site is behind Cloudflare, which adds the visitor's real country in
+// the CF-IPCountry request header (Vercel's own country header would show the
+// Cloudflare edge location instead) and, once its "Add visitor location
+// headers" managed transform is on, the region in CF-Region-Code. Every page
+// carries a small inline snippet that adds /ad-loader.js (which loads AdSense
+// and shows the ad notice with its opt out) only when the fbnm_ads cookie is
+// set, so other countries never get the AdSense address in their HTML. A
+// missing or unknown country (header absent, "XX", "T1") sets no cookie and
+// means no ads; so does a Canadian visit whose region is missing or Quebec.
 const AD_COUNTRIES = new Set(['CA', 'US']);
 const AD_COOKIE = 'fbnm_ads';
 
@@ -31,7 +34,16 @@ export function middleware(request: NextRequest) {
   // Only page requests carry the cookie (not images, scripts or the manifest).
   if ((request.headers.get('accept') || '').includes('text/html')) {
     const country = (request.headers.get('cf-ipcountry') || '').toUpperCase();
-    if (AD_COUNTRIES.has(country)) {
+    // Quebec is left out of the ad script. In Canada the region has to be
+    // known to be somewhere else: a missing region (the Cloudflare visitor
+    // location headers are not switched on) takes the safe side and sets no
+    // cookie, so no ads. The United States needs no region.
+    const regionCode = (request.headers.get('cf-region-code') || '').toUpperCase();
+    const regionName = (request.headers.get('cf-region') || '').toLowerCase();
+    const inQuebec = regionCode === 'QC' || regionName === 'quebec' || regionName === 'québec';
+    const adsAllowed =
+      country === 'US' || (country === 'CA' && regionCode !== '' && !inQuebec);
+    if (AD_COUNTRIES.has(country) && adsAllowed) {
       // One hour, so a visitor who leaves the two countries stops getting ads soon.
       response.cookies.set(AD_COOKIE, '1', { path: '/', maxAge: 3600, sameSite: 'lax', secure: true });
     } else if (request.cookies.has(AD_COOKIE)) {
