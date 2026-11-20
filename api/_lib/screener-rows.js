@@ -217,6 +217,15 @@ export function validateRow(input, now = new Date()) {
   if (imageFit && !IMAGE_FITS.includes(imageFit)) {
     errors.push('image_fit must be "contain" (posters, logos, portrait images) or left out (photos)');
   }
+  // The licence the source page states and the creator it names, kept with the
+  // picture. Both are optional here; they are saved only with an image_url.
+  const imageLicence = text(p.image_licence);
+  const imageAuthor = text(p.image_author);
+  if ((imageLicence || imageAuthor) && !imageUrl) {
+    errors.push('image_licence and image_author need an image_url');
+  }
+  if (imageLicence.length > 200) errors.push('image_licence must be 200 characters or fewer');
+  if (imageAuthor.length > 200) errors.push('image_author must be 200 characters or fewer');
 
   if (errors.length) return { errors };
 
@@ -241,6 +250,8 @@ export function validateRow(input, now = new Date()) {
       image_url: imageUrl || null,
       image_source: imageUrl ? imageSource : null,
       image_fit: imageUrl && imageFit ? imageFit : null,
+      image_licence: imageUrl && imageLicence ? imageLicence : null,
+      image_author: imageUrl && imageAuthor ? imageAuthor : null,
       insta_url: null,
       signup_url: p.signup_url ? String(p.signup_url).trim() : null,
       city_slug: p.city_slug,

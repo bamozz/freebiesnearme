@@ -10,12 +10,16 @@
 //   { "rows": [ {brand, category, neighbourhood, address, lat, lng, what,
 //                description, start_time, end_time, total_count, signup_url,
 //                city_slug, neighbourhood_slug,
-//                image_url, image_source, image_fit}, ... ],
+//                image_url, image_source, image_fit,
+//                image_licence, image_author}, ... ],
 //     "dryRun": true }   // optional: validate and de-duplicate, insert nothing
 //
 // Every listing should have a picture: image_url is the image on the
 // organizer's own page, image_source the page it came from, image_fit
 // "contain" for posters, logos and portrait images (leave it out for photos).
+// image_licence is the reuse licence the source page states (for example
+// "CC BY 4.0") and image_author the creator it names; both are saved with the
+// picture and left out when there is no image_url.
 // An image link that does not load as a picture rejects its row. A row with no
 // image is still inserted, and is listed under noImage so the routine can say so.
 //
