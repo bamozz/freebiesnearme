@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <meta name="google-adsense-account" content="ca-pub-2407639793416759">
-<script>try{if(/(?:^|;\s*)fbnm_ads=1(?:;|$)/.test(document.cookie)){var a=document.createElement('script');a.src='/ad-loader.js?v=2';a.async=true;document.head.appendChild(a);}}catch(e){}</script>
+<script>try{if(/(?:^|;\s*)fbnm_ads=1(?:;|$)/.test(document.cookie)){var a=document.createElement('script');a.src='/ad-loader.js?v=3';a.async=true;document.head.appendChild(a);}}catch(e){}</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SRH6EG57P0"></script>
 <script>
@@ -270,6 +270,18 @@
   // Newest first. Add a new object to the top of this array whenever you
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
+    {
+      date: 'November 24, 2026',
+      emoji: '\u{1F9F9}',
+      title: 'No ads and no ad notice for now',
+      blurb: "Google AdSense has not approved the site for ads yet, so the site is not showing any. The ad notice and Google's ad script are switched off until ads are approved.",
+      sections: [
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Ad notice', text: 'Removed for now, because no ads are shown.' },
+          { label: 'Google ad script', text: 'No longer loads, so nothing is sent to Google for ads.' },
+        ]},
+      ],
+    },
     {
       date: 'November 24, 2026',
       emoji: '\u{1F4CD}',

@@ -15,6 +15,12 @@
 //   fbnm_ads_off  the visitor turned Google ads off: nothing from Google loads
 //   fbnm_ads_seen the visitor has seen the notice and kept ads on
 (function () {
+  // Ads are switched off: AdSense has not approved the site yet, so nothing
+  // from Google is loaded and no notice is shown. To turn ads on again, set
+  // this to true and raise the ?v= number in the inline snippet on every page.
+  var ADS_ENABLED = false;
+  if (!ADS_ENABLED) return;
+
   var OFF = 'fbnm_ads_off';
   var SEEN = 'fbnm_ads_seen';
   var YEAR = 365 * 24 * 3600;
