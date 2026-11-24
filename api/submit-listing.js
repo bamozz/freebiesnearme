@@ -237,7 +237,10 @@ export default async function handler(req, res) {
     total_count: p.total_count || null,
     claimed_count: 0,
     submitted_by: p.submitted_by === 'hunter' ? 'hunter' : 'brand',
-    submitter_contact: p.submitter_contact || null,
+    // The visitor's email never goes into the listings table, which the public
+    // key can read. It is saved to listing_contacts below, which only this
+    // server can read.
+    submitter_contact: null,
     moderation_status: 'pending',
     // The pSEO hub pages (app/[city]/[hub]/page.tsx) filter listings on
     // is_active rather than moderation_status, so that a listing can be
@@ -273,7 +276,7 @@ export default async function handler(req, res) {
       apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
       Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
       'Content-Type': 'application/json',
-      Prefer: 'return=minimal',
+      Prefer: 'return=representation',
     },
     body: JSON.stringify(finalPayloads),
   });
@@ -292,6 +295,33 @@ export default async function handler(req, res) {
       }).catch(() => {});
     }
     return res.status(500).json({ error: 'Something went wrong submitting your listing. Please try again.' });
+  }
+
+  // Save each submitter's email next to the listing it belongs to, in the table
+  // only the service key can read. The rows come back in the order they were
+  // sent. A failure here is logged but does not undo the listing.
+  const savedRows = await insertRes.json().catch(() => []);
+  const contactRows = [];
+  payloads.forEach((p, i) => {
+    const contact = String(p.submitter_contact == null ? '' : p.submitter_contact).trim();
+    if (contact && savedRows[i] && savedRows[i].id) {
+      contactRows.push({ listing_id: savedRows[i].id, contact });
+    }
+  });
+  if (contactRows.length) {
+    const contactRes = await fetch(`${process.env.SUPABASE_URL}/rest/v1/listing_contacts`, {
+      method: 'POST',
+      headers: {
+        apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify(contactRows),
+    }).catch(() => null);
+    if (!contactRes || !contactRes.ok) {
+      console.error('listing_contacts insert failed', { status: contactRes && contactRes.status });
+    }
   }
 
   return res.status(200).json({ success: true, count: finalPayloads.length });

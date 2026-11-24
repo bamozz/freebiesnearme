@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import type { Metadata } from 'next';
-import { createServerClient } from '@/lib/supabase';
+import { createServerClient, LISTING_PUBLIC_COLUMNS } from '@/lib/supabase';
 import { buildHubItemList } from '@/lib/jsonld';
 import { formatTimeRange, hasClockTime, TORONTO_TZ } from '@/lib/datetime';
 import { CATEGORIES, CATEGORY_COLOR, CATEGORY_LABEL, CATEGORY_SLUG_LABEL } from '@/lib/categories';
@@ -171,7 +171,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const filterColumn = resolved.type === 'category' ? 'category_slug' : 'neighbourhood_slug';
   const { data: listings } = await supabase
     .from('listings')
-    .select('*')
+    .select(LISTING_PUBLIC_COLUMNS)
     .eq('city_slug', city)
     .eq(filterColumn, hub)
     .eq('is_active', true)
@@ -223,7 +223,7 @@ export default async function HubPage({ params }: Props) {
   const filterColumn = resolved.type === 'category' ? 'category_slug' : 'neighbourhood_slug';
   const { data: listings } = await supabase
     .from('listings')
-    .select('*')
+    .select(LISTING_PUBLIC_COLUMNS)
     .eq('city_slug', city)
     .eq(filterColumn, hub)
     .eq('is_active', true)

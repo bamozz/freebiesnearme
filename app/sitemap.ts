@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { createServerClient } from '@/lib/supabase';
+import { createServerClient, LISTING_PUBLIC_COLUMNS } from '@/lib/supabase';
 import { CATEGORIES } from '@/lib/categories';
 import { CITIES } from '@/lib/cities';
 import { liveHubListings } from '@/lib/hub-live';
@@ -49,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // The rows the hub pages themselves read: approved and active, every city.
     const { data, error } = await supabase
       .from('listings')
-      .select('*')
+      .select(LISTING_PUBLIC_COLUMNS)
       .eq('is_active', true)
       .eq('moderation_status', 'approved')
       .returns<Listing[]>();

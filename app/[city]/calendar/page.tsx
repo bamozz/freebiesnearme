@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { createServerClient } from '@/lib/supabase';
+import { createServerClient, LISTING_PUBLIC_COLUMNS } from '@/lib/supabase';
 import { CATEGORIES } from '@/lib/categories';
 import { getCity, popularNeighbourhoods } from '@/lib/cities';
 import { groupListings } from '@/lib/group-listings';
@@ -49,7 +49,7 @@ export default async function CalendarPage({ params }: Props) {
   const supabase = createServerClient();
   const { data: listings } = await supabase
     .from('listings')
-    .select('*')
+    .select(LISTING_PUBLIC_COLUMNS)
     .eq('city_slug', city.slug)
     .eq('is_active', true)
     .eq('moderation_status', 'approved')

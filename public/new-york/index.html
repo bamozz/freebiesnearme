@@ -1259,12 +1259,29 @@ async function loadRatings(){
 
 async function rateListing(id, stars){
   if (ratedByMe[id]) return;
-  const { data, error } = await sb.from('ratings').insert({listing_id: id, stars}).select('id').single();
-  if (error){
+  // A rating goes through the server, which checks Turnstile; the browser's own
+  // key can no longer write ratings.
+  let turnstileToken;
+  try {
+    turnstileToken = await getReportTurnstileToken();
+  } catch (e){
+    showToast((e && e.message) || 'Verification failed. Try again in a moment.', true);
+    return;
+  }
+  let data;
+  try {
+    const res = await fetch('/api/submit-rating', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({action: 'rate', listing_id: id, stars, turnstileToken}),
+    });
+    data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.success) throw new Error(data.error || 'failed');
+  } catch (e){
     showToast("Couldn't submit your rating. Try again in a moment.", true);
     return;
   }
-  ratedByMe[id] = {rowId: data.id, stars};
+  ratedByMe[id] = {rowId: data.id, token: data.token, stars};
   localStorage.setItem('ratedListings', JSON.stringify(ratedByMe));
   const s = ratingStats[id] || {sum:0, count:0};
   s.sum += stars;
@@ -1277,8 +1294,19 @@ async function rateListing(id, stars){
 async function unrateListing(id){
   const entry = ratedByMe[id];
   if (!entry) return;
-  const { data, error } = await sb.from('ratings').delete().eq('id', entry.rowId).select();
-  if (error || !data || !data.length){
+  let undone = false;
+  if (entry.token){
+    try {
+      const res = await fetch('/api/submit-rating', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'undo', id: entry.rowId, token: entry.token}),
+      });
+      const result = await res.json().catch(() => ({}));
+      undone = res.ok && !!result.success;
+    } catch (e){}
+  }
+  if (!undone){
     showToast("Couldn't undo your rating. Try again in a moment.", true);
     return;
   }
@@ -2088,9 +2116,12 @@ function imageCleared(url){
   } catch (e) { return false; }
 }
 
+// Public columns only: never select('*'), so a private column added later
+// (like the submitter's email) is never sent to browsers.
+const LISTING_COLUMNS = 'id,brand,category,neighbourhood,address,lat,lng,what,description,start_time,end_time,claimed_count,total_count,sponsored,submitted_by,moderation_status,created_at,image_url,image_source,image_fit,insta_url,group_id,signup_url,city_slug,category_slug,neighbourhood_slug,is_active';
 async function loadListings(){
   const [{ data, error }] = await Promise.all([
-    sb.from('listings').select('*').eq('city_slug', 'new-york').eq('moderation_status', 'approved').eq('is_active', true),
+    sb.from('listings').select(LISTING_COLUMNS).eq('city_slug', 'new-york').eq('moderation_status', 'approved').eq('is_active', true),
     loadImageHosts(),
   ]);
   if (error) return false;
@@ -2115,13 +2146,6 @@ function recomputeEventStatuses(){
 }
 setInterval(recomputeEventStatuses, 60000);
 
-async function ensureAnonSession(){
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) return;
-  const { error } = await sb.auth.signInAnonymously();
-  if (error) console.error('Anonymous sign-in failed:', error.message);
-}
-
 function renderLegend(){
   const wrap = document.getElementById('mapLegend');
   const itemsHtml = categories.filter(c => c.id !== 'all').map(c =>
@@ -2134,7 +2158,6 @@ function renderLegend(){
 async function init(){
   document.getElementById('list').innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">Loading giveaways...</div>';
   renderLegend();
-  await ensureAnonSession();
   const [listingsOk] = await Promise.all([loadListings(), loadRatings(), loadUpdates()]);
   if (!listingsOk){
     document.getElementById('list').innerHTML = '<div style="font-size:13.5px;color:#6B7280;padding:20px 4px;">Could not load listings right now.</div>';

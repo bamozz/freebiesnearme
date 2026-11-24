@@ -45,7 +45,7 @@
 <meta name="twitter:image" content="https://www.freebiesnearme.app/toronto/assets/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
   :root{
     color-scheme:light;
@@ -132,6 +132,7 @@
   }
   .submit-btn:disabled{opacity:0.5;cursor:default;}
 
+  .hp-field{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;}
   .result{
     margin-top:18px;padding:14px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none;
   }
@@ -260,6 +261,10 @@
   </div>
 
   <form id="feedbackForm">
+    <label class="hp-field" for="company" aria-hidden="true">Company
+      <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+    </label>
+
     <div class="field-group" id="issueFields">
       <label class="optional">Which listing?
         <input type="text" id="listingRef" placeholder="e.g. brand name or neighbourhood">
@@ -287,6 +292,8 @@
         <option value="other">Another city, or the whole site</option>
       </select>
     </label>
+
+    <div class="cf-turnstile" id="turnstileWidget" data-sitekey="0x4AAAAAAEKzPyqeHOiqJiic"></div>
 
     <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
     <div class="result" id="result"></div>
@@ -323,10 +330,6 @@
 
 
 <script>
-  // Fill these in from Supabase, Project Settings, API
-  const SUPABASE_URL = 'https://ulmmxjsvlzmxdvstabwa.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsbW14anN2bHpteGR2c3RhYndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUwMjcyNDYsImV4cCI6MjEwMDYwMzI0Nn0.LR3Sbk_faC_nARJmv_xp4LcopfoWkD9Jbdco9XhecmI';
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // The form lives at one address for every city, so it asks which city the
   // feedback is about, pre-filled from: ?city=, the page the visitor came
@@ -415,9 +418,30 @@
       correction: mode === 'issue' ? (document.getElementById('correctInfo').value || null) : null,
       contact: null,
       city_slug: citySel.value,
+      company: document.getElementById('company').value,
     };
 
-    const { error } = await sb.from('feedback').insert(payload);
+    // The note goes through the server, which checks the Turnstile answer and
+    // the length limits; the browser's own key can no longer write feedback.
+    const turnstileToken = typeof turnstile !== 'undefined' ? turnstile.getResponse() : '';
+    let error = null;
+    if (!turnstileToken){
+      error = { message: 'Please complete the verification challenge.' };
+    } else {
+      payload.turnstileToken = turnstileToken;
+      try {
+        const res = await fetch('/api/submit-feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.success) error = { message: data.error || 'Please try again.' };
+      } catch (e) {
+        error = { message: 'Please check your connection and try again.' };
+      }
+      if (typeof turnstile !== 'undefined') turnstile.reset();
+    }
 
     submitBtn.disabled = false;
     submitBtn.textContent = mode === 'issue' ? 'Submit report' : 'Share idea';

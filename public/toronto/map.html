@@ -884,8 +884,11 @@ function renderLegend(){
 // without a new network round trip - see recomputeEventStatuses() below.
 let rawListingRows = [];
 
+// Public columns only: never select('*'), so a private column added later
+// (like the submitter's email) is never sent to browsers.
+const LISTING_COLUMNS = 'id,brand,category,neighbourhood,address,lat,lng,what,description,start_time,end_time,claimed_count,total_count,sponsored,submitted_by,moderation_status,created_at,image_url,image_source,image_fit,insta_url,group_id,signup_url,city_slug,category_slug,neighbourhood_slug,is_active';
 async function loadListings(){
-  const { data, error } = await sb.from('listings').select('*').eq('city_slug', 'toronto').eq('moderation_status', 'approved').eq('is_active', true);
+  const { data, error } = await sb.from('listings').select(LISTING_COLUMNS).eq('city_slug', 'toronto').eq('moderation_status', 'approved').eq('is_active', true);
   if (error) return;
   rawListingRows = data;
   events = groupRows(rawListingRows).map(transformGroup).filter(ev => ev.status !== 'ended');

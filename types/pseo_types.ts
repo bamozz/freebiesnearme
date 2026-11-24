@@ -41,7 +41,6 @@ export interface Listing {
   total_count: number | null;
   sponsored: boolean;
   submitted_by: SubmittedBy;
-  submitter_contact: string | null;
   moderation_status: ModerationStatus;
   created_at: string; // ISO timestamptz
   image_url: string | null;

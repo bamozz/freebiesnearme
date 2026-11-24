@@ -9,8 +9,11 @@ import { createServiceRoleClient } from '@/lib/supabase';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  // Refuse outright when CRON_SECRET is missing: otherwise a request carrying
+  // the literal header "Bearer undefined" would pass the check.
+  const secret = process.env.CRON_SECRET;
   const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!secret || authHeader !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -20,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('deactivate_expired_listings RPC failed', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Internal error' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, ranAt: new Date().toISOString() });
