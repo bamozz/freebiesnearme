@@ -8,7 +8,7 @@ export default function PhotoCredit({ listing }: { listing: PictureRow }) {
   if (!credit) return null;
   return (
     <div className="photo-credit">
-      Photo: {credit.author},{' '}
+      {credit.label}: {credit.author},{' '}
       {credit.licenceUrl ? (
         <a href={credit.licenceUrl} target="_blank" rel="noopener">
           {credit.licence}

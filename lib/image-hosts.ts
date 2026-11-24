@@ -55,6 +55,7 @@ export function licenceUrl(name: string): string | null {
 }
 
 export type PhotoCreditParts = {
+  label: string;
   author: string;
   licence: string;
   licenceUrl: string | null;
@@ -67,7 +68,10 @@ export function creditFor(row: PictureRow): PhotoCreditParts | null {
   if (!hasLicenceRecord(row)) return null;
   const licence = (row.image_licence as string).trim();
   const needsChangeNote = /^CC[ -]BY/i.test(licence);
+  // Pictures from Wikimedia Commons show the venue, not the event, so the line says so.
+  const label = /^https:\/\/commons\.wikimedia\.org\//i.test(row.image_source ?? '') ? 'Venue photo' : 'Photo';
   return {
+    label,
     author: row.image_author as string,
     licence,
     licenceUrl: licenceUrl(licence),

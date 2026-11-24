@@ -144,7 +144,7 @@ gtag('config', 'G-SRH6EG57P0');`}
       el.textContent = '';
       if (!c || !SAFE_LICENCE.test(String(c.licence).trim())){ el.classList.remove('show'); return; }
       function stop(e){ e.stopPropagation(); }
-      el.appendChild(document.createTextNode('Photo: ' + c.author + ', '));
+      el.appendChild(document.createTextNode((/^https:\\/\\/commons\\.wikimedia\\.org\\//i.test(c.source || '') ? 'Venue photo' : 'Photo') + ': ' + c.author + ', '));
       var url = licenceUrl(c.licence);
       if (url){
         var a = document.createElement('a');

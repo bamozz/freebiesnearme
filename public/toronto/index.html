@@ -1007,7 +1007,11 @@ function creditHtml(r){
     ? '<a href="' + escHtml(url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + escHtml(lic) + '</a>'
     : escHtml(lic);
   const changed = /^CC[ -]BY/i.test(lic) ? (r.image_fit === 'contain' ? ' Resized to fit.' : ' Resized and cropped to fit.') : '';
-  return '<div class="photo-credit">Photo: ' + escHtml(r.image_author) + ', ' + licHtml + '. <a href="' + escHtml(r.image_source) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Source</a>.' + changed + '</div>';
+  return '<div class="photo-credit">' + creditLabel(r.image_source) + ': ' + escHtml(r.image_author) + ', ' + licHtml + '. <a href="' + escHtml(r.image_source) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Source</a>.' + changed + '</div>';
+}
+// Pictures from Wikimedia Commons show the venue, not the event, so the line says so.
+function creditLabel(source){
+  return /^https:\/\/commons\.wikimedia\.org\//i.test(source || '') ? 'Venue photo' : 'Photo';
 }
 function creditAttrs(r){
   return hasLicenceRecord(r) ? ' data-author="' + escHtml(r.image_author) + '" data-licence="' + escHtml(String(r.image_licence).trim()) + '"' : '';
@@ -1021,7 +1025,7 @@ function fillCredit(el, c){
   el.textContent = '';
   if (!c || !SAFE_LICENCE.test(String(c.licence).trim())){ el.classList.remove('show'); return; }
   const stop = (e) => e.stopPropagation();
-  el.appendChild(document.createTextNode('Photo: ' + c.author + ', '));
+  el.appendChild(document.createTextNode(creditLabel(c.source) + ': ' + c.author + ', '));
   const url = licenceUrl(c.licence);
   if (url){
     const a = document.createElement('a');
