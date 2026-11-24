@@ -19,6 +19,11 @@ const isProduction = process.env.VERCEL_ENV === 'production';
 const AD_COUNTRIES = new Set(['CA', 'US']);
 const AD_COOKIE = 'fbnm_ads';
 
+// Ads are switched off (AdSense has not approved the site), so the ad cookie is
+// not set and one a visitor still holds is removed. When ads return, set this to
+// true together with ADS_ENABLED in public/ad-loader.js.
+const ADS_ENABLED = false;
+
 export function proxy(request: NextRequest) {
   if (!isProduction && request.nextUrl.pathname === '/robots.txt') {
     return new NextResponse('User-agent: *\nDisallow: /\n', {
@@ -43,7 +48,7 @@ export function proxy(request: NextRequest) {
     const inQuebec = regionCode === 'QC' || regionName === 'quebec' || regionName === 'québec';
     const adsAllowed =
       country === 'US' || (country === 'CA' && regionCode !== '' && !inQuebec);
-    if (AD_COUNTRIES.has(country) && adsAllowed) {
+    if (ADS_ENABLED && AD_COUNTRIES.has(country) && adsAllowed) {
       // One hour, so a visitor who leaves the two countries stops getting ads soon.
       response.cookies.set(AD_COOKIE, '1', { path: '/', maxAge: 3600, sameSite: 'lax', secure: true });
     } else if (request.cookies.has(AD_COOKIE)) {
