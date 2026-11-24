@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <meta name="google-adsense-account" content="ca-pub-2407639793416759">
-<script>try{if(/(?:^|;\s*)fbnm_ads=1(?:;|$)/.test(document.cookie)){var a=document.createElement('script');a.src='/ad-loader.js';a.async=true;document.head.appendChild(a);}}catch(e){}</script>
+<script>try{if(/(?:^|;\s*)fbnm_ads=1(?:;|$)/.test(document.cookie)){var a=document.createElement('script');a.src='/ad-loader.js?v=2';a.async=true;document.head.appendChild(a);}}catch(e){}</script>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SRH6EG57P0"></script>
 <script>
@@ -270,6 +270,18 @@
   // Newest first. Add a new object to the top of this array whenever you
   // ship something worth telling people about - no build step needed.
   const CHANGELOG = [
+    {
+      date: 'November 24, 2026',
+      emoji: '\u{1F512}',
+      title: 'Clearer privacy details',
+      blurb: "The privacy page now names Cloudflare and says more plainly what happens when you turn Google ads off, and the submit form says how your email is used.",
+      sections: [
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Privacy page', text: 'Now names Cloudflare, which sits in front of the site and checks the forms, and says Google ads stay off from then on once you turn them off.' },
+          { label: 'Submit form', text: 'A short line under the email field says it is only used to follow up on your submission, with a link to the privacy page.' },
+        ]},
+      ],
+    },
     {
       date: 'November 24, 2026',
       emoji: '\u{1F4E2}',

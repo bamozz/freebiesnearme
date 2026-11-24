@@ -6,6 +6,10 @@
 // this file only when that cookie is present. Other visitors never fetch it
 // and never see the AdSense address in their HTML.
 //
+// Whenever this file changes, raise the ?v= number in the inline snippet that
+// adds it (every public/*.html page and app/layout.tsx). Browsers keep this
+// file for hours, and a new address makes them fetch the new text at once.
+//
 // Two more cookies belong to the visitor's own choice (both last a year, hold
 // no personal data, and are needed to remember the choice):
 //   fbnm_ads_off  the visitor turned Google ads off: nothing from Google loads
