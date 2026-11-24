@@ -46,6 +46,8 @@ export interface Listing {
   image_url: string | null;
   // page the image was sourced from (credit); null for user-uploaded images
   image_source: string | null;
+  image_licence: string | null;
+  image_author: string | null;
   // how the image is framed in the card: contain (whole image), left, or null (centred crop)
   image_fit: 'contain' | 'left' | null;
   insta_url: string | null;

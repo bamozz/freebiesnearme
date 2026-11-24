@@ -315,6 +315,11 @@
      wide banner art keeps its title. Anything else is a centred crop. */
   .card-media[data-fit="contain"] img{object-fit:contain;}
   .card-media[data-fit="left"] img{object-position:left center;}
+  .photo-credit{font-size:11px;line-height:1.35;color:#6B7280;margin:-4px 0 10px;}
+  .photo-credit a{color:inherit;text-decoration:underline;}
+  .lightbox-credit{display:none;position:absolute;left:14px;right:14px;bottom:58px;padding:8px 12px;border-radius:10px;background:rgba(10,12,14,0.72);backdrop-filter:blur(4px);color:#fff;font-size:12px;line-height:1.35;}
+  .lightbox-credit.show{display:block;}
+  .lightbox-credit a{color:#fff;text-decoration:underline;}
   .card-main.no-media{grid-template-columns:minmax(0,1fr);}
   .card-content{min-width:0;}
   .card-content .card-brand{margin:0 0 6px;}
@@ -732,6 +737,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M16.25 3A4.75 4.75 0 0 1 21 7.75v8.5A4.75 4.75 0 0 1 16.25 21H8a4.75 4.75 0 0 1-4.75-4.75v-8.5A4.75 4.75 0 0 1 8 3zM8 4.5a3.25 3.25 0 0 0-3.25 3.25v8.5A3.25 3.25 0 0 0 8 19.5h8.25a3.25 3.25 0 0 0 3.25-3.25v-8.5a3.25 3.25 0 0 0-3.25-3.25zm4 2.75a4.75 4.75 0 1 1 0 9.5a4.75 4.75 0 0 1 0-9.5m0 1.5a3.25 3.25 0 1 0 0 6.5a3.25 3.25 0 0 0 0-6.5M17 6a1 1 0 1 1 0 2a1 1 0 0 1 0-2"/></svg>
       <span id="lightboxInstaHandle"></span>
     </a>
+    <div class="lightbox-credit" id="lightboxCredit"></div>
     <a class="lightbox-report" id="lightboxReport" href="/feedback">Report a photo</a>
   </div>
 </div>
@@ -822,6 +828,7 @@ const lightboxImgEl = document.getElementById('lightboxImg');
 const lightboxInstaBadge = document.getElementById('lightboxInstaBadge');
 const lightboxInstaHandle = document.getElementById('lightboxInstaHandle');
 const lightboxReportEl = document.getElementById('lightboxReport');
+const lightboxCreditEl = document.getElementById('lightboxCredit');
 
 // "Report a photo" opens the feedback form on the issue tab with the listing
 // name and the picture's address filled in, so the right photo can be found
@@ -854,8 +861,9 @@ function instaMeta(value){
 // instaUrl is optional - when present, clicking the enlarged image inside
 // the lightbox opens the original Instagram story/post in a new tab, as
 // credit to the source, and a badge in the photo's corner shows the handle.
-function openLightbox(url, instaUrl, listingRef){
+function openLightbox(url, instaUrl, listingRef, credit){
   lightboxImgEl.src = url;
+  fillCredit(lightboxCreditEl, credit || null);
   lightboxReportEl.href = reportPhotoHref(url, listingRef);
   const insta = instaMeta(instaUrl);
   lightboxImgEl.style.cursor = insta ? 'pointer' : 'default';
@@ -875,6 +883,7 @@ function closeLightbox(){
   lightboxImgEl.src = '';
   lightboxImgEl.onclick = null;
   lightboxInstaBadge.classList.remove('show');
+  lightboxCreditEl.classList.remove('show');
 }
 lightboxEl.onclick = (e) => { if (e.target === lightboxEl) closeLightbox(); };
 document.getElementById('lightboxClose').onclick = closeLightbox;
@@ -971,6 +980,60 @@ function escHtml(s){
 function safeHref(u){
   const s = String(u == null ? '' : u).trim();
   return /^https?:\/\//i.test(s) ? escHtml(s) : '';
+}
+
+// A picture whose host is not cleared is shown only when its row records a reuse
+// licence we can name, the author and the source page, and the credit line below
+// is drawn with it. Anything else stays hidden. NC and ND licences never match.
+const SAFE_LICENCE = /^(?:CC[ -]BY(?:-SA)?[ -]\d\.\d|CC0(?:[ -]1\.0)?|public domain)$/i;
+function hasLicenceRecord(r){
+  return !!(r && /^https:\/\//i.test(r.image_url || '') && r.image_author && r.image_licence
+    && SAFE_LICENCE.test(String(r.image_licence).trim()) && /^https?:\/\//i.test(r.image_source || ''));
+}
+function licenceUrl(name){
+  const n = String(name).trim();
+  const m = /^CC[ -](BY(?:-SA)?)[ -](\d\.\d)$/i.exec(n);
+  if (m) return 'https://creativecommons.org/licenses/' + m[1].toLowerCase() + '/' + m[2] + '/';
+  if (/^CC0(?:[ -]1\.0)?$/i.test(n)) return 'https://creativecommons.org/publicdomain/zero/1.0/';
+  return null;
+}
+function creditHtml(r){
+  if (!hasLicenceRecord(r)) return '';
+  const lic = String(r.image_licence).trim();
+  const url = licenceUrl(lic);
+  const licHtml = url
+    ? '<a href="' + escHtml(url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' + escHtml(lic) + '</a>'
+    : escHtml(lic);
+  const changed = /^CC[ -]BY/i.test(lic) ? (r.image_fit === 'contain' ? ' Resized to fit.' : ' Resized and cropped to fit.') : '';
+  return '<div class="photo-credit">Photo: ' + escHtml(r.image_author) + ', ' + licHtml + '. <a href="' + escHtml(r.image_source) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Source</a>.' + changed + '</div>';
+}
+function creditAttrs(r){
+  return hasLicenceRecord(r) ? ' data-author="' + escHtml(r.image_author) + '" data-licence="' + escHtml(String(r.image_licence).trim()) + '"' : '';
+}
+// The lightbox draws the same line from the card's data attributes.
+function creditFromThumb(ds){
+  if (!ds.author || !ds.licence || !/^https?:\/\//i.test(ds.imageSource || '')) return null;
+  return { author: ds.author, licence: ds.licence, source: ds.imageSource };
+}
+function fillCredit(el, c){
+  el.textContent = '';
+  if (!c || !SAFE_LICENCE.test(String(c.licence).trim())){ el.classList.remove('show'); return; }
+  const stop = (e) => e.stopPropagation();
+  el.appendChild(document.createTextNode('Photo: ' + c.author + ', '));
+  const url = licenceUrl(c.licence);
+  if (url){
+    const a = document.createElement('a');
+    a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = c.licence; a.addEventListener('click', stop);
+    el.appendChild(a);
+  } else {
+    el.appendChild(document.createTextNode(c.licence));
+  }
+  el.appendChild(document.createTextNode('. '));
+  const s = document.createElement('a');
+  s.href = c.source; s.target = '_blank'; s.rel = 'noopener'; s.textContent = 'Source'; s.addEventListener('click', stop);
+  el.appendChild(s);
+  el.appendChild(document.createTextNode('.' + (/^CC[ -]BY/i.test(String(c.licence)) ? ' Resized to fit.' : '')));
+  el.classList.add('show');
 }
 
 function stripFreeWord(text){
@@ -1611,7 +1674,7 @@ function renderList(){
       ${ev.sponsored ? '<div class="sponsored-flag">Sponsored</div>' : ''}
       <div class="card-main${ev.image_url ? '' : ' no-media'}">
         ${ev.image_url
-          ? `<div class="card-media" data-image="${escHtml(ev.image_url)}" data-insta="${escHtml(ev.insta_url)}" data-image-source="${escHtml(ev.image_source)}" data-fit="${escHtml(ev.image_fit)}"${ev.image_fit === 'contain' ? ` style="background:${catColor[ev.cat]}1F"` : ''}><img src="${escHtml(ev.image_url)}" alt="${escHtml(buildImageAlt(ev))}" loading="lazy"></div>`
+          ? `<div class="card-media" data-image="${escHtml(ev.image_url)}" data-insta="${escHtml(ev.insta_url)}" data-image-source="${escHtml(ev.image_source)}" data-fit="${escHtml(ev.image_fit)}"${creditAttrs(ev)}${ev.image_fit === 'contain' ? ` style="background:${catColor[ev.cat]}1F"` : ''}><img src="${escHtml(ev.image_url)}" alt="${escHtml(buildImageAlt(ev))}" loading="lazy"></div>`
           : ''}
         <div class="card-content">
           <div class="card-top">
@@ -1627,6 +1690,7 @@ function renderList(){
           ${renderStars(ev)}
         </div>
       </div>
+      ${creditHtml(ev)}
       ${renderUpdateLine(ev)}
       ${renderUpdatePhotos(ev)}
       ${ev.description ? `<div class="card-description">${escHtml(ev.description)}</div>` : ''}
@@ -1643,7 +1707,7 @@ function renderList(){
     if (cardThumb){
       cardThumb.onclick = (e) => {
         e.stopPropagation();
-        openLightbox(cardThumb.dataset.image, cardThumb.dataset.insta || null, ev.brand);
+        openLightbox(cardThumb.dataset.image, cardThumb.dataset.insta || null, ev.brand, creditFromThumb(cardThumb.dataset));
       };
     }
 
@@ -2079,6 +2143,8 @@ function transformGroup(rows){
     status: statusFromWindows(rows),
     image_url: primary.image_url,
     image_source: primary.image_source,
+    image_licence: primary.image_licence,
+    image_author: primary.image_author,
     image_fit: primary.image_fit,
     insta_url: primary.insta_url,
     signup_url: primary.signup_url,
@@ -2112,14 +2178,14 @@ function imageCleared(url){
 
 // Public columns only: never select('*'), so a private column added later
 // (like the submitter's email) is never sent to browsers.
-const LISTING_COLUMNS = 'id,brand,category,neighbourhood,address,lat,lng,what,description,start_time,end_time,claimed_count,total_count,sponsored,submitted_by,moderation_status,created_at,image_url,image_source,image_fit,insta_url,group_id,signup_url,city_slug,category_slug,neighbourhood_slug,is_active';
+const LISTING_COLUMNS = 'id,brand,category,neighbourhood,address,lat,lng,what,description,start_time,end_time,claimed_count,total_count,sponsored,submitted_by,moderation_status,created_at,image_url,image_source,image_fit,insta_url,group_id,signup_url,city_slug,category_slug,neighbourhood_slug,is_active,image_licence,image_author';
 async function loadListings(){
   const [{ data, error }] = await Promise.all([
     sb.from('listings').select(LISTING_COLUMNS).eq('city_slug', 'toronto').eq('moderation_status', 'approved').eq('is_active', true),
     loadImageHosts(),
   ]);
   if (error) return false;
-  rawListingRows = data.map(r => imageCleared(r.image_url) ? r : Object.assign({}, r, { image_url: null }));
+  rawListingRows = data.map(r => (imageCleared(r.image_url) || hasLicenceRecord(r)) ? r : Object.assign({}, r, { image_url: null }));
   events = groupRows(rawListingRows).map(transformGroup);
   return true;
 }

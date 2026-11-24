@@ -89,6 +89,7 @@ gtag('config', 'G-SRH6EG57P0');`}
               </svg>
               <span id="lightboxInstaHandle"></span>
             </a>
+            <div className="lightbox-credit" id="lightboxCredit"></div>
             <a className="lightbox-report" id="lightboxReport" href="/feedback">
               Report a photo
             </a>
@@ -101,11 +102,12 @@ gtag('config', 'G-SRH6EG57P0');`}
   function instaMeta(value){
     if (!value) return null;
     var NON_PROFILE = {p:1, reel:1, reels:1, tv:1, stories:1, explore:1};
-    var match = value.match(/instagram\\.com\\/([^/?#]+)/i);
+    value = String(value).trim();
+    var match = value.match(/^(?:https?:\\/\\/)?(?:[a-z0-9-]+\\.)?instagram\\.com\\/([^/?#]+)/i);
     if (match){
       var segment = match[1];
       var isProfile = !NON_PROFILE[segment.toLowerCase()];
-      return { url: value, label: isProfile ? ('@' + segment) : null };
+      return { url: /^https?:\\/\\//i.test(value) ? value : 'https://' + value, label: isProfile ? ('@' + segment) : null };
     }
     var handle = value.replace(/^@/, '').trim();
     if (!handle) return null;
@@ -117,6 +119,7 @@ gtag('config', 'G-SRH6EG57P0');`}
     var lightboxInstaBadge = document.getElementById('lightboxInstaBadge');
     var lightboxInstaHandle = document.getElementById('lightboxInstaHandle');
     var lightboxReportEl = document.getElementById('lightboxReport');
+    var lightboxCreditEl = document.getElementById('lightboxCredit');
     if (!lightboxEl) return;
     // Report a photo: opens the feedback form on the issue tab with the
     // listing name and the picture's address filled in.
@@ -124,8 +127,42 @@ gtag('config', 'G-SRH6EG57P0');`}
       var city = location.pathname.split('/')[1] || '';
       return '/feedback?city=' + encodeURIComponent(city) + '&mode=issue&topic=photo&listing=' + encodeURIComponent(String(listingRef || '').slice(0, 120)) + '&photo=' + encodeURIComponent(String(url || '').slice(0, 300));
     }
-    function openLightbox(url, instaUrl, listingRef){
+    var SAFE_LICENCE = /^(?:CC[ -]BY(?:-SA)?[ -]\\d\\.\\d|CC0(?:[ -]1\\.0)?|public domain)$/i;
+    function licenceUrl(name){
+      var n = String(name).trim();
+      var m = /^CC[ -](BY(?:-SA)?)[ -](\\d\\.\\d)$/i.exec(n);
+      if (m) return 'https://creativecommons.org/licenses/' + m[1].toLowerCase() + '/' + m[2] + '/';
+      if (/^CC0(?:[ -]1\\.0)?$/i.test(n)) return 'https://creativecommons.org/publicdomain/zero/1.0/';
+      return null;
+    }
+    function creditFromThumb(ds){
+      if (!ds.author || !ds.licence || !/^https?:\\/\\//i.test(ds.imageSource || '')) return null;
+      return { author: ds.author, licence: ds.licence, source: ds.imageSource };
+    }
+    function fillCredit(el, c){
+      if (!el) return;
+      el.textContent = '';
+      if (!c || !SAFE_LICENCE.test(String(c.licence).trim())){ el.classList.remove('show'); return; }
+      function stop(e){ e.stopPropagation(); }
+      el.appendChild(document.createTextNode('Photo: ' + c.author + ', '));
+      var url = licenceUrl(c.licence);
+      if (url){
+        var a = document.createElement('a');
+        a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = c.licence; a.addEventListener('click', stop);
+        el.appendChild(a);
+      } else {
+        el.appendChild(document.createTextNode(c.licence));
+      }
+      el.appendChild(document.createTextNode('. '));
+      var s = document.createElement('a');
+      s.href = c.source; s.target = '_blank'; s.rel = 'noopener'; s.textContent = 'Source'; s.addEventListener('click', stop);
+      el.appendChild(s);
+      el.appendChild(document.createTextNode('.' + (/^CC[ -]BY/i.test(String(c.licence)) ? ' Resized to fit.' : '')));
+      el.classList.add('show');
+    }
+    function openLightbox(url, instaUrl, listingRef, credit){
       lightboxImgEl.src = url;
+      fillCredit(lightboxCreditEl, credit || null);
       if (lightboxReportEl) lightboxReportEl.href = reportPhotoHref(url, listingRef);
       var insta = instaMeta(instaUrl);
       lightboxImgEl.style.cursor = insta ? 'pointer' : 'default';
@@ -145,6 +182,7 @@ gtag('config', 'G-SRH6EG57P0');`}
       lightboxImgEl.src = '';
       lightboxImgEl.onclick = null;
       lightboxInstaBadge.classList.remove('show');
+      if (lightboxCreditEl) lightboxCreditEl.classList.remove('show');
     }
     document.addEventListener('click', function(e){
       var thumb = e.target.closest && e.target.closest('.card-media');
@@ -152,7 +190,7 @@ gtag('config', 'G-SRH6EG57P0');`}
         e.stopPropagation();
         var card = thumb.closest('.card');
         var brandEl = card && card.querySelector('.card-brand');
-        openLightbox(thumb.dataset.image, thumb.dataset.insta || null, brandEl ? brandEl.textContent : '');
+        openLightbox(thumb.dataset.image, thumb.dataset.insta || null, brandEl ? brandEl.textContent : '', creditFromThumb(thumb.dataset));
       }
     });
     lightboxEl.addEventListener('click', function(e){

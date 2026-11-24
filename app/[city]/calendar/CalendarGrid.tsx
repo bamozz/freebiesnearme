@@ -5,6 +5,8 @@ import { TORONTO_TZ, hasClockTime, torontoDateKey, formatTimeRange } from '@/lib
 import { CATEGORY_COLOR, CATEGORY_LABEL } from '@/lib/categories';
 import { stripFreeWord, directionsUrlForStop, buildImageAlt } from '@/lib/listing-display';
 import { cityForListing } from '@/lib/cities';
+import { creditFor } from '@/lib/image-hosts';
+import PhotoCredit from '@/app/components/PhotoCredit';
 import type { GroupedListing, ListingStop } from '@/lib/group-listings';
 
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -212,6 +214,8 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                                 data-insta={listing.insta_url ?? ''}
                                 data-image-source={listing.image_source ?? ''}
                                 data-fit={listing.image_fit ?? ''}
+                                data-author={creditFor(listing)?.author ?? ''}
+                                data-licence={creditFor(listing)?.licence ?? ''}
                                 style={listing.image_fit === 'contain' ? { background: `${CATEGORY_COLOR[listing.category]}1F` } : undefined}
                               >
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -226,6 +230,7 @@ export default function CalendarGrid({ listings }: { listings: GroupedListing[] 
                               <div className="cal-day-item-brand">{listing.brand}</div>
                             </div>
                           </div>
+                          <PhotoCredit listing={listing} />
                           {listing.description && <div className="card-description">{listing.description}</div>}
 
                           {stops.length > 1 ? (

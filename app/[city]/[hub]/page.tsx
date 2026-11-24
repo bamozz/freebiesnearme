@@ -18,7 +18,8 @@ import {
   icsFilename,
 } from '@/lib/listing-display';
 import { liveHubListings } from '@/lib/hub-live';
-import { withClearedImages } from '@/lib/image-hosts';
+import { creditFor, withClearedImages } from '@/lib/image-hosts';
+import PhotoCredit from '@/app/components/PhotoCredit';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
 
 
@@ -296,6 +297,8 @@ export default async function HubPage({ params }: Props) {
                         data-insta={listing.insta_url ?? ''}
                         data-image-source={listing.image_source ?? ''}
                         data-fit={listing.image_fit ?? ''}
+                        data-author={creditFor(listing)?.author ?? ''}
+                        data-licence={creditFor(listing)?.licence ?? ''}
                         style={listing.image_fit === 'contain' ? { background: `${CATEGORY_COLOR[listing.category]}1F` } : undefined}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -320,6 +323,7 @@ export default async function HubPage({ params }: Props) {
                       </div>
                     </div>
                   </div>
+                  <PhotoCredit listing={listing} />
                   {listing.description && <div className="card-description">{listing.description}</div>}
                   {listing.stops.length > 1 && (
                     <div className="card-stops">
