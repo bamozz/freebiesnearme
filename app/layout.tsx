@@ -127,7 +127,7 @@ gtag('config', 'G-SRH6EG57P0');`}
       var city = location.pathname.split('/')[1] || '';
       return '/feedback?city=' + encodeURIComponent(city) + '&mode=issue&topic=photo&listing=' + encodeURIComponent(String(listingRef || '').slice(0, 120)) + '&photo=' + encodeURIComponent(String(url || '').slice(0, 300));
     }
-    var SAFE_LICENCE = /^(?:CC[ -]BY(?:-SA)?[ -]\\d\\.\\d|CC0(?:[ -]1\\.0)?|public domain)$/i;
+    var SAFE_LICENCE = /^CC[ -]BY(?:-SA)?[ -]4\\.0$/i;
     function licenceUrl(name){
       var n = String(name).trim();
       var m = /^CC[ -](BY(?:-SA)?)[ -](\\d\\.\\d)$/i.exec(n);

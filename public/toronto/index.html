@@ -984,8 +984,10 @@ function safeHref(u){
 
 // A picture whose host is not cleared is shown only when its row records a reuse
 // licence we can name, the author and the source page, and the credit line below
-// is drawn with it. Anything else stays hidden. NC and ND licences never match.
-const SAFE_LICENCE = /^(?:CC[ -]BY(?:-SA)?[ -]\d\.\d|CC0(?:[ -]1\.0)?|public domain)$/i;
+// is drawn with it. Anything else stays hidden. Only the 4.0 licences are taken
+// (older versions need the title in a crop credit); NC and ND never match. A
+// CC BY-SA picture is shown whole, resized only, so it is not adapted.
+const SAFE_LICENCE = /^CC[ -]BY(?:-SA)?[ -]4\.0$/i;
 function hasLicenceRecord(r){
   return !!(r && /^https:\/\//i.test(r.image_url || '') && r.image_author && r.image_licence
     && SAFE_LICENCE.test(String(r.image_licence).trim()) && /^https?:\/\//i.test(r.image_source || ''));
@@ -2185,7 +2187,9 @@ async function loadListings(){
     loadImageHosts(),
   ]);
   if (error) return false;
-  rawListingRows = data.map(r => (imageCleared(r.image_url) || hasLicenceRecord(r)) ? r : Object.assign({}, r, { image_url: null }));
+  rawListingRows = data.map(r => imageCleared(r.image_url) ? r
+    : hasLicenceRecord(r) ? (/BY-SA/i.test(r.image_licence) ? Object.assign({}, r, { image_fit: 'contain' }) : r)
+    : Object.assign({}, r, { image_url: null }));
   events = groupRows(rawListingRows).map(transformGroup);
   return true;
 }

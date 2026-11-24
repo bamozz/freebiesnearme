@@ -28,9 +28,11 @@ export function isClearedImageUrl(url: string | null | undefined): boolean {
   }
 }
 
-// Licences we can name and credit. NC and ND licences never match, so a picture
-// under one stays hidden. Keep in step with SAFE_LICENCE in the static city pages.
-const SAFE_LICENCE = /^(?:CC[ -]BY(?:-SA)?[ -]\d\.\d|CC0(?:[ -]1\.0)?|public domain)$/i;
+// Licences we can name and credit: CC BY 4.0 and CC BY-SA 4.0 only (older
+// versions need the title in a crop credit; CC0 and public domain wait until the
+// source's own deed link is stored). NC and ND never match. Keep in step with
+// SAFE_LICENCE in the static city pages.
+const SAFE_LICENCE = /^CC[ -]BY(?:-SA)?[ -]4\.0$/i;
 
 export function hasLicenceRecord(row: PictureRow): boolean {
   return Boolean(
@@ -77,7 +79,12 @@ export function creditFor(row: PictureRow): PhotoCreditParts | null {
 // Returns the row unchanged when its picture may be shown, otherwise a copy
 // with the picture removed so every card and JSON-LD built from it omits it.
 export function withClearedImage<T extends PictureRow>(row: T): T {
-  return isClearedImageUrl(row.image_url) || hasLicenceRecord(row) ? row : { ...row, image_url: null };
+  if (isClearedImageUrl(row.image_url)) return row;
+  if (hasLicenceRecord(row)) {
+    // A CC BY-SA picture is shown whole, resized only, so it is not adapted.
+    return /BY-SA/i.test(row.image_licence ?? '') ? { ...row, image_fit: 'contain' } : row;
+  }
+  return { ...row, image_url: null };
 }
 
 export function withClearedImages<T extends PictureRow>(rows: T[]): T[] {
