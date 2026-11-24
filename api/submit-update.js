@@ -26,7 +26,17 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 // quality (compressImage() in index.html) before this ever gets sent, so a
 // legitimate photo should land well under this - this is a sanity ceiling
 // against a crafted/oversized request, not the primary size control.
-const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
+const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
+
+// What the file really is, from its first bytes, never from the type the
+// browser claims. The storage bucket allows the same three types.
+function sniffImage(buf) {
+  if (buf.length < 12) return null;
+  if (buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF) return { type: 'image/jpeg', ext: 'jpg' };
+  if (buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]))) return { type: 'image/png', ext: 'png' };
+  if (buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') return { type: 'image/webp', ext: 'webp' };
+  return null;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -91,16 +101,22 @@ export default async function handler(req, res) {
 
   let imageUrl = null;
   if (body.photoBase64) {
-    let buf;
-    try {
-      buf = Buffer.from(String(body.photoBase64), 'base64');
-    } catch (e) {
+    const b64 = String(body.photoBase64);
+    if (b64.length > Math.ceil(MAX_PHOTO_BYTES / 3) * 4 + 4) {
+      return res.status(400).json({ error: 'Photo is too large.' });
+    }
+    if (!/^[A-Za-z0-9+/]+={0,2}$/.test(b64)) {
       return res.status(400).json({ error: 'Invalid photo data.' });
     }
+    const buf = Buffer.from(b64, 'base64');
     if (!buf.length || buf.length > MAX_PHOTO_BYTES) {
       return res.status(400).json({ error: 'Photo is too large.' });
     }
-    const path = `${listingId}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+    const kind = sniffImage(buf);
+    if (!kind) {
+      return res.status(400).json({ error: 'Please add a JPEG, PNG or WebP photo.' });
+    }
+    const path = `${listingId}/${Date.now()}-${crypto.randomUUID()}.${kind.ext}`;
     const uploadRes = await fetch(
       `${process.env.SUPABASE_URL}/storage/v1/object/event-update-photos/${path}`,
       {
@@ -108,7 +124,7 @@ export default async function handler(req, res) {
         headers: {
           apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
           Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-          'Content-Type': 'image/jpeg',
+          'Content-Type': kind.type,
         },
         body: buf,
       }

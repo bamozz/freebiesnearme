@@ -19,7 +19,7 @@ const isProduction = process.env.VERCEL_ENV === 'production';
 const AD_COUNTRIES = new Set(['CA', 'US']);
 const AD_COOKIE = 'fbnm_ads';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (!isProduction && request.nextUrl.pathname === '/robots.txt') {
     return new NextResponse('User-agent: *\nDisallow: /\n', {
       headers: { 'Content-Type': 'text/plain' },
