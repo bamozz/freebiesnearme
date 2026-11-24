@@ -272,6 +272,19 @@
   const CHANGELOG = [
     {
       date: 'November 24, 2026',
+      emoji: '\u{1F4CD}',
+      title: 'The privacy page covers location and outside services',
+      blurb: "It now says the map asks your browser for your location (which stays in your browser), names the outside services that draw the page, and no longer says your browser is given an id.",
+      sections: [
+        { heading: 'Improved', tone: 'improved', emoji: '\u{2728}', items: [
+          { label: 'Location', text: 'Says the map asks your browser for your location to centre the map, and that we never receive or store it.' },
+          { label: 'Outside services', text: 'Names OpenFreeMap, Google Fonts, jsDelivr, unpkg and Cloudflare Web Analytics.' },
+          { label: 'No browser id', text: 'The site no longer gives your browser an id, and the privacy page now says so.' },
+        ]},
+      ],
+    },
+    {
+      date: 'November 24, 2026',
       emoji: '\u{1F512}',
       title: 'Clearer privacy details',
       blurb: "The privacy page now names Cloudflare and says more plainly what happens when you turn Google ads off, and the submit form says how your email is used.",
