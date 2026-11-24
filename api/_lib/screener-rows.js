@@ -144,6 +144,7 @@ export function validateRow(input, now = new Date()) {
   if (address.length < 8 || address.length > 200) errors.push('address must be a specific address of 8 to 200 characters');
 
   for (const [field, value] of [['brand', brand], ['what', what], ['description', description], ['neighbourhood', neighbourhood], ['address', address]]) {
+    if (/[<>]/.test(value)) errors.push(`${field} must not contain "<" or ">"`);
     if (value.includes('@')) errors.push(`${field} must not contain "@" or a social handle`);
     if (containsBlockedContent(value)) errors.push(`${field} contains language we do not allow`);
   }

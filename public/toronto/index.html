@@ -839,11 +839,12 @@ function reportPhotoHref(url, listingRef){
 const INSTA_NON_PROFILE_PATHS = new Set(['p', 'reel', 'reels', 'tv', 'stories', 'explore']);
 function instaMeta(value){
   if (!value) return null;
-  const match = value.match(/instagram\.com\/([^/?#]+)/i);
+  value = String(value).trim();
+  const match = value.match(/^(?:https?:\/\/)?(?:[a-z0-9-]+\.)?instagram\.com\/([^/?#]+)/i);
   if (match){
     const segment = match[1];
     const isProfile = !INSTA_NON_PROFILE_PATHS.has(segment.toLowerCase());
-    return { url: value, label: isProfile ? `@${segment}` : null };
+    return { url: /^https?:\/\//i.test(value) ? value : 'https://' + value, label: isProfile ? `@${segment}` : null };
   }
   const handle = value.replace(/^@/, '').trim();
   if (!handle) return null;
@@ -961,6 +962,17 @@ function directionsUrl(ev){
 // relying on every submitter to leave it out themselves. Exception: "Free
 // Flicks" is a proper name (the actual title of the screening series), not
 // filler, so it's left alone via a negative lookahead.
+// Everything that comes from the database goes into markup through escHtml,
+// and a link is only used when it is http(s), so a listing can never inject
+// script or markup into the page.
+function escHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+function safeHref(u){
+  const s = String(u == null ? '' : u).trim();
+  return /^https?:\/\//i.test(s) ? escHtml(s) : '';
+}
+
 function stripFreeWord(text){
   const stripped = (text || '').replace(/\bfree\b(?!\s+flicks\b)/gi, ' ').replace(/\s{2,}/g, ' ').trim();
   return stripped ? stripped.charAt(0).toUpperCase() + stripped.slice(1) : stripped;
@@ -987,12 +999,12 @@ function buildPopup(ev, stop){
     : ev.timeWindows;
   const dirUrl = stop ? directionsUrl({address: stop.address, location: stop.neighbourhood, lat: stop.lat, lng: stop.lng}) : directionsUrl(ev);
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
-  <div class="popup-brand">${ev.brand}</div>
-  <div style="font-size:12.5px;max-width:190px;">${stripFreeWord(ev.what)}</div>
-  ${ev.description ? `<div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.description}</div>` : ''}
-  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${place}</div>
+  <div class="popup-brand">${escHtml(ev.brand)}</div>
+  <div style="font-size:12.5px;max-width:190px;">${escHtml(stripFreeWord(ev.what))}</div>
+  ${ev.description ? `<div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${escHtml(ev.description)}</div>` : ''}
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${escHtml(place)}</div>
   <div style="font-size:11.5px;color:#6B7280;">${dateLines.map(d => `<div>${d}</div>`).join('')}</div>
-  <a class="popup-btn" href="${dirUrl}" target="_blank" rel="noopener">Get directions</a>`;
+  <a class="popup-btn" href="${escHtml(dirUrl)}" target="_blank" rel="noopener">Get directions</a>`;
 }
 
 let activePopup = null;
@@ -1060,20 +1072,21 @@ function renderCardActions(ev){
   const dir = '&#128205; Get directions';
   const links = [];
   const ghosts = [];
-  if (ev.signup_url){
-    links.push(`<a href="${ev.signup_url}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">${reg}</a>`);
+  const signupHref = safeHref(ev.signup_url);
+  if (signupHref){
+    links.push(`<a href="${signupHref}" target="_blank" rel="noopener" class="signup-link" onclick="event.stopPropagation()">${reg}</a>`);
   } else {
     ghosts.push(reg);
   }
   if (hasClockTime(new Date(ev.startTime))){
     links.push(isAndroidDevice()
-      ? `<a href="${buildGoogleCalendarUrl(ev)}" target="_blank" rel="noopener" class="calendar-link" onclick="event.stopPropagation()">${cal}</a>`
-      : `<a href="${buildCalendarUrl(ev)}" download="${icsFilename(ev)}" class="calendar-link" onclick="event.stopPropagation()">${cal}</a>`);
+      ? `<a href="${escHtml(buildGoogleCalendarUrl(ev))}" target="_blank" rel="noopener" class="calendar-link" onclick="event.stopPropagation()">${cal}</a>`
+      : `<a href="${escHtml(buildCalendarUrl(ev))}" download="${icsFilename(ev)}" class="calendar-link" onclick="event.stopPropagation()">${cal}</a>`);
   } else {
     ghosts.push(cal);
   }
   // Directions only appear on the card below 920px; wider screens use the map.
-  links.push(`<a class="mobile-directions-link" href="${directionsUrl(ev)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${dir}</a>`);
+  links.push(`<a class="mobile-directions-link" href="${escHtml(directionsUrl(ev))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${dir}</a>`);
   const ghostHtml = ghosts.map(l => `<span class="card-action-ghost" aria-hidden="true">${l}</span>`).join('')
     + `<span class="card-action-ghost dir-ghost" aria-hidden="true">${dir}</span>`;
   return `<div class="card-actions">${links.join('')}${ghostHtml}</div>`;
@@ -1088,12 +1101,12 @@ function renderMetaTimes(ev){
   // stop running on several dates (e.g. a book sale open Oct 1, 2, 3).
   if (ev.stops.length > 1 && ev.locations.length > 1){
     return ev.stops.map(s => {
-      const place = `<span>&#128205; ${placeLabel(s.address, s.neighbourhood)}</span>`;
+      const place = `<span>&#128205; ${escHtml(placeLabel(s.address, s.neighbourhood))}</span>`;
       const dates = s.windows.map(w => `<span>${formatTimeRange(w.start_time, w.end_time)}</span>`).join('');
       return place + dates;
     }).join('');
   }
-  return `<span>${placeLabel(ev.address, ev.location)}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
+  return `<span>${escHtml(placeLabel(ev.address, ev.location))}</span>` + ev.timeWindows.map(t => `<span>${t}</span>`).join('');
 }
 
 function availInfo(ev){
@@ -1156,10 +1169,10 @@ function renderUpdatePhotos(ev){
   photos.forEach(p => {
     const mine = reportedByMe[ev.id + ':' + p.type];
     const isMine = mine && mine.rowId === p.rowId;
-    html += `<div class="update-photo-thumb" data-image="${p.imageUrl}" data-type="${p.type}">
-      <img src="${p.imageUrl}" alt="Photo of ${ev.brand} shared by a visitor | freebiesnearme" loading="lazy">
-      ${p.instaUrl ? `<a class="update-photo-insta" href="${p.instaUrl}" target="_blank" rel="noopener" title="View Instagram story">IG</a>` : ''}
-      ${isMine ? `<span class="update-photo-remove" data-action="remove-update-photo" data-type="${p.type}" title="Remove your photo">&times;</span>` : ''}
+    html += `<div class="update-photo-thumb" data-image="${escHtml(p.imageUrl)}" data-type="${escHtml(p.type)}">
+      <img src="${escHtml(p.imageUrl)}" alt="Photo of ${escHtml(ev.brand)} shared by a visitor | freebiesnearme" loading="lazy">
+      ${safeHref(p.instaUrl) ? `<a class="update-photo-insta" href="${safeHref(p.instaUrl)}" target="_blank" rel="noopener" title="View Instagram story">IG</a>` : ''}
+      ${isMine ? `<span class="update-photo-remove" data-action="remove-update-photo" data-type="${escHtml(p.type)}" title="Remove your photo">&times;</span>` : ''}
     </div>`;
   });
   html += '</div><div class="update-disclaimer">Photos shared by users, not verified by our team</div>';
@@ -1176,7 +1189,7 @@ function renderStars(ev){
   }
   const countText = stats.count ? stats.count + (stats.count===1 ? ' rating' : ' ratings') : 'Be the first to rate';
   const undoLink = rated ? ' <span class="undo-link" data-action="undo-rating">Undo</span>' : '';
-  return `<div class="rating-row${rated ? ' locked' : ''}" data-id="${ev.id}"><span class="rating-label">Worthy?</span><span class="rating-stars">${starsHtml}</span><span class="rating-count">${countText}${undoLink}</span></div>`;
+  return `<div class="rating-row${rated ? ' locked' : ''}" data-id="${escHtml(ev.id)}"><span class="rating-label">Worthy?</span><span class="rating-stars">${starsHtml}</span><span class="rating-count">${countText}${undoLink}</span></div>`;
 }
 
 function renderReportSection(ev){
@@ -1184,7 +1197,7 @@ function renderReportSection(ev){
   const isOpen = openReportPickerId === ev.id;
   const pendingType = (pendingReport && pendingReport.id === ev.id) ? pendingReport.type : null;
   const myTypes = REPORT_TYPES.filter(t => reportedByMe[ev.id + ':' + t.id]);
-  let html = `<div class="report-section" data-id="${ev.id}">`;
+  let html = `<div class="report-section" data-id="${escHtml(ev.id)}">`;
 
   if (myTypes.length){
     html += '<div class="my-reports"><span class="my-reports-label">You shared:</span>';
@@ -1570,7 +1583,7 @@ function renderList(){
       ${ev.sponsored ? '<div class="sponsored-flag">Sponsored</div>' : ''}
       <div class="card-main${ev.image_url ? '' : ' no-media'}">
         ${ev.image_url
-          ? `<div class="card-media" data-image="${ev.image_url}" data-insta="${ev.insta_url || ''}" data-image-source="${ev.image_source || ''}" data-fit="${ev.image_fit || ''}"${ev.image_fit === 'contain' ? ` style="background:${catColor[ev.cat]}1F"` : ''}><img src="${ev.image_url}" alt="${buildImageAlt(ev)}" loading="lazy"></div>`
+          ? `<div class="card-media" data-image="${escHtml(ev.image_url)}" data-insta="${escHtml(ev.insta_url)}" data-image-source="${escHtml(ev.image_source)}" data-fit="${escHtml(ev.image_fit)}"${ev.image_fit === 'contain' ? ` style="background:${catColor[ev.cat]}1F"` : ''}><img src="${escHtml(ev.image_url)}" alt="${escHtml(buildImageAlt(ev))}" loading="lazy"></div>`
           : ''}
         <div class="card-content">
           <div class="card-top">
@@ -1580,15 +1593,15 @@ function renderList(){
             ${statusBadge(ev)}
           </div>
           <div class="card-text">
-            <div class="card-what">${stripFreeWord(ev.what)}</div>
-            <div class="card-brand">${ev.brand}</div>
+            <div class="card-what">${escHtml(stripFreeWord(ev.what))}</div>
+            <div class="card-brand">${escHtml(ev.brand)}</div>
           </div>
           ${renderStars(ev)}
         </div>
       </div>
       ${renderUpdateLine(ev)}
       ${renderUpdatePhotos(ev)}
-      ${ev.description ? `<div class="card-description">${ev.description}</div>` : ''}
+      ${ev.description ? `<div class="card-description">${escHtml(ev.description)}</div>` : ''}
       <div class="card-meta">
         ${renderMetaTimes(ev)}
         ${a ? `<span class="avail ${a.cls}">${a.text}</span>` : ''}

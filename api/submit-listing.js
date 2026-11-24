@@ -14,6 +14,38 @@ function countUrls(text) {
 // Cities the site runs in (keep in sync with lib/cities.ts).
 const ALLOWED_CITY_SLUGS = ['toronto', 'new-york'];
 
+// Whatever a visitor types is shown on every city page. The pages escape it
+// when they draw it, and this is the second lock: angle brackets are never part
+// of a real event name or address, so they are refused, and links must be
+// http(s) (a bare "example.com" gets https:// added) so a stored link can never
+// be a script address.
+const TEXT_LIMITS = [
+  ['brand', 100, 'Brand or business name'],
+  ['what', 300, 'Description'],
+  ['address', 200, 'Address'],
+  ['neighbourhood', 100, 'Neighbourhood'],
+  ['submitter_contact', 200, 'Contact'],
+];
+
+// Returns null when empty, the cleaned link, or false when it is not usable.
+function normalizeWebUrl(value) {
+  const s = String(value == null ? '' : value).trim();
+  if (!s) return null;
+  if (s.length > 500 || /[\s<>"`]/.test(s)) return false;
+  if (/^https?:\/\//i.test(s)) return s;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(s)) return false;
+  if (/^(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}(\/\S*)?$/i.test(s)) return 'https://' + s;
+  return false;
+}
+
+// Instagram can be a link or a bare @handle.
+function normalizeInstaUrl(value) {
+  const s = String(value == null ? '' : value).trim();
+  if (!s) return null;
+  if (/^@?[A-Za-z0-9._]{1,30}$/.test(s)) return s;
+  return normalizeWebUrl(s);
+}
+
 // Photos. Nobody can write to the listing-photos bucket directly any more
 // (its insert policy is gone), so this endpoint, holding the service key, is
 // the only way a photo gets stored. The form compresses to a JPEG under
@@ -92,7 +124,11 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing listing details.' });
   }
 
+  const links = [];
   for (const p of payloads) {
+    if (!p || typeof p !== 'object') {
+      return res.status(400).json({ error: 'Missing required listing fields.' });
+    }
     const brand = String(p.brand || '').trim();
     const what = String(p.what || '').trim();
     if (!brand || !what || !p.category || !p.neighbourhood || p.lat == null || p.lng == null || !p.start_time) {
@@ -110,6 +146,24 @@ export default async function handler(req, res) {
     if (containsBlockedContent(what)) {
       return res.status(400).json({ error: 'Description contains language we don\'t allow.', field: 'what' });
     }
+    for (const [field, max, label] of TEXT_LIMITS) {
+      const value = String(p[field] == null ? '' : p[field]);
+      if (value.length > max) {
+        return res.status(400).json({ error: `${label} is too long.`, field });
+      }
+      if (/[<>]/.test(value)) {
+        return res.status(400).json({ error: `${label} can't contain < or > characters.`, field });
+      }
+    }
+    const signup = normalizeWebUrl(p.signup_url);
+    if (signup === false) {
+      return res.status(400).json({ error: 'Please enter a valid web link, starting with https://', field: 'signup_url' });
+    }
+    const insta = normalizeInstaUrl(p.insta_url);
+    if (insta === false) {
+      return res.status(400).json({ error: 'Please enter a valid Instagram link or @handle.', field: 'insta_url' });
+    }
+    links.push({ signup, insta });
   }
 
   // Photo (optional). Checked before anything is stored: the visitor must
@@ -170,7 +224,7 @@ export default async function handler(req, res) {
 
   // Rebuild the payload from scratch server-side rather than trusting the
   // client for anything security- or moderation-relevant.
-  const finalPayloads = payloads.map(p => ({
+  const finalPayloads = payloads.map((p, i) => ({
     brand: String(p.brand).trim(),
     category: p.category,
     neighbourhood: p.neighbourhood,
@@ -204,8 +258,8 @@ export default async function handler(req, res) {
           image_licence_text_version: photo.licenceVersion,
         }
       : {}),
-    insta_url: p.insta_url || null,
-    signup_url: p.signup_url || null,
+    insta_url: links[i].insta,
+    signup_url: links[i].signup,
     group_id: p.group_id || null,
     // Which city's pages the listing belongs to. Anything not on the
     // allowlist falls back to the column default (toronto) rather than

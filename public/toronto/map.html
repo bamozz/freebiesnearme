@@ -494,6 +494,17 @@ function pinElement(ev){
 // relying on every submitter to leave it out themselves. Exception: "Free
 // Flicks" is a proper name (the actual title of the screening series), not
 // filler, so it's left alone via a negative lookahead.
+// Everything that comes from the database goes into markup through escHtml,
+// and a link is only used when it is http(s), so a listing can never inject
+// script or markup into the page.
+function escHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+function safeHref(u){
+  const s = String(u == null ? '' : u).trim();
+  return /^https?:\/\//i.test(s) ? escHtml(s) : '';
+}
+
 function stripFreeWord(text){
   const stripped = (text || '').replace(/\bfree\b(?!\s+flicks\b)/gi, ' ').replace(/\s{2,}/g, ' ').trim();
   return stripped ? stripped.charAt(0).toUpperCase() + stripped.slice(1) : stripped;
@@ -515,10 +526,10 @@ function buildPopup(ev, stop){
     ? encodeURIComponent(address + ', ' + neighbourhood + ', Toronto, ON')
     : lat + ',' + lng;
   return `<div class="popup-cat">${catLabel[ev.cat]}${ev.sponsored ? ' &middot; Sponsored' : ''}</div>
-  <div class="popup-brand">${ev.brand}</div>
-  <div style="font-size:12.5px;max-width:190px;">${stripFreeWord(ev.what)}</div>
-  ${ev.description ? `<div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${ev.description}</div>` : ''}
-  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${neighbourhood}</div>
+  <div class="popup-brand">${escHtml(ev.brand)}</div>
+  <div style="font-size:12.5px;max-width:190px;">${escHtml(stripFreeWord(ev.what))}</div>
+  ${ev.description ? `<div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${escHtml(ev.description)}</div>` : ''}
+  <div style="font-size:11.5px;color:#6B7280;margin-top:4px;">${escHtml(neighbourhood)}</div>
   <div style="font-size:11.5px;color:#6B7280;">${dateLines.map(d => `<div>${d}</div>`).join('')}</div>
   <a class="popup-btn" href="https://www.google.com/maps/search/?api=1&query=${directionsQuery}" target="_blank" rel="noopener">Get directions</a>`;
 }
