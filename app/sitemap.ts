@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { createServerClient, LISTING_PUBLIC_COLUMNS } from '@/lib/supabase';
 import { CATEGORIES } from '@/lib/categories';
 import { CITIES } from '@/lib/cities';
-import { liveHubListings } from '@/lib/hub-live';
+import { hubIndexable } from '@/lib/hub-live';
 import type { Listing } from '@/types/pseo_types';
 
 const BASE_URL = 'https://www.freebiesnearme.app';
@@ -24,11 +24,9 @@ function staticRoutes(): MetadataRoute.Sitemap {
   const root = { url: `${BASE_URL}/`, changeFrequency: 'daily' as const, priority: 1.0 };
   const cities = Object.keys(CITIES).flatMap((slug) => [
     { url: `${BASE_URL}/${slug}`, changeFrequency: 'daily' as const, priority: 1.0 },
-    { url: `${BASE_URL}/${slug}/map`, changeFrequency: 'daily' as const, priority: 0.8 },
     { url: `${BASE_URL}/${slug}/calendar`, changeFrequency: 'daily' as const, priority: 0.8 },
     { url: `${BASE_URL}/${slug}/submit`, changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: `${BASE_URL}/${slug}/advertise`, changeFrequency: 'monthly' as const, priority: 0.6 },
-    { url: `${BASE_URL}/${slug}/changelog`, changeFrequency: 'weekly' as const, priority: 0.3 },
   ]);
   // Sitewide pages have one address for every city.
   const sitewide = [
@@ -70,35 +68,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (row.neighbourhood_slug !== row.category_slug) addToHub(row.city_slug, row.neighbourhood_slug, row);
     }
 
-    // Category hubs (food-drink, wellness and so on) are evergreen search
-    // targets, so every category of every city is always listed and stays
-    // indexable, even with nothing live. A neighbourhood or venue hub goes in
-    // only when its page would list at least one listing that has not wrapped
-    // up, using the same rule the page uses (lib/hub-live.ts); with nothing
-    // live it renders the empty state, is noindex and stays out.
+    // A hub (category, neighbourhood or venue) goes in only when its page is
+    // indexable: at least MIN_INDEXABLE_LISTINGS listings that have not wrapped
+    // up, by the same rule the page uses for its robots tag (lib/hub-live.ts).
+    // The map and changelog pages are noindex and stay out too.
     // lastModified is the time the newest listing was added to that hub
-    // (listings.created_at), a real timestamp; there is no listing update time
-    // in the database. A category with no rows at all gets none.
+    // (listings.created_at), a real timestamp.
     const newestCreated = (rows: Listing[]) =>
       rows.reduce((max, row) => (row.created_at > max ? row.created_at : max), rows[0].created_at);
     const hubRoutes: MetadataRoute.Sitemap = [];
-    const categoryPaths = new Set<string>();
-    for (const city of Object.keys(CITIES)) {
-      for (const category of CATEGORIES) {
-        const path = `${city}/${category.slug}`;
-        categoryPaths.add(path);
-        const rows = hubs.get(path) ?? [];
-        hubRoutes.push({
-          url: `${BASE_URL}/${path}`,
-          lastModified: rows.length ? new Date(newestCreated(rows)) : undefined,
-          changeFrequency: 'daily',
-          priority: 0.8,
-        });
-      }
-    }
     for (const [path, rows] of hubs.entries()) {
-      if (categoryPaths.has(path)) continue;
-      if (liveHubListings(rows).length === 0) continue;
+      if (!hubIndexable(rows)) continue;
       hubRoutes.push({
         url: `${BASE_URL}/${path}`,
         lastModified: new Date(newestCreated(rows)),

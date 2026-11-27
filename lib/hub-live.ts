@@ -9,3 +9,13 @@ import { groupListings, type GroupedListing } from '@/lib/group-listings';
 export function liveHubListings(rows: Listing[]): GroupedListing[] {
   return groupListings(rows).filter((listing) => listing.groupStatus !== 'ended');
 }
+
+// A hub with fewer live listings than this is thin for search: its page asks
+// search engines not to index it and the sitemap leaves it out, and both switch
+// back by themselves once enough listings are live. Category and neighbourhood
+// hubs follow the same rule (SEO check, Nov 27 2026, for the AdSense review).
+export const MIN_INDEXABLE_LISTINGS = 2;
+
+export function hubIndexable(rows: Listing[]): boolean {
+  return liveHubListings(rows).length >= MIN_INDEXABLE_LISTINGS;
+}

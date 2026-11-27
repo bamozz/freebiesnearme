@@ -17,7 +17,7 @@ import {
   buildGoogleCalendarUrl,
   icsFilename,
 } from '@/lib/listing-display';
-import { liveHubListings } from '@/lib/hub-live';
+import { hubIndexable, liveHubListings } from '@/lib/hub-live';
 import { creditFor, withClearedImages } from '@/lib/image-hosts';
 import PhotoCredit from '@/app/components/PhotoCredit';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
@@ -179,6 +179,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq('moderation_status', 'approved')
     .returns<Listing[]>();
   const activeCount = liveHubListings(listings ?? []).length;
+  const indexable = hubIndexable(listings ?? []);
 
   const where = resolved.type === 'category' ? `${label.toLowerCase()} in ${cityLabel}` : `${label}, ${cityLabel}`;
   const description =
@@ -191,12 +192,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical: url },
-    // A neighbourhood or venue hub with nothing live keeps its status code and
-    // text but asks search engines not to index it; the links on it can still
-    // be followed. The sitemap omits the same hubs (lib/hub-live.ts). Category
-    // hubs stay indexable even when empty: they are the evergreen pages for
-    // searches like free food toronto.
-    ...(activeCount === 0 && resolved.type === 'neighbourhood' ? { robots: { index: false, follow: true } } : {}),
+    // A hub with too few live listings keeps its status code and text but asks
+    // search engines not to index it; the links on it can still be followed.
+    // The sitemap omits the same hubs (lib/hub-live.ts, hubIndexable).
+    ...(indexable ? {} : { robots: { index: false, follow: true } }),
     openGraph: {
       type: 'website',
       siteName: 'Freebies Near Me',

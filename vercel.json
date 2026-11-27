@@ -165,7 +165,7 @@
     },
     {
       "source": "/toronto",
-      "destination": "/toronto/index.html"
+      "destination": "/api/city-home?city=toronto"
     },
     {
       "source": "/toronto/map",
@@ -185,7 +185,7 @@
     },
     {
       "source": "/new-york",
-      "destination": "/new-york/index.html"
+      "destination": "/api/city-home?city=new-york"
     },
     {
       "source": "/new-york/map",
@@ -261,5 +261,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/city-home.js": {
+      "includeFiles": "public/{toronto,new-york}/index.html"
+    }
+  }
 }
