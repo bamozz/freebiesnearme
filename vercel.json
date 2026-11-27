@@ -165,7 +165,7 @@
     },
     {
       "source": "/toronto",
-      "destination": "/api/city-home?city=toronto"
+      "destination": "/toronto/index.html"
     },
     {
       "source": "/toronto/map",
@@ -185,7 +185,7 @@
     },
     {
       "source": "/new-york",
-      "destination": "/api/city-home?city=new-york"
+      "destination": "/new-york/index.html"
     },
     {
       "source": "/new-york/map",

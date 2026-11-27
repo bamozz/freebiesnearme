@@ -24,6 +24,11 @@ const AD_COOKIE = 'fbnm_ads';
 // this to false together with ADS_ENABLED there to stop loading Google at all.
 const ADS_ENABLED = true;
 
+const CITY_HOMES = new Map([
+  ['/toronto', 'toronto'],
+  ['/new-york', 'new-york'],
+]);
+
 export function proxy(request: NextRequest) {
   if (!isProduction && request.nextUrl.pathname === '/robots.txt') {
     return new NextResponse('User-agent: *\nDisallow: /\n', {
@@ -31,7 +36,13 @@ export function proxy(request: NextRequest) {
     });
   }
 
-  const response = NextResponse.next();
+  // The city homes are static files (public/<city>/index.html), and a static
+  // file answers before any vercel.json rewrite, so the rewrite to the function
+  // that puts the listings into the HTML (api/city-home.js) is done here.
+  const cityHome = CITY_HOMES.get(request.nextUrl.pathname);
+  const response = cityHome
+    ? NextResponse.rewrite(new URL(`/api/city-home?city=${cityHome}`, request.url))
+    : NextResponse.next();
   if (!isProduction) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow');
   }
