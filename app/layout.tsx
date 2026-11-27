@@ -47,7 +47,7 @@ gtag('config', 'G-SRH6EG57P0');`}
         <script
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
-            __html: `try{if(/(?:^|;\\s*)fbnm_ads=1(?:;|$)/.test(document.cookie)){var a=document.createElement('script');a.src='/ad-loader.js?v=3';a.async=true;document.head.appendChild(a);}}catch(e){}`,
+            __html: `try{if(/(?:^|;\\s*)fbnm_ads=1(?:;|$)/.test(document.cookie)){var a=document.createElement('script');a.src='/ad-loader.js?v=4';a.async=true;document.head.appendChild(a);}}catch(e){}`,
           }}
         />
         {/* Rendered as plain <link> tags (matching how the static

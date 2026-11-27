@@ -1,7 +1,7 @@
 // Loads the AdSense script, and shows the ad notice with its opt out.
 //
 // This file is requested only by visitors in Canada (outside Quebec) or the
-// United States: middleware.ts sets the fbnm_ads cookie from the Cloudflare
+// United States: proxy.ts sets the fbnm_ads cookie from the Cloudflare
 // country and region headers, and a small inline snippet on every page adds
 // this file only when that cookie is present. Other visitors never fetch it
 // and never see the AdSense address in their HTML.
@@ -15,10 +15,14 @@
 //   fbnm_ads_off  the visitor turned Google ads off: nothing from Google loads
 //   fbnm_ads_seen the visitor has seen the notice and kept ads on
 (function () {
-  // Ads are switched off: AdSense has not approved the site yet, so nothing
-  // from Google is loaded and no notice is shown. To turn ads on again, set
-  // this to true and raise the ?v= number in the inline snippet on every page.
-  var ADS_ENABLED = false;
+  // ADS_ENABLED false: nothing from Google loads at all.
+  // ADS_PAUSED true: AdSense is reviewing the site, so Google's script loads
+  // (the review looks for it) with ad requests paused: no ad is requested or
+  // shown, and no notice is drawn. When AdSense approves the site and Legal and
+  // Sharon say yes, set ADS_PAUSED to false (the notice then shows before ads)
+  // and raise the ?v= number in the inline snippet on every page.
+  var ADS_ENABLED = true;
+  var ADS_PAUSED = true;
   if (!ADS_ENABLED) return;
 
   var OFF = 'fbnm_ads_off';
@@ -39,10 +43,12 @@
   // Google's script, so the visitor can see what the ads do before anything
   // is sent to Google. The script is not held back until a click.
   function start() {
-    if (!hasCookie(SEEN)) showNotice();
+    if (!ADS_PAUSED && !hasCookie(SEEN)) showNotice();
     loadGoogle();
   }
   function loadGoogle() {
+    // Set before the script loads, so it never sends an ad request.
+    if (ADS_PAUSED) (window.adsbygoogle = window.adsbygoogle || []).pauseAdRequests = 1;
     var s = document.createElement('script');
     s.async = true;
     s.crossOrigin = 'anonymous';

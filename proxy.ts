@@ -19,10 +19,10 @@ const isProduction = process.env.VERCEL_ENV === 'production';
 const AD_COUNTRIES = new Set(['CA', 'US']);
 const AD_COOKIE = 'fbnm_ads';
 
-// Ads are switched off (AdSense has not approved the site), so the ad cookie is
-// not set and one a visitor still holds is removed. When ads return, set this to
-// true together with ADS_ENABLED in public/ad-loader.js.
-const ADS_ENABLED = false;
+// The ad cookie is set again so pages load Google's script for the AdSense
+// review. Ads themselves stay paused in public/ad-loader.js (ADS_PAUSED). Set
+// this to false together with ADS_ENABLED there to stop loading Google at all.
+const ADS_ENABLED = true;
 
 export function proxy(request: NextRequest) {
   if (!isProduction && request.nextUrl.pathname === '/robots.txt') {
