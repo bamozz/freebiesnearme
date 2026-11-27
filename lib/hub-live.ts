@@ -16,6 +16,10 @@ export function liveHubListings(rows: Listing[]): GroupedListing[] {
 // hubs follow the same rule (SEO check, Nov 27 2026, for the AdSense review).
 export const MIN_INDEXABLE_LISTINGS = 2;
 
-export function hubIndexable(rows: Listing[]): boolean {
+// The misc hubs are never indexed: the category name carries no search intent.
+const NEVER_INDEXED = new Set(['misc']);
+
+export function hubIndexable(rows: Listing[], hub: string): boolean {
+  if (NEVER_INDEXED.has(hub)) return false;
   return liveHubListings(rows).length >= MIN_INDEXABLE_LISTINGS;
 }

@@ -78,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       rows.reduce((max, row) => (row.created_at > max ? row.created_at : max), rows[0].created_at);
     const hubRoutes: MetadataRoute.Sitemap = [];
     for (const [path, rows] of hubs.entries()) {
-      if (!hubIndexable(rows)) continue;
+      if (!hubIndexable(rows, path.split('/')[1])) continue;
       hubRoutes.push({
         url: `${BASE_URL}/${path}`,
         lastModified: new Date(newestCreated(rows)),

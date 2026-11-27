@@ -18,6 +18,7 @@ import {
   icsFilename,
 } from '@/lib/listing-display';
 import { hubIndexable, liveHubListings } from '@/lib/hub-live';
+import { hubCopy } from '@/lib/hub-copy';
 import { creditFor, withClearedImages } from '@/lib/image-hosts';
 import PhotoCredit from '@/app/components/PhotoCredit';
 import type { Listing, PseoCategoryStats, PseoNeighbourhoodStats } from '@/types/pseo_types';
@@ -179,7 +180,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq('moderation_status', 'approved')
     .returns<Listing[]>();
   const activeCount = liveHubListings(listings ?? []).length;
-  const indexable = hubIndexable(listings ?? []);
+  const indexable = hubIndexable(listings ?? [], hub);
 
   const where = resolved.type === 'category' ? `${label.toLowerCase()} in ${cityLabel}` : `${label}, ${cityLabel}`;
   const description =
@@ -249,6 +250,7 @@ export default async function HubPage({ params }: Props) {
   const cityLabel = cityConfig.name;
   const hubUrl = `https://www.freebiesnearme.app/${city}/${hub}`;
   const jsonLd = buildHubItemList(items, hubLabel, hubUrl);
+  const about = hubCopy(city, hub);
 
   return (
     <>
@@ -408,6 +410,14 @@ export default async function HubPage({ params }: Props) {
           </ul>
         )}
 
+        {about && (
+          <section className="hub-about">
+            <h2>{about.heading}</h2>
+            {about.paragraphs.map((text, i) => (
+              <p key={i}>{text}</p>
+            ))}
+          </section>
+        )}
       </div>
 
       {/* Internal linking mesh: every hub page cross-links to the other
